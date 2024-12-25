@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Compra con Tarjeta - Finanzas Personales</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100">
+    <nav class="bg-blue-600 text-white p-4">
+      <div class="container mx-auto flex justify-between items-center">
+        <h1 class="text-2xl font-bold">Registro de Compra con Tarjeta</h1>
+        <a href="index.html" class="text-white hover:text-gray-200"
+          >Volver al Inicio</a
+        >
+      </div>
+    </nav>
+
+    <main class="container mx-auto p-4">
+      <form class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
+        <!-- Tarjeta de Crédito -->
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Tarjeta de Crédito
+          </label>
+          <select class="w-full border rounded-md p-2">
+            <option>Visa Oro Bancolombia (...1234)</option>
+            <option>Mastercard Platinum Davivienda (...5678)</option>
+          </select>
+        </div>
+
+        <!-- Fecha de Compra -->
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Fecha de Compra
+          </label>
+          <input type="date" class="w-full border rounded-md p-2" />
+        </div>
+
+        <!-- Establecimiento -->
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Establecimiento
+          </label>
+          <input
+            type="text"
+            class="w-full border rounded-md p-2"
+            placeholder="Nombre del comercio"
+          />
+        </div>
+
+        <!-- Monto -->
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Monto de la Compra
+          </label>
+          <input
+            type="number"
+            class="w-full border rounded-md p-2"
+            placeholder="0.00"
+          />
+        </div>
+
+        <!-- Categoría -->
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Categoría
+          </label>
+          <select class="w-full border rounded-md p-2">
+            <option>Alimentación</option>
+            <option>Transporte</option>
+            <option>Entretenimiento</option>
+            <option>Hogar</option>
+            <option>Salud</option>
+            <option>Otros</option>
+          </select>
+        </div>
+
+        <!-- Número de Cuotas -->
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Número de Cuotas
+          </label>
+          <div class="grid grid-cols-2 gap-4">
+            <select class="w-full border rounded-md p-2">
+              <option>1 cuota</option>
+              <option>2 cuotas</option>
+              <option>3 cuotas</option>
+              <option>6 cuotas</option>
+              <option>12 cuotas</option>
+              <option>24 cuotas</option>
+            </select>
+            <div class="flex items-center">
+              <input type="checkbox" class="mr-2" />
+              <label class="text-gray-700 text-sm">Sin intereses</label>
+            </div>
+          </div>
+        </div>
+
+        <!-- Descripción -->
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Descripción
+          </label>
+          <textarea
+            class="w-full border rounded-md p-2"
+            rows="3"
+            placeholder="Detalles de la compra"
+          ></textarea>
+        </div>
+
+        <!-- Archivos Adjuntos -->
+        <div class="mb-6">
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Factura o Comprobante
+          </label>
+          <input type="file" multiple class="w-full border rounded-md p-2" />
+        </div>
+
+        <!-- Botones -->
+        <div class="flex justify-end space-x-4">
+          <button
+            type="button"
+            class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+          >
+            Registrar Compra
+          </button>
+        </div>
+      </form>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Transferencia entre Cuentas - Finanzas Personales</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100">
+    <nav class="bg-blue-600 text-white p-4">
+      <div class="container mx-auto flex justify-between items-center">
+        <h1 class="text-2xl font-bold">Transferencia entre Cuentas</h1>
+        <a href="index.html" class="text-white hover:text-gray-200"
+          >Volver al Inicio</a
+        >
+      </div>
+    </nav>
+
+    <main class="container mx-auto p-4">
+      <form class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
+        <!-- Fecha -->
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Fecha
+          </label>
+          <input type="date" class="w-full border rounded-md p-2" />
+        </div>
+
+        <!-- Cuenta Origen -->
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Cuenta Origen
+          </label>
+          <select class="w-full border rounded-md p-2">
+            <option>Cuenta Corriente Principal</option>
+            <option>Cuenta de Ahorros</option>
+            <option>Cuenta Nómina</option>
+          </select>
+        </div>
+
+        <!-- Cuenta Destino -->
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Cuenta Destino
+          </label>
+          <select class="w-full border rounded-md p-2">
+            <option>Cuenta de Ahorros</option>
+            <option>Cuenta Corriente Principal</option>
+            <option>Cuenta Nómina</option>
+          </select>
+        </div>
+
+        <!-- Monto -->
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Monto
+          </label>
+          <input
+            type="number"
+            class="w-full border rounded-md p-2"
+            placeholder="0.00"
+          />
+        </div>
+
+        <!-- Descripción -->
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Descripción
+          </label>
+          <textarea
+            class="w-full border rounded-md p-2"
+            rows="3"
+            placeholder="Motivo de la transferencia"
+          ></textarea>
+        </div>
+
+        <!-- Archivos Adjuntos -->
+        <div class="mb-6">
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Comprobante de Transferencia
+          </label>
+          <input type="file" class="w-full border rounded-md p-2" />
+        </div>
+
+        <!-- Botones -->
+        <div class="flex justify-end space-x-4">
+          <button
+            type="button"
+            class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+          >
+            Realizar Transferencia
+          </button>
+        </div>
+      </form>
+    </main>
+  </body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard - Finanzas Personales</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100">
+    <nav class="bg-blue-600 text-white p-4">
+      <div class="container mx-auto flex justify-between items-center">
+        <h1 class="text-2xl font-bold">Dashboard Financiero</h1>
+        <a href="index.html" class="text-white hover:text-gray-200"
+          >Volver al Inicio</a
+        >
+      </div>
+    </nav>
+
+    <main class="container mx-auto p-4">
+      <!-- Filtros de Período -->
+      <div class="bg-white p-4 rounded-lg shadow-md mb-4">
+        <div class="grid grid-cols-4 gap-4">
+          <select class="border rounded-md p-2">
+            <option>Último Mes</option>
+            <option>Últimos 3 Meses</option>
+            <option>Último Año</option>
+            <option>Personalizado</option>
+          </select>
+          <input
+            type="date"
+            class="border rounded-md p-2"
+            placeholder="Fecha Inicio"
+          />
+          <input
+            type="date"
+            class="border rounded-md p-2"
+            placeholder="Fecha Fin"
+          />
+          <button
+            class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+          >
+            Actualizar
+          </button>
+        </div>
+      </div>
+
+      <!-- Resumen General -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <!-- Balance General -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h2 class="text-lg font-bold mb-4">Balance General</h2>
+          <div class="space-y-2">
+            <div class="flex justify-between">
+              <span>Total Activos:</span>
+              <span class="font-bold text-green-600">$25,000,000</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Total Deudas:</span>
+              <span class="font-bold text-red-600">$8,000,000</span>
+            </div>
+            <div class="flex justify-between pt-2 border-t">
+              <span>Balance Neto:</span>
+              <span class="font-bold text-blue-600">$17,000,000</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Flujo de Efectivo -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h2 class="text-lg font-bold mb-4">Flujo del Mes</h2>
+          <div class="space-y-2">
+            <div class="flex justify-between">
+              <span>Ingresos:</span>
+              <span class="font-bold text-green-600">$4,500,000</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Gastos:</span>
+              <span class="font-bold text-red-600">$3,200,000</span>
+            </div>
+            <div class="flex justify-between pt-2 border-t">
+              <span>Neto:</span>
+              <span class="font-bold text-blue-600">$1,300,000</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Próximos Pagos -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h2 class="text-lg font-bold mb-4">Próximos Pagos</h2>
+          <div class="space-y-2">
+            <div class="text-sm">
+              <div class="flex justify-between text-red-600">
+                <span>TC Bancolombia</span>
+                <span>$500,000 (2 días)</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Préstamo Casa</span>
+                <span>$1,200,000 (5 días)</span>
+              </div>
+              <div class="flex justify-between">
+                <span>TC Davivienda</span>
+                <span>$300,000 (8 días)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estado de Cuentas -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <!-- Cuentas Bancarias -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h2 class="text-lg font-bold mb-4">Cuentas Bancarias</h2>
+          <div class="divide-y">
+            <div class="py-2 flex justify-between">
+              <span>Cuenta Corriente Principal</span>
+              <span class="font-bold">$3,500,000</span>
+            </div>
+            <div class="py-2 flex justify-between">
+              <span>Cuenta de Ahorros</span>
+              <span class="font-bold">$8,500,000</span>
+            </div>
+            <div class="py-2 flex justify-between">
+              <span>Cuenta Nómina</span>
+              <span class="font-bold">$2,000,000</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjetas de Crédito -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h2 class="text-lg font-bold mb-4">Tarjetas de Crédito</h2>
+          <div class="divide-y">
+            <div class="py-2">
+              <div class="flex justify-between">
+                <span>Visa Oro</span>
+                <span class="font-bold text-red-600">$1,500,000</span>
+              </div>
+              <div class="text-sm text-gray-500">
+                <span>Disponible: $3,500,000</span>
+              </div>
+            </div>
+            <div class="py-2">
+              <div class="flex justify-between">
+                <span>Mastercard Platinum</span>
+                <span class="font-bold text-red-600">$2,800,000</span>
+              </div>
+              <div class="text-sm text-gray-500">
+                <span>Disponible: $2,200,000</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Gráficos -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Gastos por Categoría -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h2 class="text-lg font-bold mb-4">Gastos por Categoría</h2>
+          <div
+            class="h-64 bg-gray-100 rounded flex items-center justify-center"
+          >
+            [Gráfico de Torta]
+          </div>
+        </div>
+
+        <!-- Tendencia de Gastos -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h2 class="text-lg font-bold mb-4">Tendencia de Gastos</h2>
+          <div
+            class="h-64 bg-gray-100 rounded flex items-center justify-center"
+          >
+            [Gráfico de Línea]
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="bg-gray-200 text-center p-4 mt-8">
+      <p>Última actualización: 25/12/2024 10:30 AM</p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Informe de Tarjetas - Finanzas Personales</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100">
+    <nav class="bg-blue-600 text-white p-4">
+      <div class="container mx-auto flex justify-between items-center">
+        <h1 class="text-2xl font-bold">Informe de Tarjetas de Crédito</h1>
+        <a href="index.html" class="text-white hover:text-gray-200"
+          >Volver al Inicio</a
+        >
+      </div>
+    </nav>
+
+    <main class="container mx-auto p-4">
+      <!-- Filtros -->
+      <div class="bg-white p-4 rounded-lg shadow-md mb-4">
+        <div class="grid grid-cols-4 gap-4">
+          <select class="border rounded-md p-2">
+            <option>Todas las Tarjetas</option>
+            <option>Visa Oro</option>
+            <option>Mastercard Platinum</option>
+          </select>
+          <select class="border rounded-md p-2">
+            <option>Último Mes</option>
+            <option>Últimos 3 Meses</option>
+            <option>Último Año</option>
+          </select>
+          <div class="col-span-2">
+            <button
+              class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            >
+              Generar Informe
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resumen de Tarjetas -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <!-- Tarjeta 1 -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <h2 class="text-lg font-bold">Visa Oro Bancolombia</h2>
+              <p class="text-sm text-gray-500">**** 1234</p>
+            </div>
+            <span
+              class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm"
+            >
+              Al día
+            </span>
+          </div>
+
+          <div class="space-y-2 mb-4">
+            <div class="flex justify-between">
+              <span>Límite de Crédito:</span>
+              <span>$5,000,000</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Saldo Actual:</span>
+              <span class="text-red-600">$1,500,000</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Disponible:</span>
+              <span class="text-green-600">$3,500,000</span>
+            </div>
+          </div>
+
+          <div class="border-t pt-2">
+            <div class="grid grid-cols-2 gap-2 text-sm">
+              <div>
+                <p>Fecha de Corte: 15/01/2024</p>
+                <p>Fecha de Pago: 22/01/2024</p>
+              </div>
+              <div>
+                <p>Pago Mínimo: $150,000</p>
+                <p>Pago Total: $1,500,000</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta 2 -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <div class="flex justify-between items-start mb-4">
+            <div>
+              <h2 class="text-lg font-bold">Mastercard Platinum</h2>
+              <p class="text-sm text-gray-500">**** 5678</p>
+            </div>
+            <span
+              class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm"
+            >
+              Pago pendiente
+            </span>
+          </div>
+
+          <div class="space-y-2 mb-4">
+            <div class="flex justify-between">
+              <span>Límite de Crédito:</span>
+              <span>$8,000,000</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Saldo Actual:</span>
+              <span class="text-red-600">$2,800,000</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Disponible:</span>
+              <span class="text-green-600">$5,200,000</span>
+            </div>
+          </div>
+
+          <div class="border-t pt-2">
+            <div class="grid grid-cols-2 gap-2 text-sm">
+              <div>
+                <p>Fecha de Corte: 20/01/2024</p>
+                <p>Fecha de Pago: 27/01/2024</p>
+              </div>
+              <div>
+                <p>Pago Mínimo: $280,000</p>
+                <p>Pago Total: $2,800,000</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detalle de Movimientos -->
+      <div class="bg-white p-4 rounded-lg shadow-md mb-4">
+        <h2 class="text-lg font-bold mb-4">Últimos Movimientos</h2>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-2 text-left">Fecha</th>
+                <th class="px-4 py-2 text-left">Tarjeta</th>
+                <th class="px-4 py-2 text-left">Descripción</th>
+                <th class="px-4 py-2 text-right">Monto</th>
+                <th class="px-4 py-2 text-center">Cuotas</th>
+                <th class="px-4 py-2 text-center">Estado</th>
+                <th class="px-4 py-2 text-center">Soporte</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y">
+              <tr>
+                <td class="px-4 py-2">20/12/2024</td>
+                <td class="px-4 py-2">Visa Oro</td>
+                <td class="px-4 py-2">Supermercado Éxito</td>
+                <td class="px-4 py-2 text-right">$250,000</td>
+                <td class="px-4 py-2 text-center">1</td>
+                <td class="px-4 py-2 text-center">
+                  <span
+                    class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm"
+                  >
+                    Pendiente
+                  </span>
+                </td>
+                <td class="px-4 py-2 text-center">
+                  <a href="#" class="text-blue-600 hover:underline">Ver</a>
+                </td>
+              </tr>
+              <tr>
+                <td class="px-4 py-2">18/12/2024</td>
+                <td class="px-4 py-2">Mastercard Platinum</td>
+                <td class="px-4 py-2">Falabella</td>
+                <td class="px-4 py-2 text-right">$500,000</td>
+                <td class="px-4 py-2 text-center">6</td>
+                <td class="px-4 py-2 text-center">
+                  <span
+                    class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm"
+                  >
+                    Próximo pago
+                  </span>
+                </td>
+                <td class="px-4 py-2 text-center">
+                  <a href="#" class="text-blue-600 hover:underline">Ver</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Análisis de Gastos -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Gráfico de Gastos por Categoría -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h2 class="text-lg font-bold mb-4">Gastos por Categoría</h2>
+          <div
+            class="h-64 bg-gray-100 rounded flex items-center justify-center"
+          >
+            [Gráfico de Distribución]
+          </div>
+        </div>
+
+        <!-- Análisis de Cuotas -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h2 class="text-lg font-bold mb-4">Análisis de Cuotas</h2>
+          <div class="space-y-4">
+            <div>
+              <h3 class="font-semibold mb-2">Cuotas Pendientes Totales</h3>
+              <div class="bg-gray-100 p-3 rounded">
+                <div class="flex justify-between mb-2">
+                  <span>Visa Oro</span>
+                  <span>$800,000 (4 compras)</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>Mastercard Platinum</span>
+                  <span>$1,200,000 (3 compras)</span>
+                </div>
+              </div>
+            </div>
+            <div>
+              <h3 class="font-semibold mb-2">Próximas Cuotas (30 días)</h3>
+              <div class="bg-gray-100 p-3 rounded">
+                <div class="flex justify-between mb-2">
+                  <span>Enero 2025</span>
+                  <span>$350,000</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>Febrero 2025</span>
+                  <span>$350,000</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="bg-gray-200 text-center p-4 mt-8">
+      <p>Última actualización: 25/12/2024 10:30 AM</p>
+    </footer>
+  </body>
+</html>
