@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Análisis Tributario - Finanzas Personales</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100">
+    <nav class="bg-blue-600 text-white p-4">
+      <div class="container mx-auto flex justify-between items-center">
+        <h1 class="text-2xl font-bold">Análisis Tributario</h1>
+        <div class="flex items-center space-x-4">
+          <button
+            class="bg-white text-blue-600 px-4 py-2 rounded-md hover:bg-blue-50"
+          >
+            Exportar a Excel
+          </button>
+          <button
+            class="bg-white text-blue-600 px-4 py-2 rounded-md hover:bg-blue-50"
+          >
+            Exportar a PDF
+          </button>
+          <a href="index.html" class="text-white hover:text-gray-200"
+            >Volver al Inicio</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <main class="container mx-auto p-4">
+      <!-- Filtros -->
+      <div class="bg-white p-4 rounded-lg shadow-md mb-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Año Fiscal
+            </label>
+            <select class="w-full border rounded-md p-2">
+              <option>2024</option>
+              <option>2023</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Periodo
+            </label>
+            <select class="w-full border rounded-md p-2">
+              <option>Acumulado Anual</option>
+              <option>Enero - Marzo</option>
+              <option>Abril - Junio</option>
+              <option>Julio - Septiembre</option>
+              <option>Octubre - Diciembre</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Mostrar Valores En
+            </label>
+            <select class="w-full border rounded-md p-2">
+              <option>UVT y Pesos</option>
+              <option>Solo UVT</option>
+              <option>Solo Pesos</option>
+            </select>
+          </div>
+          <div class="flex items-end">
+            <button
+              class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            >
+              Actualizar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Estado General -->
+      <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <h2 class="text-xl font-bold mb-4">Estado General</h2>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <!-- UVT del Año -->
+          <div class="p-4 bg-blue-50 rounded-lg">
+            <h3 class="font-bold mb-2">Valor UVT 2024</h3>
+            <div class="text-3xl font-bold text-blue-600">$47,065</div>
+            <div class="text-sm text-gray-500 mt-1">
+              Valor para cálculos del año en curso
+            </div>
+          </div>
+
+          <!-- Porcentaje Acumulado -->
+          <div class="p-4 bg-green-50 rounded-lg">
+            <h3 class="font-bold mb-2">Porcentaje del Año</h3>
+            <div class="text-3xl font-bold text-green-600">75%</div>
+            <div class="text-sm text-gray-500 mt-1">
+              9 de 12 meses transcurridos
+            </div>
+          </div>
+
+          <!-- Estado -->
+          <div class="p-4 bg-yellow-50 rounded-lg">
+            <h3 class="font-bold mb-2">Estado Actual</h3>
+            <div class="space-y-2">
+              <div class="flex justify-between items-center">
+                <span>Mayor Categoría:</span>
+                <span class="font-bold text-yellow-600">65.7%</span>
+              </div>
+              <div class="text-sm text-gray-500">
+                Compras y Consumos (920/1400 UVT)
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Análisis por Categorías -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <!-- Gráfico de Acumulados -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-xl font-bold mb-4">Acumulados vs Topes</h2>
+          <div class="space-y-6">
+            <!-- Consignaciones -->
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>Consignaciones</span>
+                <span>750/1400 UVT (53.5%)</span>
+              </div>
+              <div class="w-full bg-gray-200 h-4 rounded-full">
+                <div
+                  class="bg-blue-600 h-4 rounded-l-full"
+                  style="width: 53.5%"
+                ></div>
+              </div>
+              <div class="flex justify-between text-xs text-gray-500 mt-1">
+                <span>$35,298,750</span>
+                <span>$65,891,000</span>
+              </div>
+            </div>
+
+            <!-- Tarjetas de Crédito -->
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>Tarjetas de Crédito</span>
+                <span>600/1400 UVT (42.8%)</span>
+              </div>
+              <div class="w-full bg-gray-200 h-4 rounded-full">
+                <div
+                  class="bg-blue-600 h-4 rounded-l-full"
+                  style="width: 42.8%"
+                ></div>
+              </div>
+              <div class="flex justify-between text-xs text-gray-500 mt-1">
+                <span>$28,239,000</span>
+                <span>$65,891,000</span>
+              </div>
+            </div>
+
+            <!-- Compras y Consumos -->
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>Compras y Consumos</span>
+                <span>920/1400 UVT (65.7%)</span>
+              </div>
+              <div class="w-full bg-gray-200 h-4 rounded-full">
+                <div
+                  class="bg-blue-600 h-4 rounded-l-full"
+                  style="width: 65.7%"
+                ></div>
+              </div>
+              <div class="flex justify-between text-xs text-gray-500 mt-1">
+                <span>$43,299,800</span>
+                <span>$65,891,000</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Proyección -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-xl font-bold mb-4">Proyección a Fin de Año</h2>
+          <div class="space-y-6">
+            <!-- Consignaciones -->
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>Consignaciones</span>
+                <span>1000/1400 UVT (71.4%)</span>
+              </div>
+              <div class="w-full bg-gray-200 h-4 rounded-full">
+                <div
+                  class="bg-green-600 h-4 rounded-l-full"
+                  style="width: 71.4%"
+                ></div>
+              </div>
+              <div class="text-xs text-gray-500 mt-1">
+                Proyectado: $47,065,000
+              </div>
+            </div>
+
+            <!-- Tarjetas de Crédito -->
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>Tarjetas de Crédito</span>
+                <span>800/1400 UVT (57.1%)</span>
+              </div>
+              <div class="w-full bg-gray-200 h-4 rounded-full">
+                <div
+                  class="bg-green-600 h-4 rounded-l-full"
+                  style="width: 57.1%"
+                ></div>
+              </div>
+              <div class="text-xs text-gray-500 mt-1">
+                Proyectado: $37,652,000
+              </div>
+            </div>
+
+            <!-- Compras y Consumos -->
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span>Compras y Consumos</span>
+                <span>1200/1400 UVT (85.7%)</span>
+              </div>
+              <div class="w-full bg-gray-200 h-4 rounded-full">
+                <div
+                  class="bg-yellow-600 h-4 rounded-l-full"
+                  style="width: 85.7%"
+                ></div>
+              </div>
+              <div class="text-xs text-gray-500 mt-1">
+                Proyectado: $56,478,000
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Análisis Mensual -->
+      <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold">Análisis Mensual</h2>
+          <select class="border rounded-md p-2">
+            <option>Todos los Conceptos</option>
+            <option>Consignaciones</option>
+            <option>Tarjetas de Crédito</option>
+            <option>Compras y Consumos</option>
+          </select>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-4 py-2 text-left">Mes</th>
+                <th class="px-4 py-2 text-right">UVTs</th>
+                <th class="px-4 py-2 text-right">Valor en Pesos</th>
+                <th class="px-4 py-2 text-right">% del Tope</th>
+                <th class="px-4 py-2 text-center">Tendencia</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y">
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-2">Septiembre</td>
+                <td class="px-4 py-2 text-right">120</td>
+                <td class="px-4 py-2 text-right">$5,647,800</td>
+                <td class="px-4 py-2 text-right">8.57%</td>
+                <td class="px-4 py-2 text-center">
+                  <span class="text-green-600">↗</span>
+                </td>
+              </tr>
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-2">Agosto</td>
+                <td class="px-4 py-2 text-right">110</td>
+                <td class="px-4 py-2 text-right">$5,177,150</td>
+                <td class="px-4 py-2 text-right">7.86%</td>
+                <td class="px-4 py-2 text-center">
+                  <span class="text-red-600">↘</span>
+                </td>
+              </tr>
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-2">Julio</td>
+                <td class="px-4 py-2 text-right">115</td>
+                <td class="px-4 py-2 text-right">$5,412,475</td>
+                <td class="px-4 py-2 text-right">8.21%</td>
+                <td class="px-4 py-2 text-center">
+                  <span class="text-gray-600">→</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Notas y Alertas -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <!-- Alertas -->
+        <div class="bg-red-50 p-6 rounded-lg shadow-md">
+          <h2 class="text-xl font-bold mb-4 text-red-800">
+            Alertas y Puntos de Atención
+          </h2>
+          <div class="space-y-4">
+            <div class="flex items-start space-x-2">
+              <div class="flex-shrink-0">
+                <svg
+                  class="h-6 w-6 text-red-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
+                </svg>
+              </div>
+              <ul class="space-y-2 text-sm">
+                <li class="text-red-800">
+                  <span class="font-semibold">Compras y Consumos:</span>
+                  Alcanzado el 65.7% (920 UVT) con 3 meses restantes
+                </li>
+                <li class="text-red-800">
+                  <span class="font-semibold">Proyección Crítica:</span>
+                  Se estima alcanzar 85.7% al cierre del año
+                </li>
+                <li class="text-red-800">
+                  <span class="font-semibold">Incremento Notable:</span>
+                  +12% en movimientos respecto al mes anterior
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recomendaciones -->
+        <div class="bg-green-50 p-6 rounded-lg shadow-md">
+          <h2 class="text-xl font-bold mb-4 text-green-800">Recomendaciones</h2>
+          <div class="space-y-4">
+            <div class="flex items-start space-x-2">
+              <div class="flex-shrink-0">
+                <svg
+                  class="h-6 w-6 text-green-500"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+              </div>
+              <ul class="space-y-2 text-sm">
+                <li class="text-green-800">
+                  Considerar limitar compras y consumos a máximo 160 UVT
+                  mensuales
+                </li>
+                <li class="text-green-800">
+                  Priorizar el uso de medios de pago con soporte formal
+                </li>
+                <li class="text-green-800">
+                  Mantener registro detallado de transacciones en últimos meses
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="flex justify-end space-x-4">
+        <button
+          class="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600"
+        >
+          Volver
+        </button>
+        <button
+          class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
+        >
+          Guardar Informe
+        </button>
+        <button
+          class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700"
+        >
+          Enviar al Contador
+        </button>
+      </div>
+    </main>
+
+    <footer class="bg-gray-200 text-center p-4 mt-8">
+      <p>Sistema de Finanzas Personales - 2024</p>
+    </footer>
+  </body>
+</html>

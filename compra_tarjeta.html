@@ -17,71 +17,84 @@
     </nav>
 
     <main class="container mx-auto p-4">
-      <form class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
-        <!-- Tarjeta de Crédito -->
-        <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2">
-            Tarjeta de Crédito
-          </label>
-          <select class="w-full border rounded-md p-2">
-            <option>Visa Oro Bancolombia (...1234)</option>
-            <option>Mastercard Platinum Davivienda (...5678)</option>
-          </select>
+      <form class="bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto">
+        <!-- Tarjeta y Fecha -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Tarjeta de Crédito
+            </label>
+            <select class="w-full border rounded-md p-2">
+              <option>Visa Oro Bancolombia (...1234)</option>
+              <option>Mastercard Platinum Davivienda (...5678)</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Fecha de Compra
+            </label>
+            <input type="date" class="w-full border rounded-md p-2" />
+          </div>
         </div>
 
-        <!-- Fecha de Compra -->
-        <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2">
-            Fecha de Compra
-          </label>
-          <input type="date" class="w-full border rounded-md p-2" />
+        <!-- Establecimiento y Monto -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Establecimiento
+            </label>
+            <input
+              type="text"
+              class="w-full border rounded-md p-2"
+              placeholder="Nombre del comercio"
+            />
+          </div>
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Monto de la Compra
+            </label>
+            <input
+              type="number"
+              class="w-full border rounded-md p-2"
+              placeholder="0.00"
+            />
+          </div>
         </div>
 
-        <!-- Establecimiento -->
-        <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2">
-            Establecimiento
-          </label>
-          <input
-            type="text"
-            class="w-full border rounded-md p-2"
-            placeholder="Nombre del comercio"
-          />
+        <!-- Categorización -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Categoría
+            </label>
+            <select
+              class="w-full border rounded-md p-2"
+              onchange="actualizarSubcategorias()"
+            >
+              <option>Alimentación</option>
+              <option>Transporte</option>
+              <option>Entretenimiento</option>
+              <option>Hogar</option>
+              <option>Salud</option>
+              <option>Otros</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Subcategoría
+            </label>
+            <select class="w-full border rounded-md p-2" id="subcategoria">
+              <option>Seleccione una subcategoría</option>
+            </select>
+          </div>
         </div>
 
-        <!-- Monto -->
-        <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2">
-            Monto de la Compra
-          </label>
-          <input
-            type="number"
-            class="w-full border rounded-md p-2"
-            placeholder="0.00"
-          />
-        </div>
-
-        <!-- Categoría -->
-        <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2">
-            Categoría
-          </label>
-          <select class="w-full border rounded-md p-2">
-            <option>Alimentación</option>
-            <option>Transporte</option>
-            <option>Entretenimiento</option>
-            <option>Hogar</option>
-            <option>Salud</option>
-            <option>Otros</option>
-          </select>
-        </div>
-
-        <!-- Número de Cuotas -->
-        <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2">
-            Número de Cuotas
-          </label>
-          <div class="grid grid-cols-2 gap-4">
+        <!-- Cuotas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Número de Cuotas
+            </label>
             <select class="w-full border rounded-md p-2">
               <option>1 cuota</option>
               <option>2 cuotas</option>
@@ -89,10 +102,51 @@
               <option>6 cuotas</option>
               <option>12 cuotas</option>
               <option>24 cuotas</option>
+              <option>36 cuotas</option>
             </select>
+          </div>
+          <div class="flex items-center pt-8">
+            <input type="checkbox" class="mr-2" />
+            <label class="text-gray-700 text-sm">Compra sin intereses</label>
+          </div>
+        </div>
+
+        <!-- Información Fiscal -->
+        <div class="bg-blue-50 p-4 rounded-md mb-4">
+          <h3 class="font-bold text-blue-800 mb-2">Información Fiscal</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-gray-700 text-sm font-bold mb-2">
+                Tipo de Documento Soporte
+              </label>
+              <select class="w-full border rounded-md p-2">
+                <option>Documento Informal / Otros / Sin Soporte</option>
+                <option>Factura Electrónica</option>
+                <option>Factura Física</option>
+                <option>Documento Equivalente</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-gray-700 text-sm font-bold mb-2">
+                Número de Documento (Opcional)
+              </label>
+              <input
+                type="text"
+                class="w-full border rounded-md p-2"
+                placeholder="Número de factura o documento"
+              />
+            </div>
+          </div>
+          <div class="mt-4 space-y-2">
             <div class="flex items-center">
-              <input type="checkbox" class="mr-2" />
-              <label class="text-gray-700 text-sm">Sin intereses</label>
+              <input type="checkbox" class="mr-2" id="registrableExogena" />
+              <label class="text-sm">Registrable en exógena</label>
+            </div>
+            <div class="flex items-center">
+              <input type="checkbox" class="mr-2" id="gastoDeducible" />
+              <label class="text-sm"
+                >Gasto deducible de mi actividad económica</label
+              >
             </div>
           </div>
         </div>
@@ -104,7 +158,7 @@
           </label>
           <textarea
             class="w-full border rounded-md p-2"
-            rows="3"
+            rows="2"
             placeholder="Detalles de la compra"
           ></textarea>
         </div>
@@ -112,9 +166,14 @@
         <!-- Archivos Adjuntos -->
         <div class="mb-6">
           <label class="block text-gray-700 text-sm font-bold mb-2">
-            Factura o Comprobante
+            Soportes Documentales
           </label>
-          <input type="file" multiple class="w-full border rounded-md p-2" />
+          <div class="border-2 border-dashed border-gray-300 rounded-md p-4">
+            <input type="file" multiple class="w-full" />
+            <p class="text-sm text-gray-500 mt-1">
+              Adjunte facturas, voucher y otros soportes relevantes
+            </p>
+          </div>
         </div>
 
         <!-- Botones -->
@@ -134,5 +193,21 @@
         </div>
       </form>
     </main>
+
+    <script>
+      function actualizarSubcategorias() {
+        const subcategoria = document.getElementById("subcategoria");
+        // Aquí se agregaría la lógica para cargar las subcategorías según la categoría seleccionada
+        subcategoria.innerHTML = `
+                <option>Subcategoría 1</option>
+                <option>Subcategoría 2</option>
+                <option>Subcategoría 3</option>
+            `;
+      }
+    </script>
+
+    <footer class="bg-gray-200 text-center p-4 mt-8">
+      <p>Sistema de Finanzas Personales - 2024</p>
+    </footer>
   </body>
 </html>

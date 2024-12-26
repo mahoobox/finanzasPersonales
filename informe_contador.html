@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Informe para Contador - Finanzas Personales</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100">
+    <nav class="bg-blue-600 text-white p-4">
+      <div class="container mx-auto flex justify-between items-center">
+        <h1 class="text-2xl font-bold">Informe para Contador</h1>
+        <div class="flex items-center space-x-4">
+          <button
+            class="bg-white text-blue-600 px-4 py-2 rounded-md hover:bg-blue-50"
+          >
+            Exportar a Excel
+          </button>
+          <button
+            class="bg-white text-blue-600 px-4 py-2 rounded-md hover:bg-blue-50"
+          >
+            Exportar a PDF
+          </button>
+          <a href="index.html" class="text-white hover:text-gray-200"
+            >Volver al Inicio</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <main class="container mx-auto p-4">
+      <!-- Filtros Principales -->
+      <div class="bg-white p-4 rounded-lg shadow-md mb-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2"
+              >Año Fiscal</label
+            >
+            <select class="w-full border rounded-md p-2">
+              <option>2024</option>
+              <option>2023</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2"
+              >Período</label
+            >
+            <select class="w-full border rounded-md p-2">
+              <option>Todo el año</option>
+              <option>Enero - Marzo</option>
+              <option>Abril - Junio</option>
+              <option>Julio - Septiembre</option>
+              <option>Octubre - Diciembre</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2"
+              >Vista</label
+            >
+            <select class="w-full border rounded-md p-2">
+              <option>Todas las transacciones</option>
+              <option>Solo registrables en exógena</option>
+              <option>Solo gastos deducibles</option>
+            </select>
+          </div>
+          <div class="flex items-end">
+            <button
+              class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            >
+              Actualizar Informe
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Análisis por Categoría -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <!-- Consignaciones -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h3 class="font-bold text-lg mb-3">Consignaciones Bancarias</h3>
+          <div class="space-y-2">
+            <div class="flex justify-between text-sm mb-1">
+              <span>750/1400 UVT</span>
+              <span class="text-gray-500">($35,298,750 / $65,891,000)</span>
+            </div>
+            <div class="bg-gray-200 h-2 rounded-full">
+              <div
+                class="bg-blue-600 h-2 rounded-full"
+                style="width: 53.5%"
+              ></div>
+            </div>
+            <div class="grid grid-cols-2 text-sm mt-2">
+              <div>
+                <div>Formales: 600 UVT</div>
+                <div class="text-gray-500">$28,239,000</div>
+              </div>
+              <div>
+                <div>Informales: 150 UVT</div>
+                <div class="text-gray-500">$7,059,750</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjetas de Crédito -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h3 class="font-bold text-lg mb-3">Tarjetas de Crédito</h3>
+          <div class="space-y-2">
+            <div class="flex justify-between text-sm mb-1">
+              <span>600/1400 UVT</span>
+              <span class="text-gray-500">($28,239,000 / $65,891,000)</span>
+            </div>
+            <div class="bg-gray-200 h-2 rounded-full">
+              <div
+                class="bg-blue-600 h-2 rounded-full"
+                style="width: 42.8%"
+              ></div>
+            </div>
+            <div class="grid grid-cols-2 text-sm mt-2">
+              <div>
+                <div>Con Factura: 450 UVT</div>
+                <div class="text-gray-500">$21,179,250</div>
+              </div>
+              <div>
+                <div>Sin Factura: 150 UVT</div>
+                <div class="text-gray-500">$7,059,750</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Compras y Consumos -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h3 class="font-bold text-lg mb-3">Compras y Consumos</h3>
+          <div class="space-y-2">
+            <div class="flex justify-between text-sm mb-1">
+              <span>920/1400 UVT</span>
+              <span class="text-gray-500">($43,299,800 / $65,891,000)</span>
+            </div>
+            <div class="bg-gray-200 h-2 rounded-full">
+              <div
+                class="bg-blue-600 h-2 rounded-full"
+                style="width: 65.7%"
+              ></div>
+            </div>
+            <div class="grid grid-cols-2 text-sm mt-2">
+              <div>
+                <div>Con Factura: 720 UVT</div>
+                <div class="text-gray-500">$33,886,800</div>
+              </div>
+              <div>
+                <div>Sin Factura: 200 UVT</div>
+                <div class="text-gray-500">$9,413,000</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Detalle de Movimientos -->
+      <div class="bg-white rounded-lg shadow-md mb-6">
+        <div class="p-4 border-b">
+          <h2 class="text-xl font-bold">Detalle de Movimientos</h2>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="bg-gray-50">
+              <tr>
+                <!-- Fecha -->
+                <th class="px-4 py-2">
+                  <div class="flex flex-col">
+                    <span class="text-left mb-2">Fecha</span>
+                    <select class="border rounded text-sm p-1">
+                      <option>Todos los meses</option>
+                      <option>Enero</option>
+                      <option>Febrero</option>
+                      <option>Marzo</option>
+                    </select>
+                  </div>
+                </th>
+
+                <!-- Tipo -->
+                <th class="px-4 py-2">
+                  <div class="flex flex-col">
+                    <span class="text-left mb-2">Tipo</span>
+                    <select class="border rounded text-sm p-1">
+                      <option>Todos</option>
+                      <option>Ingreso</option>
+                      <option>Gasto</option>
+                      <option>Compra TC</option>
+                    </select>
+                  </div>
+                </th>
+
+                <!-- Descripción -->
+                <th class="px-4 py-2">
+                  <div class="flex flex-col">
+                    <span class="text-left mb-2">Descripción</span>
+                    <input
+                      type="text"
+                      placeholder="Buscar..."
+                      class="border rounded text-sm p-1"
+                    />
+                  </div>
+                </th>
+
+                <!-- Monto -->
+                <th class="px-4 py-2">
+                  <div class="flex flex-col">
+                    <span class="text-right mb-2">Monto</span>
+                    <select class="border rounded text-sm p-1">
+                      <option>Todos</option>
+                      <option>> $1,000,000</option>
+                      <option>> $5,000,000</option>
+                      <option>> $10,000,000</option>
+                    </select>
+                  </div>
+                </th>
+
+                <!-- Registrable en Exógena -->
+                <th class="px-4 py-2">
+                  <div class="flex flex-col">
+                    <span class="text-center mb-2">Exógena</span>
+                    <select class="border rounded text-sm p-1">
+                      <option>Todos</option>
+                      <option>Sí</option>
+                      <option>No</option>
+                    </select>
+                  </div>
+                </th>
+
+                <!-- Deducible -->
+                <th class="px-4 py-2">
+                  <div class="flex flex-col">
+                    <span class="text-center mb-2">Deducible</span>
+                    <select class="border rounded text-sm p-1">
+                      <option>Todos</option>
+                      <option>Sí</option>
+                      <option>No</option>
+                    </select>
+                  </div>
+                </th>
+
+                <!-- Tipo de Soporte -->
+                <th class="px-4 py-2">
+                  <div class="flex flex-col">
+                    <span class="text-left mb-2">Soporte</span>
+                    <select class="border rounded text-sm p-1">
+                      <option>Todos</option>
+                      <option>F. Electrónica</option>
+                      <option>F. Física</option>
+                      <option>Doc. Equivalente</option>
+                      <option>Sin Soporte</option>
+                    </select>
+                  </div>
+                </th>
+
+                <th class="px-4 py-2 text-center">Soporte</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y">
+              <!-- Ejemplo 1 -->
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-2">20/12/2024</td>
+                <td class="px-4 py-2">Ingreso</td>
+                <td class="px-4 py-2">
+                  Honorarios Profesionales - Proyecto ABC
+                </td>
+                <td class="px-4 py-2 text-right text-green-600">$5,000,000</td>
+                <td class="px-4 py-2 text-center">
+                  <span
+                    class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm"
+                  >
+                    Sí
+                  </span>
+                </td>
+                <td class="px-4 py-2 text-center">-</td>
+                <td class="px-4 py-2">F. Electrónica</td>
+                <td class="px-4 py-2 text-center">
+                  <a href="#" class="text-blue-600 hover:underline">Ver</a>
+                </td>
+              </tr>
+
+              <!-- Ejemplo 2 -->
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-2">18/12/2024</td>
+                <td class="px-4 py-2">Gasto</td>
+                <td class="px-4 py-2">Compra Laptop Dell XPS</td>
+                <td class="px-4 py-2 text-right text-red-600">$4,500,000</td>
+                <td class="px-4 py-2 text-center">
+                  <span
+                    class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm"
+                  >
+                    Sí
+                  </span>
+                </td>
+                <td class="px-4 py-2 text-center">
+                  <span
+                    class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                  >
+                    Sí
+                  </span>
+                </td>
+                <td class="px-4 py-2">F. Electrónica</td>
+                <td class="px-4 py-2 text-center">
+                  <a href="#" class="text-blue-600 hover:underline">Ver</a>
+                </td>
+              </tr>
+
+              <!-- Ejemplo 3 -->
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-2">15/12/2024</td>
+                <td class="px-4 py-2">Compra TC</td>
+                <td class="px-4 py-2">Almuerzo Restaurante XYZ</td>
+                <td class="px-4 py-2 text-right text-red-600">$85,000</td>
+                <td class="px-4 py-2 text-center">
+                  <span
+                    class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-sm"
+                  >
+                    No
+                  </span>
+                </td>
+                <td class="px-4 py-2 text-center">
+                  <span
+                    class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                  >
+                    Sí
+                  </span>
+                </td>
+                <td class="px-4 py-2">Doc. Equivalente</td>
+                <td class="px-4 py-2 text-center">
+                  <a href="#" class="text-blue-600 hover:underline">Ver</a>
+                </td>
+              </tr>
+
+              <!-- Ejemplo 4 -->
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-2">10/12/2024</td>
+                <td class="px-4 py-2">Gasto</td>
+                <td class="px-4 py-2">Servicios de Limpieza</td>
+                <td class="px-4 py-2 text-right text-red-600">$150,000</td>
+                <td class="px-4 py-2 text-center">
+                  <span
+                    class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-sm"
+                  >
+                    No
+                  </span>
+                </td>
+                <td class="px-4 py-2 text-center">
+                  <span
+                    class="px-2 py-1 bg-red-100 text-red-800 rounded-full text-sm"
+                  >
+                    No
+                  </span>
+                </td>
+                <td class="px-4 py-2">Sin Soporte</td>
+                <td class="px-4 py-2 text-center">-</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div class="p-4 border-t bg-gray-50">
+          <div class="flex justify-between items-center">
+            <div class="text-sm text-gray-600">
+              Mostrando 4 de 145 movimientos
+            </div>
+            <div class="space-x-2">
+              <button class="px-3 py-1 border rounded hover:bg-gray-100">
+                Anterior
+              </button>
+              <button
+                class="px-3 py-1 border rounded bg-blue-50 border-blue-300"
+              >
+                1
+              </button>
+              <button class="px-3 py-1 border rounded hover:bg-gray-100">
+                2
+              </button>
+              <button class="px-3 py-1 border rounded hover:bg-gray-100">
+                3
+              </button>
+              <button class="px-3 py-1 border rounded hover:bg-gray-100">
+                Siguiente
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ficha Técnica -->
+      <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <h2 class="text-xl font-bold mb-4">
+          Ficha Técnica de Parámetros Fiscales
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <h3 class="font-semibold mb-3">Valores Base 2024</h3>
+            <div class="space-y-2">
+              <div class="flex justify-between items-center py-2 border-b">
+                <span>Valor UVT:</span>
+                <span class="font-bold">$47,065</span>
+              </div>
+              <div class="flex justify-between items-center py-2 border-b">
+                <span>Consignaciones Bancarias:</span>
+                <span class="font-bold">1400 UVT ($65,891,000)</span>
+              </div>
+              <div class="flex justify-between items-center py-2 border-b">
+                <span>Consumos Tarjetas de Crédito:</span>
+                <span class="font-bold">1400 UVT ($65,891,000)</span>
+              </div>
+              <div class="flex justify-between items-center py-2 border-b">
+                <span>Compras y Consumos Totales:</span>
+                <span class="font-bold">1400 UVT ($65,891,000)</span>
+              </div>
+            </div>
+          </div>
+          <div>
+            <h3 class="font-semibold mb-3">Valores Base 2025 (Próximo Año)</h3>
+            <div class="space-y-2">
+              <div class="flex justify-between items-center py-2 border-b">
+                <span>Valor UVT:</span>
+                <span class="font-bold">$49,799</span>
+              </div>
+              <div class="flex justify-between items-center py-2 border-b">
+                <span>Consignaciones Bancarias:</span>
+                <span class="font-bold">1400 UVT ($69,718,600)</span>
+              </div>
+              <div class="flex justify-between items-center py-2 border-b">
+                <span>Consumos Tarjetas de Crédito:</span>
+                <span class="font-bold">1400 UVT ($69,718,600)</span>
+              </div>
+              <div class="flex justify-between items-center py-2 border-b">
+                <span>Compras y Consumos Totales:</span>
+                <span class="font-bold">1400 UVT ($69,718,600)</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Notas y Observaciones -->
+      <div class="bg-yellow-50 p-6 rounded-lg shadow-md mb-6">
+        <h2 class="text-xl font-bold mb-4">Notas y Observaciones</h2>
+        <div class="space-y-4">
+          <!-- Alerta de Aproximación a Topes -->
+          <div class="flex items-start space-x-2">
+            <div class="flex-shrink-0">
+              <svg
+                class="h-6 w-6 text-yellow-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+            </div>
+            <div>
+              <p class="text-sm font-semibold">Aproximación a Topes:</p>
+              <ul class="text-sm list-disc list-inside pl-4 mt-1 space-y-1">
+                <li>
+                  Compras y Consumos Totales al 65.7% del tope anual (920/1400
+                  UVT)
+                </li>
+                <li>
+                  Consignaciones Bancarias al 53.5% del tope anual (750/1400
+                  UVT)
+                </li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Documentación Pendiente -->
+          <div class="flex items-start space-x-2">
+            <div class="flex-shrink-0">
+              <svg
+                class="h-6 w-6 text-blue-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                />
+              </svg>
+            </div>
+            <div>
+              <p class="text-sm font-semibold">Documentación Pendiente:</p>
+              <ul class="text-sm list-disc list-inside pl-4 mt-1 space-y-1">
+                <li>3 transacciones sin soporte formal</li>
+                <li>2 facturas electrónicas pendientes de descarga</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- Proyección -->
+          <div class="flex items-start space-x-2">
+            <div class="flex-shrink-0">
+              <svg
+                class="h-6 w-6 text-green-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"
+                />
+              </svg>
+            </div>
+            <div>
+              <p class="text-sm font-semibold">Proyección al Cierre del Año:</p>
+              <p class="text-sm mt-1">
+                Manteniendo el ritmo actual de operaciones, se estima alcanzar
+                aproximadamente el 85% de los topes establecidos para el año
+                2024.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="flex justify-end space-x-4">
+        <button
+          class="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600"
+        >
+          Volver
+        </button>
+        <button
+          class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700"
+        >
+          Enviar al Contador
+        </button>
+        <button
+          class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
+        >
+          Descargar Informe
+        </button>
+      </div>
+    </main>
+
+    <footer class="bg-gray-200 text-center p-4 mt-8">
+      <p>Sistema de Finanzas Personales - 2024</p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Configuración Fiscal - Finanzas Personales</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-100">
+    <nav class="bg-blue-600 text-white p-4">
+      <div class="container mx-auto flex justify-between items-center">
+        <h1 class="text-2xl font-bold">Configuración Fiscal</h1>
+        <a href="index.html" class="text-white hover:text-gray-200"
+          >Volver al Inicio</a
+        >
+      </div>
+    </nav>
+
+    <main class="container mx-auto p-4">
+      <!-- Selección de Año -->
+      <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <div class="flex justify-between items-center mb-6">
+          <div class="flex-1 mr-4">
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Seleccionar Año
+            </label>
+            <select
+              class="w-full border rounded-md p-2"
+              id="selectAnio"
+              onchange="mostrarConfiguracionAnio()"
+            >
+              <option value="2025">2025</option>
+              <option value="2024" selected>2024</option>
+              <option value="2023">2023</option>
+              <option value="2022">2022</option>
+              <option value="nuevo">+ Añadir nuevo año</option>
+            </select>
+          </div>
+          <div class="flex-1">
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Valor UVT
+            </label>
+            <div class="flex">
+              <span
+                class="inline-flex items-center px-3 text-gray-500 bg-gray-100 border border-r-0 border-gray-300 rounded-l-md"
+              >
+                $
+              </span>
+              <input
+                type="number"
+                id="valorUVT"
+                class="flex-1 border rounded-r-md p-2"
+                placeholder="Valor en pesos"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Configuración de Topes -->
+      <div class="bg-white p-6 rounded-lg shadow-md mb-6">
+        <h2 class="text-xl font-bold mb-4">Configuración de Topes en UVT</h2>
+        <div class="space-y-6">
+          <!-- Consignaciones -->
+          <div class="p-4 border rounded-lg bg-gray-50">
+            <h3 class="text-lg font-semibold mb-4">Consignaciones Bancarias</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">
+                  Cantidad de UVTs
+                </label>
+                <input
+                  type="number"
+                  id="topeConsignaciones"
+                  class="w-full border rounded-md p-2"
+                  placeholder="Ej: 1400"
+                />
+              </div>
+              <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">
+                  Valor en Pesos
+                </label>
+                <div
+                  class="text-lg font-semibold mt-2"
+                  id="valorConsignaciones"
+                >
+                  $ 0
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tarjetas de Crédito -->
+          <div class="p-4 border rounded-lg bg-gray-50">
+            <h3 class="text-lg font-semibold mb-4">
+              Consumos con Tarjetas de Crédito
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">
+                  Cantidad de UVTs
+                </label>
+                <input
+                  type="number"
+                  id="topeTarjetas"
+                  class="w-full border rounded-md p-2"
+                  placeholder="Ej: 1400"
+                />
+              </div>
+              <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">
+                  Valor en Pesos
+                </label>
+                <div class="text-lg font-semibold mt-2" id="valorTarjetas">
+                  $ 0
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Compras y Consumos -->
+          <div class="p-4 border rounded-lg bg-gray-50">
+            <h3 class="text-lg font-semibold mb-4">
+              Compras y Consumos Totales
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">
+                  Cantidad de UVTs
+                </label>
+                <input
+                  type="number"
+                  id="topeCompras"
+                  class="w-full border rounded-md p-2"
+                  placeholder="Ej: 1400"
+                />
+              </div>
+              <div>
+                <label class="block text-gray-700 text-sm font-bold mb-2">
+                  Valor en Pesos
+                </label>
+                <div class="text-lg font-semibold mt-2" id="valorCompras">
+                  $ 0
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resumen -->
+      <div class="bg-blue-50 p-6 rounded-lg shadow-md mb-6">
+        <h2 class="text-xl font-bold mb-4">
+          Resumen del Año <span id="anioResumen">2024</span>
+        </h2>
+        <div class="space-y-2">
+          <div class="flex justify-between items-center">
+            <span>Valor UVT:</span>
+            <span class="font-semibold" id="resumenUVT">$ 47,065</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span>Tope Consignaciones:</span>
+            <span class="font-semibold" id="resumenConsignaciones"
+              >$ 65,891,000</span
+            >
+          </div>
+          <div class="flex justify-between items-center">
+            <span>Tope Tarjetas de Crédito:</span>
+            <span class="font-semibold" id="resumenTarjetas">$ 65,891,000</span>
+          </div>
+          <div class="flex justify-between items-center">
+            <span>Tope Compras y Consumos:</span>
+            <span class="font-semibold" id="resumenCompras">$ 65,891,000</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones -->
+      <div class="flex justify-end space-x-4">
+        <button
+          type="button"
+          class="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600"
+        >
+          Cancelar
+        </button>
+        <button
+          type="button"
+          class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
+          onclick="guardarConfiguracion()"
+        >
+          Guardar Configuración
+        </button>
+      </div>
+    </main>
+
+    <script>
+      // Datos de ejemplo
+      const configuracionPorAnio = {
+        2025: {
+          uvt: 49799,
+          topesUVT: {
+            consignaciones: 1400,
+            tarjetas: 1400,
+            compras: 1400,
+          },
+        },
+        2024: {
+          uvt: 47065,
+          topesUVT: {
+            consignaciones: 1400,
+            tarjetas: 1400,
+            compras: 1400,
+          },
+        },
+      };
+
+      function mostrarConfiguracionAnio() {
+        const anio = document.getElementById("selectAnio").value;
+
+        if (anio === "nuevo") {
+          // Lógica para añadir nuevo año
+          const nuevoAnio = new Date().getFullYear() + 1;
+          // Aquí iría la lógica para añadir el nuevo año al select
+          return;
+        }
+
+        const config = configuracionPorAnio[anio];
+        if (config) {
+          document.getElementById("valorUVT").value = config.uvt;
+          document.getElementById("topeConsignaciones").value =
+            config.topesUVT.consignaciones;
+          document.getElementById("topeTarjetas").value =
+            config.topesUVT.tarjetas;
+          document.getElementById("topeCompras").value =
+            config.topesUVT.compras;
+
+          actualizarValores();
+        }
+      }
+
+      function actualizarValores() {
+        const uvt = parseFloat(document.getElementById("valorUVT").value) || 0;
+        const topesUVT = {
+          consignaciones:
+            parseFloat(document.getElementById("topeConsignaciones").value) ||
+            0,
+          tarjetas:
+            parseFloat(document.getElementById("topeTarjetas").value) || 0,
+          compras:
+            parseFloat(document.getElementById("topeCompras").value) || 0,
+        };
+
+        // Actualizar valores en pesos
+        document.getElementById("valorConsignaciones").textContent =
+          "$ " + formatNumber(uvt * topesUVT.consignaciones);
+        document.getElementById("valorTarjetas").textContent =
+          "$ " + formatNumber(uvt * topesUVT.tarjetas);
+        document.getElementById("valorCompras").textContent =
+          "$ " + formatNumber(uvt * topesUVT.compras);
+
+        // Actualizar resumen
+        const anio = document.getElementById("selectAnio").value;
+        document.getElementById("anioResumen").textContent = anio;
+        document.getElementById("resumenUVT").textContent =
+          "$ " + formatNumber(uvt);
+        document.getElementById("resumenConsignaciones").textContent =
+          "$ " + formatNumber(uvt * topesUVT.consignaciones);
+        document.getElementById("resumenTarjetas").textContent =
+          "$ " + formatNumber(uvt * topesUVT.tarjetas);
+        document.getElementById("resumenCompras").textContent =
+          "$ " + formatNumber(uvt * topesUVT.compras);
+      }
+
+      function formatNumber(num) {
+        return num.toLocaleString("es-CO");
+      }
+
+      // Event listeners
+      document
+        .getElementById("valorUVT")
+        .addEventListener("input", actualizarValores);
+      document
+        .getElementById("topeConsignaciones")
+        .addEventListener("input", actualizarValores);
+      document
+        .getElementById("topeTarjetas")
+        .addEventListener("input", actualizarValores);
+      document
+        .getElementById("topeCompras")
+        .addEventListener("input", actualizarValores);
+
+      // Inicializar con los valores del año actual
+      mostrarConfiguracionAnio();
+    </script>
+
+    <footer class="bg-gray-200 text-center p-4 mt-8">
+      <p>Sistema de Finanzas Personales - 2024</p>
+    </footer>
+  </body>
+</html>

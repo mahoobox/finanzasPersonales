@@ -1,99 +1,270 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Registro de Transacción - Finanzas Personales</title>
     <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-100">
+  </head>
+  <body class="bg-gray-100">
     <nav class="bg-blue-600 text-white p-4">
-        <div class="container mx-auto flex justify-between items-center">
-            <h1 class="text-2xl font-bold">Nueva Transacción</h1>
-            <a href="index.html" class="text-white hover:text-gray-200">Volver al Inicio</a>
-        </div>
+      <div class="container mx-auto flex justify-between items-center">
+        <h1 class="text-2xl font-bold">Nueva Transacción</h1>
+        <a href="index.html" class="text-white hover:text-gray-200"
+          >Volver al Inicio</a
+        >
+      </div>
     </nav>
 
     <main class="container mx-auto p-4">
-        <form class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
-            <!-- Tipo de Transacción -->
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2">
-                    Tipo de Transacción
-                </label>
-                <select class="w-full border rounded-md p-2">
-                    <option>Gasto</option>
-                    <option>Ingreso</option>
-                </select>
-            </div>
+      <form class="bg-white p-6 rounded-lg shadow-md max-w-4xl mx-auto">
+        <!-- Tipo de Transacción -->
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Tipo de Transacción
+          </label>
+          <select
+            class="w-full border rounded-md p-2"
+            id="tipoTransaccion"
+            onchange="mostrarCampos()"
+          >
+            <option value="">Seleccione tipo de transacción</option>
+            <option value="ingreso">Ingreso</option>
+            <option value="gasto">Gasto</option>
+          </select>
+        </div>
 
-            <!-- Fecha -->
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2">
-                    Fecha
-                </label>
-                <input type="date" class="w-full border rounded-md p-2">
-            </div>
+        <!-- Fecha y Monto -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Fecha
+            </label>
+            <input type="date" class="w-full border rounded-md p-2" />
+          </div>
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Monto
+            </label>
+            <input
+              type="number"
+              class="w-full border rounded-md p-2"
+              placeholder="0.00"
+            />
+          </div>
+        </div>
 
-            <!-- Cuenta -->
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2">
-                    Cuenta
-                </label>
-                <select class="w-full border rounded-md p-2">
-                    <option>Cuenta Corriente Principal</option>
-                    <option>Cuenta de Ahorros</option>
-                    <option>Cuenta Nómina</option>
-                </select>
+        <!-- Campos para Ingreso -->
+        <div id="camposIngreso" class="hidden">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-gray-700 text-sm font-bold mb-2">
+                Origen de los Fondos
+              </label>
+              <select class="w-full border rounded-md p-2">
+                <option>Honorarios (Independiente)</option>
+                <option>Salario (Empleador)</option>
+                <option>Rendimientos Financieros</option>
+                <option>Venta de Activos</option>
+                <option>Otros Ingresos</option>
+              </select>
             </div>
+            <div>
+              <label class="block text-gray-700 text-sm font-bold mb-2">
+                Cuenta Destino
+              </label>
+              <select class="w-full border rounded-md p-2">
+                <option>Efectivo</option>
+                <option>Cuenta Corriente Principal</option>
+                <option>Cuenta de Ahorros</option>
+                <option>Cuenta Nómina</option>
+              </select>
+            </div>
+          </div>
+        </div>
 
-            <!-- Categoría -->
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2">
-                    Categoría
-                </label>
-                <select class="w-full border rounded-md p-2">
-                    <option>Alimentación</option>
-                    <option>Transporte</option>
-                    <option>Servicios</option>
-                    <option>Entretenimiento</option>
-                </select>
+        <!-- Campos para Gasto -->
+        <div id="camposGasto" class="hidden">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div>
+              <label class="block text-gray-700 text-sm font-bold mb-2">
+                Cuenta Origen
+              </label>
+              <select class="w-full border rounded-md p-2">
+                <option>Efectivo</option>
+                <option>Cuenta Corriente Principal</option>
+                <option>Cuenta de Ahorros</option>
+                <option>Cuenta Nómina</option>
+              </select>
             </div>
+            <div>
+              <label class="block text-gray-700 text-sm font-bold mb-2">
+                Categoría
+              </label>
+              <select
+                class="w-full border rounded-md p-2"
+                onchange="actualizarSubcategorias()"
+              >
+                <option>Alimentación</option>
+                <option>Transporte</option>
+                <option>Servicios</option>
+                <option>Entretenimiento</option>
+                <option>Salud</option>
+                <option>Educación</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-gray-700 text-sm font-bold mb-2">
+                Subcategoría
+              </label>
+              <select class="w-full border rounded-md p-2" id="subcategoria">
+                <option>Seleccione una subcategoría</option>
+              </select>
+            </div>
+          </div>
+        </div>
 
-            <!-- Monto -->
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2">
-                    Monto
-                </label>
-                <input type="number" class="w-full border rounded-md p-2" placeholder="0.00">
+        <!-- Información Fiscal -->
+        <div
+          id="informacionFiscal"
+          class="hidden bg-blue-50 p-4 rounded-md mb-4"
+        >
+          <h3 class="font-bold text-blue-800 mb-2">Información Fiscal</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-gray-700 text-sm font-bold mb-2">
+                Tipo de Documento Soporte
+              </label>
+              <select class="w-full border rounded-md p-2" id="tipoSoporte">
+                <option>Documento Informal / Otros / Sin Soporte</option>
+                <option>Factura Electrónica</option>
+                <option>Factura Física</option>
+                <option>Documento Equivalente</option>
+                <option>Cuenta de Cobro</option>
+              </select>
             </div>
+            <div>
+              <label class="block text-gray-700 text-sm font-bold mb-2">
+                Número de Documento (Opcional)
+              </label>
+              <input
+                type="text"
+                class="w-full border rounded-md p-2"
+                placeholder="Número de documento si aplica"
+              />
+            </div>
+            <div class="md:col-span-2">
+              <div class="flex items-center space-x-4 mt-2">
+                <input
+                  type="checkbox"
+                  class="form-checkbox"
+                  id="registrableExogena"
+                />
+                <label class="text-sm">Registrable en exógena</label>
+              </div>
+              <div
+                id="checkboxGasto"
+                class="hidden flex items-center space-x-4 mt-2"
+              >
+                <input
+                  type="checkbox"
+                  class="form-checkbox"
+                  id="gastoDeducible"
+                />
+                <label class="text-sm"
+                  >Gasto deducible de mi actividad económica</label
+                >
+              </div>
+            </div>
+          </div>
+        </div>
 
-            <!-- Descripción -->
-            <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2">
-                    Descripción
-                </label>
-                <textarea class="w-full border rounded-md p-2" rows="3"></textarea>
-            </div>
+        <!-- Descripción -->
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Descripción
+          </label>
+          <textarea
+            class="w-full border rounded-md p-2"
+            rows="3"
+            placeholder="Detalles de la transacción"
+          ></textarea>
+        </div>
 
-            <!-- Archivos Adjuntos -->
-            <div class="mb-6">
-                <label class="block text-gray-700 text-sm font-bold mb-2">
-                    Archivos Adjuntos
-                </label>
-                <input type="file" multiple class="w-full border rounded-md p-2">
-            </div>
+        <!-- Archivos Adjuntos -->
+        <div class="mb-6">
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Soportes Documentales
+          </label>
+          <div class="border-2 border-dashed border-gray-300 rounded-md p-4">
+            <input type="file" multiple class="w-full" />
+            <p class="text-sm text-gray-500 mt-1">
+              Adjunte facturas, comprobantes y otros soportes relevantes
+            </p>
+          </div>
+        </div>
 
-            <!-- Botones -->
-            <div class="flex justify-end space-x-4">
-                <button type="button" class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600">
-                    Cancelar
-                </button>
-                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">
-                    Guardar
-                </button>
-            </div>
-        </form>
+        <!-- Botones -->
+        <div class="flex justify-end space-x-4">
+          <button
+            type="button"
+            class="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
+          >
+            Guardar
+          </button>
+        </div>
+      </form>
     </main>
-</body>
+
+    <script>
+      function mostrarCampos() {
+        const tipoTransaccion =
+          document.getElementById("tipoTransaccion").value;
+        const camposIngreso = document.getElementById("camposIngreso");
+        const camposGasto = document.getElementById("camposGasto");
+        const informacionFiscal = document.getElementById("informacionFiscal");
+        const checkboxGasto = document.getElementById("checkboxGasto");
+
+        // Ocultar todos los campos primero
+        camposIngreso.classList.add("hidden");
+        camposGasto.classList.add("hidden");
+        informacionFiscal.classList.add("hidden");
+        checkboxGasto.classList.add("hidden");
+
+        // Mostrar campos según el tipo de transacción
+        switch (tipoTransaccion) {
+          case "ingreso":
+            camposIngreso.classList.remove("hidden");
+            informacionFiscal.classList.remove("hidden");
+            break;
+          case "gasto":
+            camposGasto.classList.remove("hidden");
+            informacionFiscal.classList.remove("hidden");
+            checkboxGasto.classList.remove("hidden");
+            break;
+        }
+      }
+
+      function actualizarSubcategorias() {
+        const subcategoria = document.getElementById("subcategoria");
+        // Aquí se agregaría la lógica para cargar las subcategorías según la categoría seleccionada
+        // Por ahora solo es un ejemplo
+        subcategoria.innerHTML = `
+                <option>Subcategoría 1</option>
+                <option>Subcategoría 2</option>
+                <option>Subcategoría 3</option>
+            `;
+      }
+    </script>
+
+    <footer class="bg-gray-200 text-center p-4 mt-8">
+      <p>Sistema de Finanzas Personales - 2024</p>
+    </footer>
+  </body>
 </html>

@@ -17,7 +17,9 @@
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         <!-- Transacciones -->
         <div class="bg-white p-6 rounded-lg shadow-md">
-          <h2 class="text-xl font-bold mb-4 text-blue-600">Transacciones</h2>
+          <h2 class="text-xl font-bold mb-4 text-blue-600">
+            Registro de Operaciones
+          </h2>
           <ul class="space-y-2">
             <li>
               <a
@@ -88,9 +90,11 @@
           </ul>
         </div>
 
-        <!-- Informes -->
+        <!-- Informes Operativos -->
         <div class="bg-white p-6 rounded-lg shadow-md">
-          <h2 class="text-xl font-bold mb-4 text-blue-600">Informes</h2>
+          <h2 class="text-xl font-bold mb-4 text-blue-600">
+            Informes Operativos
+          </h2>
           <ul class="space-y-2">
             <li>
               <a href="dashboard.html" class="text-blue-500 hover:underline"
@@ -121,6 +125,36 @@
           </ul>
         </div>
 
+        <!-- Informes Fiscales -->
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <h2 class="text-xl font-bold mb-4 text-blue-600">
+            Informes Fiscales
+          </h2>
+          <ul class="space-y-2">
+            <li>
+              <a
+                href="informe_contador.html"
+                class="text-blue-500 hover:underline"
+                >Informe para Contador</a
+              >
+            </li>
+            <li>
+              <a
+                href="informe_tributario.html"
+                class="text-blue-500 hover:underline"
+                >Análisis Tributario</a
+              >
+            </li>
+            <li>
+              <a
+                href="consolidado_movimientos.html"
+                class="text-blue-500 hover:underline"
+                >Consolidado de Movimientos</a
+              >
+            </li>
+          </ul>
+        </div>
+
         <!-- Configuración -->
         <div class="bg-white p-6 rounded-lg shadow-md">
           <h2 class="text-xl font-bold mb-4 text-blue-600">Configuración</h2>
@@ -135,7 +169,54 @@
                 >Gestionar Categorías</a
               >
             </li>
+            <li>
+              <a
+                href="configuracion_fiscal.html"
+                class="text-blue-500 hover:underline"
+                >Configuración Fiscal</a
+              >
+            </li>
+
+            <li>
+              <a href="soportes.html" class="text-blue-500 hover:underline"
+                >Gestión de Soportes</a
+              >
+            </li>
           </ul>
+        </div>
+      </div>
+
+      <!-- Panel de Estado -->
+      <div class="mt-8 bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-xl font-bold mb-4 text-blue-600">Estado del Sistema</h2>
+        <div class="grid md:grid-cols-3 gap-4">
+          <!-- Estado Fiscal -->
+          <div>
+            <h3 class="font-semibold mb-2">Estado Fiscal 2024</h3>
+            <div class="space-y-1 text-sm">
+              <p>Valor UVT: $47,065</p>
+              <p>Consignaciones: 800/1400 UVT</p>
+              <p>Tarjetas de Crédito: 600/1400 UVT</p>
+            </div>
+          </div>
+
+          <!-- Documentos Pendientes -->
+          <div>
+            <h3 class="font-semibold mb-2">Documentos Pendientes</h3>
+            <div class="space-y-1 text-sm">
+              <p>Soportes sin clasificar: 3</p>
+              <p>Facturas pendientes: 2</p>
+            </div>
+          </div>
+
+          <!-- Alertas -->
+          <div>
+            <h3 class="font-semibold mb-2">Alertas</h3>
+            <div class="space-y-1 text-sm text-red-600">
+              <p>2 pagos próximos a vencer</p>
+              <p>1 soporte fiscal pendiente</p>
+            </div>
+          </div>
         </div>
       </div>
     </main>

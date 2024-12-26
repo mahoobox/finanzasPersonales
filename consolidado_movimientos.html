@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Consolidado de Movimientos - Finanzas Personales</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      .dropdown-content {
+        display: none;
+        position: absolute;
+        background-color: white;
+        min-width: 200px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        z-index: 50;
+        border-radius: 0.375rem;
+      }
+
+      .dropdown:hover .dropdown-content {
+        display: block;
+      }
+    </style>
+  </head>
+  <body class="bg-gray-100">
+    <nav class="bg-blue-600 text-white p-4">
+      <div class="container mx-auto flex justify-between items-center">
+        <h1 class="text-2xl font-bold">Consolidado de Movimientos</h1>
+        <a href="index.html" class="text-white hover:text-gray-200"
+          >Volver al Inicio</a
+        >
+      </div>
+    </nav>
+
+    <main class="container mx-auto p-4">
+      <!-- Filtros Superiores -->
+      <div class="bg-white p-4 rounded-lg shadow-md mb-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Desde
+            </label>
+            <input type="date" class="w-full border rounded-md p-2" />
+          </div>
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Hasta
+            </label>
+            <input type="date" class="w-full border rounded-md p-2" />
+          </div>
+          <div class="flex items-end">
+            <button
+              class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            >
+              Actualizar
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Resumen -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <!-- Ingresos -->
+        <div class="p-4 bg-white rounded-lg shadow-md">
+          <h3 class="font-bold text-lg mb-3">Ingresos</h3>
+          <div class="space-y-2">
+            <div class="flex justify-between">
+              <span>Formales:</span>
+              <span class="font-bold text-green-600">$45,000,000</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Informales:</span>
+              <span class="font-bold text-green-600">$15,000,000</span>
+            </div>
+            <div class="flex justify-between pt-2 border-t mt-2">
+              <span class="font-bold">Total:</span>
+              <span class="font-bold text-green-600">$60,000,000</span>
+            </div>
+            <div class="bg-gray-100 h-2 rounded-full mt-2">
+              <div
+                class="bg-green-600 h-2 rounded-full"
+                style="width: 75%"
+              ></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gastos -->
+        <div class="p-4 bg-white rounded-lg shadow-md">
+          <h3 class="font-bold text-lg mb-3">Gastos</h3>
+          <div class="space-y-2">
+            <div class="flex justify-between">
+              <span>Con Factura:</span>
+              <span class="font-bold text-red-600">$32,000,000</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Sin Factura:</span>
+              <span class="font-bold text-red-600">$8,000,000</span>
+            </div>
+            <div class="flex justify-between pt-2 border-t mt-2">
+              <span class="font-bold">Total:</span>
+              <span class="font-bold text-red-600">$40,000,000</span>
+            </div>
+            <div class="bg-gray-100 h-2 rounded-full mt-2">
+              <div class="bg-red-600 h-2 rounded-full" style="width: 50%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Movimientos -->
+        <div class="p-4 bg-white rounded-lg shadow-md">
+          <h3 class="font-bold text-lg mb-3">Movimientos</h3>
+          <div class="space-y-2">
+            <div class="flex justify-between">
+              <span>Transferencias:</span>
+              <span class="font-bold">52</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Con Soporte:</span>
+              <span class="font-bold text-green-600">145</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Sin Soporte:</span>
+              <span class="font-bold text-red-600">23</span>
+            </div>
+            <div class="bg-gray-100 h-2 rounded-full mt-2">
+              <div
+                class="bg-blue-600 h-2 rounded-full"
+                style="width: 85%"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla con Filtros Modernos -->
+      <div class="bg-white rounded-lg shadow-md">
+        <div class="p-4 border-b">
+          <h2 class="text-xl font-bold">Detalle de Movimientos</h2>
+        </div>
+
+        <div class="overflow-x-auto">
+          <table class="w-full">
+            <thead class="bg-gray-50">
+              <tr>
+                <!-- Fecha -->
+                <th class="px-4 py-2">
+                  <div class="relative">
+                    <button
+                      onclick="toggleSortDirection()"
+                      class="flex items-center space-x-1 hover:text-blue-600"
+                    >
+                      <span>Fecha</span>
+                      <svg
+                        class="w-4 h-4"
+                        fill="currentColor"
+                        viewBox="0 0 320 512"
+                      >
+                        <path
+                          d="M137.4 41.4c12.5-12.5 32.8-12.5 45.3 0l128 128c9.2 9.2 11.9 22.9 6.9 34.9s-16.6 19.8-29.6 19.8L32 224c-12.9 0-24.6-7.8-29.6-19.8s-2.2-25.7 6.9-34.9l128-128zm0 429.3l-128-128c-9.2-9.2-11.9-22.9-6.9-34.9s16.6-19.8 29.6-19.8l256 0c12.9 0 24.6 7.8 29.6 19.8s2.2 25.7-6.9 34.9l-128 128c-12.5 12.5-32.8 12.5-45.3 0z"
+                        />
+                      </svg>
+                    </button>
+                    <!-- Dropdown para Fecha -->
+                    <div
+                      id="dropdownFecha"
+                      class="hidden absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50"
+                    >
+                      <div class="p-2">
+                        <a
+                          href="#"
+                          class="block px-4 py-2 text-sm hover:bg-gray-100"
+                          >Más reciente primero</a
+                        >
+                        <a
+                          href="#"
+                          class="block px-4 py-2 text-sm hover:bg-gray-100"
+                          >Más antiguo primero</a
+                        >
+                        <div class="border-t mt-2 pt-2 flex justify-end">
+                          <button
+                            class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                          >
+                            Aplicar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </th>
+
+                <!-- Tipo -->
+                <th class="px-4 py-2 dropdown">
+                  <div class="relative">
+                    <button
+                      onclick="toggleDropdown('tipo')"
+                      class="flex items-center space-x-1 hover:text-blue-600"
+                    >
+                      <span>Tipo</span>
+                      <svg
+                        class="w-4 h-4"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                    <!-- Dropdown para Tipo -->
+                    <div
+                      id="dropdownTipo"
+                      class="dropdown-content absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50"
+                    >
+                      <div class="p-2">
+                        <label class="flex items-center p-2 hover:bg-gray-100">
+                          <input type="checkbox" class="mr-2" />
+                          <span class="text-sm">Todos</span>
+                        </label>
+                        <label class="flex items-center p-2 hover:bg-gray-100">
+                          <input type="checkbox" class="mr-2" />
+                          <span class="text-sm">Ingreso</span>
+                        </label>
+                        <label class="flex items-center p-2 hover:bg-gray-100">
+                          <input type="checkbox" class="mr-2" />
+                          <span class="text-sm">Gasto</span>
+                        </label>
+                        <label class="flex items-center p-2 hover:bg-gray-100">
+                          <input type="checkbox" class="mr-2" />
+                          <span class="text-sm">Transferencia</span>
+                        </label>
+                        <div class="border-t mt-2 pt-2 flex justify-end">
+                          <button
+                            class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                          >
+                            Aplicar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </th>
+
+                <!-- Cuenta -->
+                <th class="px-4 py-2 dropdown">
+                  <div class="relative">
+                    <button
+                      onclick="toggleDropdown('cuenta')"
+                      class="flex items-center space-x-1 hover:text-blue-600"
+                    >
+                      <span>Cuenta</span>
+                      <svg
+                        class="w-4 h-4"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                    <!-- Dropdown para Cuenta -->
+                    <div
+                      id="dropdownCuenta"
+                      class="dropdown-content absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50"
+                    >
+                      <div class="p-2">
+                        <label class="flex items-center p-2 hover:bg-gray-100">
+                          <input type="checkbox" class="mr-2" />
+                          <span class="text-sm">Todas</span>
+                        </label>
+                        <label class="flex items-center p-2 hover:bg-gray-100">
+                          <input type="checkbox" class="mr-2" />
+                          <span class="text-sm">Efectivo</span>
+                        </label>
+                        <label class="flex items-center p-2 hover:bg-gray-100">
+                          <input type="checkbox" class="mr-2" />
+                          <span class="text-sm">Cuenta Corriente</span>
+                        </label>
+                        <label class="flex items-center p-2 hover:bg-gray-100">
+                          <input type="checkbox" class="mr-2" />
+                          <span class="text-sm">Cuenta Ahorros</span>
+                        </label>
+                        <div class="border-t mt-2 pt-2 flex justify-end">
+                          <button
+                            class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                          >
+                            Aplicar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </th>
+
+                <!-- Categoría -->
+                <th class="px-4 py-2 dropdown">
+                  <div class="relative">
+                    <button
+                      onclick="toggleDropdown('categoria')"
+                      class="flex items-center space-x-1 hover:text-blue-600"
+                    >
+                      <span>Categoría</span>
+                      <svg
+                        class="w-4 h-4"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                    <!-- Dropdown para Categoría -->
+                    <div
+                      id="dropdownCategoria"
+                      class="dropdown-content absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50"
+                    >
+                      <div class="p-2">
+                        <label class="flex items-center p-2 hover:bg-gray-100">
+                          <input type="checkbox" class="mr-2" />
+                          <span class="text-sm">Todas</span>
+                        </label>
+                        <label class="flex items-center p-2 hover:bg-gray-100">
+                          <input type="checkbox" class="mr-2" />
+                          <span class="text-sm">Alimentación</span>
+                        </label>
+                        <label class="flex items-center p-2 hover:bg-gray-100">
+                          <input type="checkbox" class="mr-2" />
+                          <span class="text-sm">Transporte</span>
+                        </label>
+                        <label class="flex items-center p-2 hover:bg-gray-100">
+                          <input type="checkbox" class="mr-2" />
+                          <span class="text-sm">Servicios</span>
+                        </label>
+                        <div class="border-t mt-2 pt-2 flex justify-end">
+                          <button
+                            class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                          >
+                            Aplicar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </th>
+
+                <!-- Descripción (sin dropdown) -->
+                <th class="px-4 py-2">Descripción</th>
+
+                <!-- Monto -->
+                <th class="px-4 py-2 dropdown">
+                  <div class="relative">
+                    <button
+                      onclick="toggleDropdown('monto')"
+                      class="flex items-center space-x-1 hover:text-blue-600"
+                    >
+                      <span>Monto</span>
+                      <svg
+                        class="w-4 h-4"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                    <!-- Dropdown para Monto -->
+                    <div
+                      id="dropdownMonto"
+                      class="dropdown-content absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50"
+                    >
+                      <div class="p-2">
+                        <label class="flex items-center p-2 hover:bg-gray-100">
+                          <input type="checkbox" class="mr-2" />
+                          <span class="text-sm">Todos</span>
+                        </label>
+                        <label class="flex items-center p-2 hover:bg-gray-100">
+                          <input type="checkbox" class="mr-2" />
+                          <span class="text-sm">> $1,000,000</span>
+                        </label>
+                        <label class="flex items-center p-2 hover:bg-gray-100">
+                          <input type="checkbox" class="mr-2" />
+                          <span class="text-sm">> $5,000,000</span>
+                        </label>
+                        <label class="flex items-center p-2 hover:bg-gray-100">
+                          <input type="checkbox" class="mr-2" />
+                          <span class="text-sm">> $10,000,000</span>
+                        </label>
+                        <div class="border-t mt-2 pt-2 flex justify-end">
+                          <button
+                            class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                          >
+                            Aplicar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </th>
+
+                <!-- Estado Fiscal -->
+                <th class="px-4 py-2 dropdown">
+                  <div class="relative">
+                    <button
+                      onclick="toggleDropdown('estadoFiscal')"
+                      class="flex items-center space-x-1 hover:text-blue-600"
+                    >
+                      <span>Estado Fiscal</span>
+                      <svg
+                        class="w-4 h-4"
+                        viewBox="0 0 20 20"
+                        fill="currentColor"
+                      >
+                        <path
+                          fill-rule="evenodd"
+                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                          clip-rule="evenodd"
+                        />
+                      </svg>
+                    </button>
+                    <!-- Dropdown para Estado Fiscal -->
+                    <div
+                      id="dropdownEstadoFiscal"
+                      class="dropdown-content absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50"
+                    >
+                      <div class="p-2">
+                        <label class="flex items-center p-2 hover:bg-gray-100">
+                          <input type="checkbox" class="mr-2" />
+                          <span class="text-sm">Todos</span>
+                        </label>
+                        <label class="flex items-center p-2 hover:bg-gray-100">
+                          <input type="checkbox" class="mr-2" />
+                          <span class="text-sm">Exógena</span>
+                        </label>
+                        <label class="flex items-center p-2 hover:bg-gray-100">
+                          <input type="checkbox" class="mr-2" />
+                          <span class="text-sm">Deducible</span>
+                        </label>
+                        <label class="flex items-center p-2 hover:bg-gray-100">
+                          <input type="checkbox" class="mr-2" />
+                          <span class="text-sm">N/A</span>
+                        </label>
+                        <div class="border-t mt-2 pt-2 flex justify-end">
+                          <button
+                            class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                          >
+                            Aplicar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </th>
+
+                <!-- Soporte (sin dropdown) -->
+                <th class="px-4 py-2 text-center">Soporte</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y">
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-2">20/12/2024</td>
+                <td class="px-4 py-2">Ingreso</td>
+                <td class="px-4 py-2">Cuenta Corriente</td>
+                <td class="px-4 py-2">Honorarios</td>
+                <td class="px-4 py-2">Proyecto ABC</td>
+                <td class="px-4 py-2 text-right text-green-600">$5,000,000</td>
+                <td class="px-4 py-2 text-center">
+                  <span
+                    class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm"
+                  >
+                    Exógena
+                  </span>
+                </td>
+                <td class="px-4 py-2 text-center">
+                  <a href="#" class="text-blue-600 hover:underline">Ver</a>
+                </td>
+              </tr>
+
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-2">18/12/2024</td>
+                <td class="px-4 py-2">Gasto</td>
+                <td class="px-4 py-2">T.C. Bancolombia</td>
+                <td class="px-4 py-2">Equipos</td>
+                <td class="px-4 py-2">Laptop Dell XPS</td>
+                <td class="px-4 py-2 text-right text-red-600">$4,500,000</td>
+                <td class="px-4 py-2 text-center">
+                  <div class="flex flex-col">
+                    <span
+                      class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm mb-1"
+                    >
+                      Exógena
+                    </span>
+                    <span
+                      class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
+                    >
+                      Deducible
+                    </span>
+                  </div>
+                </td>
+                <td class="px-4 py-2 text-center">
+                  <a href="#" class="text-blue-600 hover:underline">Ver</a>
+                </td>
+              </tr>
+
+              <tr class="hover:bg-gray-50">
+                <td class="px-4 py-2">15/12/2024</td>
+                <td class="px-4 py-2">Transferencia</td>
+                <td class="px-4 py-2">Efectivo → Ahorros</td>
+                <td class="px-4 py-2">-</td>
+                <td class="px-4 py-2">Consignación</td>
+                <td class="px-4 py-2 text-right text-gray-600">$2,000,000</td>
+                <td class="px-4 py-2 text-center">
+                  <span
+                    class="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-sm"
+                  >
+                    N/A
+                  </span>
+                </td>
+                <td class="px-4 py-2 text-center">
+                  <a href="#" class="text-blue-600 hover:underline">Ver</a>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Paginación -->
+        <div class="p-4 border-t bg-gray-50">
+          <div class="flex justify-between items-center">
+            <div class="text-sm text-gray-600">
+              Mostrando 3 de 220 movimientos
+            </div>
+            <div class="space-x-2">
+              <button class="px-3 py-1 border rounded hover:bg-gray-100">
+                Anterior
+              </button>
+              <button
+                class="px-3 py-1 border rounded bg-blue-50 border-blue-300"
+              >
+                1
+              </button>
+              <button class="px-3 py-1 border rounded hover:bg-gray-100">
+                2
+              </button>
+              <button class="px-3 py-1 border rounded hover:bg-gray-100">
+                3
+              </button>
+              <button class="px-3 py-1 border rounded hover:bg-gray-100">
+                Siguiente
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Botones de Acción -->
+      <div class="flex justify-end space-x-4 mt-6">
+        <button
+          class="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600"
+        >
+          Volver
+        </button>
+        <button
+          class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700"
+        >
+          Exportar a Excel
+        </button>
+        <button
+          class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
+        >
+          Exportar a PDF
+        </button>
+      </div>
+    </main>
+
+    <!-- Dropdowns de Filtros (inicialmente ocultos) -->
+    <div id="filterDropdowns" class="hidden">
+      <!-- Filtro de Fecha -->
+      <div
+        id="fechaFilter"
+        class="hidden absolute bg-white border rounded-lg shadow-lg p-4 z-50"
+      >
+        <div class="space-y-2">
+          <div class="font-bold mb-2">Ordenar por:</div>
+          <div
+            class="flex items-center space-x-2 hover:bg-gray-100 p-1 cursor-pointer"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M5 15l7-7 7 7"
+              />
+            </svg>
+            <span>Más reciente primero</span>
+          </div>
+          <div
+            class="flex items-center space-x-2 hover:bg-gray-100 p-1 cursor-pointer"
+          >
+            <svg
+              class="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                stroke-width="2"
+                d="M19 9l-7 7-7-7"
+              />
+            </svg>
+            <span>Más antiguo primero</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Filtro de Tipo -->
+      <div
+        id="tipoFilter"
+        class="hidden absolute bg-white border rounded-lg shadow-lg p-4 z-50"
+      >
+        <div class="space-y-2">
+          <label class="flex items-center space-x-2">
+            <input type="checkbox" checked />
+            <span>Todos</span>
+          </label>
+          <label class="flex items-center space-x-2">
+            <input type="checkbox" />
+            <span>Ingresos</span>
+          </label>
+          <label class="flex items-center space-x-2">
+            <input type="checkbox" />
+            <span>Gastos</span>
+          </label>
+          <label class="flex items-center space-x-2">
+            <input type="checkbox" />
+            <span>Transferencias</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- [Similares dropdowns para otros filtros...] -->
+    </div>
+
+    <script>
+      let activeDropdown = null;
+      let activeButton = null;
+      let sortDirection = "desc"; // 'asc' o 'desc'
+
+      // Función para alternar la dirección de ordenamiento
+      function toggleSortDirection() {
+        sortDirection = sortDirection === "asc" ? "desc" : "asc";
+        const rows = Array.from(document.querySelectorAll("tbody tr"));
+        const tbody = document.querySelector("tbody");
+
+        rows.sort((a, b) => {
+          const dateA = new Date(a.cells[0].textContent);
+          const dateB = new Date(b.cells[0].textContent);
+          return sortDirection === "asc" ? dateA - dateB : dateB - dateA;
+        });
+
+        tbody.innerHTML = "";
+        rows.forEach((row) => tbody.appendChild(row));
+      }
+
+      function toggleDropdown(type) {
+        event.preventDefault();
+        const dropdown = document.getElementById("dropdown" + type);
+
+        // Cerrar otros dropdowns abiertos
+        document.querySelectorAll('[id^="dropdown"]').forEach((d) => {
+          if (d !== dropdown) d.classList.add("hidden");
+        });
+
+        // Toggle del dropdown actual
+        if (dropdown) {
+          dropdown.classList.toggle("hidden");
+
+          // Posicionar el dropdown
+          const button = event.currentTarget;
+          const rect = button.getBoundingClientRect();
+          dropdown.style.top = `${rect.bottom + window.scrollY}px`;
+          dropdown.style.left = `${rect.left}px`;
+        }
+      }
+
+      // Función para aplicar filtros
+      function applyFilters(dropdownId) {
+        const dropdown = document.getElementById(dropdownId);
+        const type = dropdownId.replace("dropdown", "").toLowerCase();
+        const selectedValues = [];
+
+        // Recolectar valores seleccionados
+        dropdown
+          .querySelectorAll('input[type="checkbox"]:checked')
+          .forEach((checkbox) => {
+            if (checkbox.nextElementSibling.textContent !== "Todos") {
+              selectedValues.push(
+                checkbox.nextElementSibling.textContent.trim()
+              );
+            }
+          });
+
+        // Filtrar filas
+        document.querySelectorAll("tbody tr").forEach((row) => {
+          let show = true;
+          const cellIndex = getCellIndexForType(type);
+          if (cellIndex !== -1) {
+            const cellValue = row.cells[cellIndex].textContent.trim();
+            if (
+              selectedValues.length > 0 &&
+              !selectedValues.includes(cellValue)
+            ) {
+              show = false;
+            }
+          }
+          row.style.display = show ? "" : "none";
+        });
+
+        // Cerrar dropdown
+        dropdown.classList.add("hidden");
+      }
+
+      function getCellIndexForType(type) {
+        switch (type) {
+          case "tipo":
+            return 1;
+          case "cuenta":
+            return 2;
+          case "categoria":
+            return 3;
+          case "monto":
+            return 5;
+          case "estadofiscal":
+            return 6;
+          default:
+            return -1;
+        }
+      }
+
+      // Event Listeners
+      document.addEventListener("click", function (event) {
+        if (
+          !event.target.closest(".relative") &&
+          !event.target.closest('[id^="dropdown"]')
+        ) {
+          document.querySelectorAll('[id^="dropdown"]').forEach((dropdown) => {
+            dropdown.classList.add("hidden");
+          });
+        }
+      });
+
+      // Manejar checkboxes "Todos"
+      document.querySelectorAll('[id^="dropdown"]').forEach((dropdown) => {
+        const todosCheckbox = dropdown.querySelector('input[type="checkbox"]');
+        const otrosCheckboxes = Array.from(
+          dropdown.querySelectorAll('input[type="checkbox"]')
+        ).slice(1);
+
+        if (todosCheckbox) {
+          todosCheckbox.addEventListener("change", function () {
+            otrosCheckboxes.forEach((checkbox) => {
+              checkbox.checked = this.checked;
+              checkbox.disabled = this.checked;
+            });
+          });
+        }
+      });
+
+      // Agregar eventos a botones "Aplicar"
+      document.querySelectorAll('[id^="dropdown"] button').forEach((button) => {
+        if (button.textContent.trim() === "Aplicar") {
+          button.addEventListener("click", function () {
+            const dropdownId = this.closest('[id^="dropdown"]').id;
+            applyFilters(dropdownId);
+          });
+        }
+      });
+    </script>
+
+    <footer class="bg-gray-200 text-center p-4 mt-8">
+      <p>Sistema de Finanzas Personales - 2024</p>
+    </footer>
+  </body>
+</html>
