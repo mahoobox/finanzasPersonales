@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Transferencia entre Cuentas - Finanzas Personales</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="componentes/popup.js"></script>
   </head>
-  <body class="bg-gray-100">
+  <body class="bg-gray-100" onload="Popup.init()">
     <nav class="bg-blue-600 text-white p-4">
       <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-2xl font-bold">Transferencia entre Cuentas</h1>
@@ -15,79 +16,103 @@
         >
       </div>
     </nav>
-
     <main class="container mx-auto p-4">
-      <form class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
+      <form
+        id="transferenciasForm"
+        onsubmit="realizarTransferencia(event)"
+        class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto"
+      >
         <!-- Fecha -->
         <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2">
-            Fecha
-          </label>
-          <input type="date" class="w-full border rounded-md p-2" />
-        </div>
-
-        <!-- Cuenta Origen -->
-        <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2">
-            Cuenta Origen
-          </label>
-          <select class="w-full border rounded-md p-2">
-            <option>Efectivo</option>
-            <option>Cuenta Corriente Principal</option>
-            <option>Cuenta de Ahorros</option>
-            <option>Cuenta Nómina</option>
-          </select>
-        </div>
-
-        <!-- Cuenta Destino -->
-        <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2">
-            Cuenta Destino
-          </label>
-          <select class="w-full border rounded-md p-2">
-            <option>Efectivo</option>
-            <option>Cuenta Corriente Principal</option>
-            <option>Cuenta de Ahorros</option>
-            <option>Cuenta Nómina</option>
-          </select>
-        </div>
-
-        <!-- Monto -->
-        <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2">
-            Monto
-          </label>
+          <label class="block text-gray-700 text-sm font-bold mb-2"
+            >Fecha</label
+          >
           <input
-            type="number"
+            type="date"
+            id="fecha"
             class="w-full border rounded-md p-2"
-            placeholder="0.00"
+            required
           />
         </div>
-
+        <!-- Cuenta Origen -->
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2"
+            >Cuenta Origen</label
+          >
+          <select
+            id="cuentaOrigen"
+            onchange="validarCuentas()"
+            class="w-full border rounded-md p-2"
+            required
+          >
+            <option value="">Seleccione cuenta origen</option>
+            <option value="efectivo">Efectivo</option>
+            <option value="corriente">Cuenta Corriente Principal</option>
+            <option value="ahorros">Cuenta de Ahorros</option>
+            <option value="nomina">Cuenta Nómina</option>
+          </select>
+        </div>
+        <!-- Cuenta Destino -->
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2"
+            >Cuenta Destino</label
+          >
+          <select
+            id="cuentaDestino"
+            onchange="validarCuentas()"
+            class="w-full border rounded-md p-2"
+            required
+          >
+            <option value="">Seleccione cuenta destino</option>
+            <option value="efectivo">Efectivo</option>
+            <option value="corriente">Cuenta Corriente Principal</option>
+            <option value="ahorros">Cuenta de Ahorros</option>
+            <option value="nomina">Cuenta Nómina</option>
+          </select>
+        </div>
+        <!-- Monto -->
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2"
+            >Monto</label
+          >
+          <input
+            type="number"
+            id="monto"
+            min="0"
+            step="0.01"
+            class="w-full border rounded-md p-2"
+            placeholder="0.00"
+            required
+          />
+        </div>
         <!-- Descripción -->
         <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2">
-            Descripción
-          </label>
+          <label class="block text-gray-700 text-sm font-bold mb-2"
+            >Descripción</label
+          >
           <textarea
+            id="descripcion"
             class="w-full border rounded-md p-2"
             rows="3"
             placeholder="Motivo de la transferencia"
           ></textarea>
         </div>
-
         <!-- Comprobante -->
         <div class="mb-6">
-          <label class="block text-gray-700 text-sm font-bold mb-2">
-            Comprobante
-          </label>
-          <input type="file" class="w-full border rounded-md p-2" />
+          <label class="block text-gray-700 text-sm font-bold mb-2"
+            >Comprobante</label
+          >
+          <input
+            type="file"
+            id="comprobante"
+            class="w-full border rounded-md p-2"
+          />
         </div>
-
         <!-- Botones -->
         <div class="flex justify-end space-x-4">
           <button
             type="button"
+            onclick="cancelarTransferencia()"
             class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
           >
             Cancelar
@@ -101,6 +126,63 @@
         </div>
       </form>
     </main>
+
+    <script>
+      function validarCuentas() {
+        const origen = document.getElementById("cuentaOrigen").value;
+        const destino = document.getElementById("cuentaDestino").value;
+
+        if (origen && destino && origen === destino) {
+          Popup.mostrar(
+            "error",
+            "La cuenta origen y destino no pueden ser la misma"
+          );
+          document.getElementById("cuentaDestino").value = "";
+          return false;
+        }
+        return true;
+      }
+
+      function validarFormulario() {
+        const monto = parseFloat(document.getElementById("monto").value);
+        if (isNaN(monto) || monto <= 0) {
+          Popup.mostrar("error", "El monto debe ser mayor a 0");
+          return false;
+        }
+
+        if (!validarCuentas()) {
+          return false;
+        }
+
+        const descripcion = document.getElementById("descripcion").value.trim();
+        if (descripcion.length < 5) {
+          Popup.mostrar(
+            "warning",
+            "Por favor, proporcione una descripción más detallada"
+          );
+          return false;
+        }
+
+        return true;
+      }
+
+      function realizarTransferencia(event) {
+        event.preventDefault();
+        if (!validarFormulario()) return;
+
+        // Aquí iría la lógica para procesar la transferencia
+        Popup.mostrar("success", "Transferencia realizada exitosamente");
+        document.getElementById("transferenciasForm").reset();
+      }
+
+      function cancelarTransferencia() {
+        Popup.mostrar(
+          "warning",
+          "¿Está seguro de cancelar la transferencia? Los datos no guardados se perderán"
+        );
+        document.getElementById("transferenciasForm").reset();
+      }
+    </script>
 
     <footer class="bg-gray-200 text-center p-4 mt-8">
       <p>Sistema de Finanzas Personales - 2024</p>

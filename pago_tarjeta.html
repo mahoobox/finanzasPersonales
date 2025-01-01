@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pago de Tarjeta - Finanzas Personales</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="componentes/popup.js"></script>
   </head>
-  <body class="bg-gray-100">
+  <body class="bg-gray-100" onload="Popup.init()">
     <nav class="bg-blue-600 text-white p-4">
       <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-2xl font-bold">Registro de Pago de Tarjeta</h1>
@@ -17,15 +18,27 @@
     </nav>
 
     <main class="container mx-auto p-4">
-      <form class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
+      <form
+        id="pagoForm"
+        onsubmit="registrarPago(event)"
+        class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto"
+      >
         <!-- Tarjeta de Crédito -->
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2">
             Tarjeta de Crédito
           </label>
-          <select class="w-full border rounded-md p-2">
-            <option>Visa Oro Bancolombia (...1234)</option>
-            <option>Mastercard Platinum Davivienda (...5678)</option>
+          <select
+            id="tarjeta"
+            class="w-full border rounded-md p-2"
+            onchange="actualizarInfoTarjeta()"
+            required
+          >
+            <option value="">Seleccione una tarjeta</option>
+            <option value="visa">Visa Oro Bancolombia (...1234)</option>
+            <option value="master">
+              Mastercard Platinum Davivienda (...5678)
+            </option>
           </select>
         </div>
 
@@ -36,12 +49,20 @@
           </h3>
           <div class="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <p class="text-gray-600">Saldo actual: $1,500,000</p>
-              <p class="text-gray-600">Pago mínimo: $150,000</p>
+              <p class="text-gray-600">
+                Cupo total: <span id="cupoTotal">$0</span>
+              </p>
+              <p class="text-gray-600">
+                Saldo total: <span id="saldoTotal">$0</span>
+              </p>
             </div>
             <div>
-              <p class="text-gray-600">Fecha de corte: 15/01/2024</p>
-              <p class="text-gray-600">Fecha límite de pago: 22/01/2024</p>
+              <p class="text-gray-600">
+                Fecha de corte: <span id="fechaCorte">--/--/----</span>
+              </p>
+              <p class="text-gray-600">
+                Fecha límite de pago: <span id="fechaPago">--/--/----</span>
+              </p>
             </div>
           </div>
         </div>
@@ -51,7 +72,12 @@
           <label class="block text-gray-700 text-sm font-bold mb-2">
             Fecha de Pago
           </label>
-          <input type="date" class="w-full border rounded-md p-2" />
+          <input
+            type="date"
+            id="fechaPagoInput"
+            class="w-full border rounded-md p-2"
+            required
+          />
         </div>
 
         <!-- Cuenta Origen -->
@@ -59,10 +85,15 @@
           <label class="block text-gray-700 text-sm font-bold mb-2">
             Cuenta de Origen
           </label>
-          <select class="w-full border rounded-md p-2">
-            <option>Cuenta Corriente Principal</option>
-            <option>Cuenta de Ahorros</option>
-            <option>Cuenta Nómina</option>
+          <select
+            id="cuentaOrigen"
+            class="w-full border rounded-md p-2"
+            required
+          >
+            <option value="">Seleccione una cuenta</option>
+            <option value="corriente">Cuenta Corriente Principal</option>
+            <option value="ahorros">Cuenta de Ahorros</option>
+            <option value="nomina">Cuenta Nómina</option>
           </select>
         </div>
 
@@ -73,8 +104,12 @@
           </label>
           <input
             type="number"
+            id="montoPago"
             class="w-full border rounded-md p-2"
             placeholder="0.00"
+            step="0.01"
+            min="0"
+            required
           />
         </div>
 
@@ -83,34 +118,48 @@
           <label class="block text-gray-700 text-sm font-bold mb-2">
             Tipo de Pago
           </label>
-          <div class="grid grid-cols-3 gap-4">
-            <button
-              type="button"
-              class="p-2 border rounded-md hover:bg-blue-50"
-            >
-              Pago Mínimo
-            </button>
-            <button
-              type="button"
-              class="p-2 border rounded-md hover:bg-blue-50"
-            >
-              Pago Total
-            </button>
-            <button
-              type="button"
-              class="p-2 border rounded-md hover:bg-blue-50"
-            >
-              Otro Monto
-            </button>
+          <div class="space-y-2">
+            <div class="flex items-center">
+              <input
+                type="radio"
+                name="tipoPago"
+                value="regular"
+                id="pagoRegular"
+                class="mr-2"
+                checked
+              />
+              <label for="pagoRegular" class="text-sm">Pago Normal</label>
+            </div>
+            <div class="flex items-center">
+              <input
+                type="radio"
+                name="tipoPago"
+                value="minimo"
+                id="pagoMinimo"
+                class="mr-2"
+              />
+              <label for="pagoMinimo" class="text-sm">Pago Mínimo</label>
+            </div>
+            <div class="flex items-center">
+              <input
+                type="radio"
+                name="tipoPago"
+                value="total"
+                id="pagoTotal"
+                class="mr-2"
+              />
+              <label for="pagoTotal" class="text-sm">Pago Total</label>
+            </div>
           </div>
         </div>
 
         <!-- Descripción -->
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2">
-            Descripción
+            Descripción (Opcional)
           </label>
           <textarea
+            id="descripcion"
             class="w-full border rounded-md p-2"
             rows="2"
             placeholder="Notas adicionales sobre el pago"
@@ -122,13 +171,18 @@
           <label class="block text-gray-700 text-sm font-bold mb-2">
             Comprobante de Pago
           </label>
-          <input type="file" class="w-full border rounded-md p-2" />
+          <input
+            type="file"
+            id="comprobante"
+            class="w-full border rounded-md p-2"
+          />
         </div>
 
         <!-- Botones -->
         <div class="flex justify-end space-x-4">
           <button
             type="button"
+            onclick="cancelarPago()"
             class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
           >
             Cancelar
@@ -142,5 +196,149 @@
         </div>
       </form>
     </main>
+
+    <script>
+      // Datos simulados de las tarjetas
+      const tarjetasInfo = {
+        visa: {
+          cupoTotal: "5,000,000",
+          saldoTotal: "1,500,000",
+          fechaCorte: "15/01/2024",
+          fechaPago: "22/01/2024",
+        },
+        master: {
+          cupoTotal: "8,000,000",
+          saldoTotal: "3,200,000",
+          fechaCorte: "20/01/2024",
+          fechaPago: "27/01/2024",
+        },
+      };
+
+      function actualizarInfoTarjeta() {
+        const tarjeta = document.getElementById("tarjeta").value;
+        if (!tarjeta) {
+          document.getElementById("cupoTotal").textContent = "$0";
+          document.getElementById("saldoTotal").textContent = "$0";
+          document.getElementById("fechaCorte").textContent = "--/--/----";
+          document.getElementById("fechaPago").textContent = "--/--/----";
+          return;
+        }
+
+        const info = tarjetasInfo[tarjeta];
+        document.getElementById("cupoTotal").textContent = `$${info.cupoTotal}`;
+        document.getElementById(
+          "saldoTotal"
+        ).textContent = `$${info.saldoTotal}`;
+        document.getElementById("fechaCorte").textContent = info.fechaCorte;
+        document.getElementById("fechaPago").textContent = info.fechaPago;
+
+        Popup.mostrar("info", "Información de la tarjeta actualizada");
+      }
+
+      function seleccionarTipoPago(tipo) {
+        const montoInput = document.getElementById("montoPago");
+        const tarjeta = document.getElementById("tarjeta").value;
+
+        if (!tarjeta) {
+          Popup.mostrar("error", "Debe seleccionar una tarjeta primero");
+          document.querySelector('input[value="otro"]').checked = true;
+          return;
+        }
+
+        const info = tarjetasInfo[tarjeta];
+        switch (tipo) {
+          case "minimo":
+            montoInput.value = (
+              parseFloat(info.saldoTotal.replace(/,/g, "")) * 0.1
+            ).toFixed(2);
+            montoInput.readOnly = true;
+            break;
+          case "total":
+            montoInput.value = parseFloat(
+              info.saldoTotal.replace(/,/g, "")
+            ).toFixed(2);
+            montoInput.readOnly = true;
+            break;
+          case "otro":
+            montoInput.value = "";
+            montoInput.readOnly = false;
+            break;
+        }
+      }
+
+      function validarFormulario() {
+        // Validar tarjeta seleccionada
+        const tarjeta = document.getElementById("tarjeta").value;
+        if (!tarjeta) {
+          Popup.mostrar("error", "Debe seleccionar una tarjeta");
+          return false;
+        }
+
+        // Validar cuenta origen
+        const cuenta = document.getElementById("cuentaOrigen").value;
+        if (!cuenta) {
+          Popup.mostrar("error", "Debe seleccionar una cuenta de origen");
+          return false;
+        }
+
+        // Validar monto
+        const monto = parseFloat(document.getElementById("montoPago").value);
+        if (isNaN(monto) || monto <= 0) {
+          Popup.mostrar("error", "El monto debe ser mayor a 0");
+          return false;
+        }
+
+        const saldoTotal = parseFloat(
+          tarjetasInfo[tarjeta].saldoTotal.replace(/,/g, "")
+        );
+        if (monto > saldoTotal) {
+          Popup.mostrar("warning", "El monto de pago es mayor al saldo total");
+          return false;
+        }
+
+        return true;
+      }
+
+      function registrarPago(event) {
+        event.preventDefault();
+
+        if (!validarFormulario()) return;
+
+        const tipoPago = document.querySelector(
+          'input[name="tipoPago"]:checked'
+        ).value;
+        let mensaje = "Pago registrado exitosamente";
+
+        switch (tipoPago) {
+          case "minimo":
+            mensaje = "Pago mínimo registrado exitosamente";
+            break;
+          case "total":
+            mensaje = "Pago total registrado exitosamente";
+            break;
+          case "regular":
+            mensaje = "Pago registrado exitosamente";
+            break;
+        }
+
+        // Aquí iría la lógica para registrar el pago
+        Popup.mostrar("success", mensaje);
+        document.getElementById("pagoForm").reset();
+        actualizarInfoTarjeta();
+      }
+
+      function cancelarPago() {
+        Popup.mostrar(
+          "warning",
+          "¿Está seguro de cancelar el registro? Los datos no guardados se perderán"
+        );
+        document.getElementById("pagoForm").reset();
+        actualizarInfoTarjeta();
+      }
+    </script>
+
+    <footer class="bg-gray-200 text-center p-4 mt-8">
+      <p>Sistema de Finanzas Personales - 2024</p>
+    </footer>
   </body>
 </html>

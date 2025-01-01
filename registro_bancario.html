@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Registro Bancario - Finanzas Personales</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="componentes/popup.js"></script>
   </head>
-  <body class="bg-gray-100">
+  <body class="bg-gray-100" onload="Popup.init()">
     <nav class="bg-blue-600 text-white p-4">
       <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-2xl font-bold">
@@ -19,15 +20,25 @@
     </nav>
 
     <main class="container mx-auto p-4">
-      <form class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
+      <form
+        id="registroBancarioForm"
+        onsubmit="guardarRegistro(event)"
+        class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto"
+      >
         <!-- Tipo de Registro -->
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2">
             Tipo de Registro
           </label>
-          <select class="w-full border rounded-md p-2">
-            <option>Costo Bancario</option>
-            <option>Rendimiento</option>
+          <select
+            id="tipoRegistro"
+            class="w-full border rounded-md p-2"
+            required
+            onchange="actualizarConceptos()"
+          >
+            <option value="">Seleccione tipo de registro</option>
+            <option value="costo">Costo Bancario</option>
+            <option value="rendimiento">Rendimiento</option>
           </select>
         </div>
 
@@ -36,7 +47,12 @@
           <label class="block text-gray-700 text-sm font-bold mb-2">
             Fecha
           </label>
-          <input type="date" class="w-full border rounded-md p-2" />
+          <input
+            type="date"
+            id="fecha"
+            class="w-full border rounded-md p-2"
+            required
+          />
         </div>
 
         <!-- Cuenta -->
@@ -44,10 +60,11 @@
           <label class="block text-gray-700 text-sm font-bold mb-2">
             Cuenta
           </label>
-          <select class="w-full border rounded-md p-2">
-            <option>Cuenta Corriente Principal</option>
-            <option>Cuenta de Ahorros</option>
-            <option>Cuenta Nómina</option>
+          <select id="cuenta" class="w-full border rounded-md p-2" required>
+            <option value="">Seleccione una cuenta</option>
+            <option value="corriente">Cuenta Corriente Principal</option>
+            <option value="ahorros">Cuenta de Ahorros</option>
+            <option value="nomina">Cuenta Nómina</option>
           </select>
         </div>
 
@@ -56,18 +73,8 @@
           <label class="block text-gray-700 text-sm font-bold mb-2">
             Concepto
           </label>
-          <select class="w-full border rounded-md p-2">
-            <optgroup label="Costos">
-              <option>Cuota de Manejo</option>
-              <option>Comisión por Transferencia</option>
-              <option>Comisión por Retiro</option>
-              <option>Otro Costo</option>
-            </optgroup>
-            <optgroup label="Rendimientos">
-              <option>Intereses Ahorros</option>
-              <option>Rendimientos Inversión</option>
-              <option>Otro Rendimiento</option>
-            </optgroup>
+          <select id="concepto" class="w-full border rounded-md p-2" required>
+            <option value="">Seleccione un concepto</option>
           </select>
         </div>
 
@@ -78,52 +85,46 @@
           </label>
           <input
             type="number"
+            id="monto"
             class="w-full border rounded-md p-2"
             placeholder="0.00"
+            step="0.01"
+            min="0"
+            required
           />
         </div>
 
         <!-- Descripción -->
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2">
-            Descripción
+            Descripción (Opcional)
           </label>
           <textarea
+            id="descripcion"
             class="w-full border rounded-md p-2"
             rows="3"
             placeholder="Detalles adicionales del cargo o rendimiento"
           ></textarea>
         </div>
 
-        <!-- Periodo del Extracto -->
-        <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2">
-            Periodo del Extracto
-          </label>
-          <div class="grid grid-cols-2 gap-4">
-            <div>
-              <label class="block text-gray-600 text-sm mb-1">Desde</label>
-              <input type="date" class="w-full border rounded-md p-2" />
-            </div>
-            <div>
-              <label class="block text-gray-600 text-sm mb-1">Hasta</label>
-              <input type="date" class="w-full border rounded-md p-2" />
-            </div>
-          </div>
-        </div>
-
         <!-- Archivos Adjuntos -->
         <div class="mb-6">
           <label class="block text-gray-700 text-sm font-bold mb-2">
-            Extracto Bancario
+            Soportes de la Transacción
           </label>
-          <input type="file" class="w-full border rounded-md p-2" />
+          <input
+            type="file"
+            id="soportes"
+            class="w-full border rounded-md p-2"
+            multiple
+          />
         </div>
 
         <!-- Botones -->
         <div class="flex justify-end space-x-4">
           <button
             type="button"
+            onclick="cancelarRegistro()"
             class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
           >
             Cancelar
@@ -137,5 +138,75 @@
         </div>
       </form>
     </main>
+
+    <script>
+      function actualizarConceptos() {
+        const tipoRegistro = document.getElementById("tipoRegistro").value;
+        const conceptoSelect = document.getElementById("concepto");
+
+        // Limpiar opciones actuales
+        conceptoSelect.innerHTML =
+          '<option value="">Seleccione un concepto</option>';
+
+        if (tipoRegistro === "costo") {
+          const costos = [
+            "Cuota de Manejo",
+            "Comisión por Transferencia",
+            "Comisión por Retiro",
+            "Otro Costo",
+          ];
+          costos.forEach((costo) => {
+            const option = document.createElement("option");
+            option.value = costo.toLowerCase().replace(/\s+/g, "_");
+            option.textContent = costo;
+            conceptoSelect.appendChild(option);
+          });
+        } else if (tipoRegistro === "rendimiento") {
+          const rendimientos = [
+            "Intereses Ahorros",
+            "Rendimientos Inversión",
+            "Otro Rendimiento",
+          ];
+          rendimientos.forEach((rendimiento) => {
+            const option = document.createElement("option");
+            option.value = rendimiento.toLowerCase().replace(/\s+/g, "_");
+            option.textContent = rendimiento;
+            conceptoSelect.appendChild(option);
+          });
+        }
+      }
+
+      function validarFormulario() {
+        const monto = parseFloat(document.getElementById("monto").value);
+        if (isNaN(monto) || monto <= 0) {
+          Popup.mostrar("error", "El monto debe ser mayor a 0");
+          return false;
+        }
+
+        return true;
+      }
+
+      function guardarRegistro(event) {
+        event.preventDefault();
+
+        if (!validarFormulario()) return;
+
+        // Aquí iría la lógica para guardar el registro
+        Popup.mostrar("success", "Registro guardado exitosamente");
+        document.getElementById("registroBancarioForm").reset();
+      }
+
+      function cancelarRegistro() {
+        Popup.mostrar(
+          "warning",
+          "¿Está seguro de cancelar el registro? Los datos no guardados se perderán"
+        );
+        document.getElementById("registroBancarioForm").reset();
+      }
+    </script>
+
+    <footer class="bg-gray-200 text-center p-4 mt-8">
+      <p>Sistema de Finanzas Personales - 2024</p>
+    </footer>
   </body>
 </html>

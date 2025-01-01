@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Nuevo Préstamo - Finanzas Personales</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="componentes/popup.js"></script>
   </head>
-  <body class="bg-gray-100">
+  <body class="bg-gray-100" onload="Popup.init()">
     <nav class="bg-blue-600 text-white p-4">
       <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-2xl font-bold">Registro de Nuevo Préstamo</h1>
@@ -17,13 +18,22 @@
     </nav>
 
     <main class="container mx-auto p-4">
-      <form class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
+      <form
+        id="prestamoForm"
+        onsubmit="registrarPrestamo(event)"
+        class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto"
+      >
         <!-- Tipo de Préstamo -->
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2">
             Tipo de Préstamo
           </label>
-          <select class="w-full border rounded-md p-2" id="tipoPrestamo">
+          <select
+            class="w-full border rounded-md p-2"
+            id="tipoPrestamo"
+            required
+          >
+            <option value="">Seleccione un tipo de préstamo</option>
             <option value="recibido">Préstamo Recibido (Yo debo)</option>
             <option value="otorgado">Préstamo Otorgado (Me deben)</option>
           </select>
@@ -36,8 +46,10 @@
           </label>
           <input
             type="text"
+            id="entidad"
             class="w-full border rounded-md p-2"
             placeholder="Nombre del banco o persona"
+            required
           />
         </div>
 
@@ -47,7 +59,12 @@
             <label class="block text-gray-700 text-sm font-bold mb-2">
               Fecha de Inicio
             </label>
-            <input type="date" class="w-full border rounded-md p-2" />
+            <input
+              type="date"
+              id="fechaInicio"
+              class="w-full border rounded-md p-2"
+              required
+            />
           </div>
           <div>
             <label class="block text-gray-700 text-sm font-bold mb-2">
@@ -55,8 +72,12 @@
             </label>
             <input
               type="number"
+              id="montoOriginal"
               class="w-full border rounded-md p-2"
               placeholder="0.00"
+              step="0.01"
+              min="0"
+              required
             />
           </div>
         </div>
@@ -66,10 +87,11 @@
           <label class="block text-gray-700 text-sm font-bold mb-2">
             Cuenta Relacionada
           </label>
-          <select class="w-full border rounded-md p-2">
-            <option>Cuenta Corriente Principal</option>
-            <option>Cuenta de Ahorros</option>
-            <option>Cuenta Nómina</option>
+          <select id="cuenta" class="w-full border rounded-md p-2" required>
+            <option value="">Seleccione una cuenta</option>
+            <option value="corriente">Cuenta Corriente Principal</option>
+            <option value="ahorros">Cuenta de Ahorros</option>
+            <option value="nomina">Cuenta Nómina</option>
           </select>
         </div>
 
@@ -81,10 +103,12 @@
             </label>
             <input
               type="number"
+              id="diaPago"
               min="1"
               max="31"
               class="w-full border rounded-md p-2"
               placeholder="Día del mes"
+              required
             />
           </div>
           <div>
@@ -93,18 +117,36 @@
             </label>
             <input
               type="number"
+              id="cuotaEsperada"
               class="w-full border rounded-md p-2"
               placeholder="Monto aproximado"
+              step="0.01"
+              min="0"
+              required
             />
           </div>
+        </div>
+
+        <!-- Email -->
+        <div class="mb-4">
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Email (Opcional)
+          </label>
+          <input
+            type="email"
+            id="email"
+            class="w-full border rounded-md p-2"
+            placeholder="correo@ejemplo.com"
+          />
         </div>
 
         <!-- Detalles del Préstamo -->
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2">
-            Detalles del Préstamo
+            Detalles del Préstamo (Opcional)
           </label>
           <textarea
+            id="detalles"
             class="w-full border rounded-md p-2"
             rows="3"
             placeholder="Detalles importantes, condiciones, notas adicionales"
@@ -119,8 +161,9 @@
           <div class="space-y-2">
             <input
               type="file"
+              id="documentos"
               class="w-full border rounded-md p-2"
-              placeholder="Contrato o pagaré"
+              multiple
             />
             <p class="text-sm text-gray-500">
               Sube el contrato, pagaré u otros documentos relevantes
@@ -135,7 +178,7 @@
           </h3>
           <div class="space-y-2">
             <div class="flex items-center">
-              <input type="checkbox" class="mr-2" />
+              <input type="checkbox" id="recordatorio" class="mr-2" />
               <label class="text-gray-700 text-sm">
                 Recordatorio de pago (3 días antes)
               </label>
@@ -147,6 +190,7 @@
         <div class="flex justify-end space-x-4">
           <button
             type="button"
+            onclick="cancelarPrestamo()"
             class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
           >
             Cancelar
@@ -160,5 +204,85 @@
         </div>
       </form>
     </main>
+
+    <script>
+      function validarFormulario() {
+        // Validar monto original
+        const monto = parseFloat(
+          document.getElementById("montoOriginal").value
+        );
+        if (isNaN(monto) || monto <= 0) {
+          Popup.mostrar("error", "El monto debe ser mayor a 0");
+          return false;
+        }
+
+        // Validar día de pago
+        const diaPago = parseInt(document.getElementById("diaPago").value);
+        if (isNaN(diaPago) || diaPago < 1 || diaPago > 31) {
+          Popup.mostrar("error", "El día de pago debe estar entre 1 y 31");
+          return false;
+        }
+
+        // Validar cuota esperada
+        const cuota = parseFloat(
+          document.getElementById("cuotaEsperada").value
+        );
+        if (isNaN(cuota) || cuota <= 0) {
+          Popup.mostrar("error", "La cuota esperada debe ser mayor a 0");
+          return false;
+        }
+
+        // Validar email si se proporcionó
+        const email = document.getElementById("email").value;
+        if (email && !email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+          Popup.mostrar("error", "El formato del email no es válido");
+          return false;
+        }
+
+        return true;
+      }
+
+      function registrarPrestamo(event) {
+        event.preventDefault();
+
+        if (!validarFormulario()) return;
+
+        // Obtener tipo de préstamo para personalizar el mensaje
+        const tipoPrestamo = document.getElementById("tipoPrestamo").value;
+        const mensajeExito =
+          tipoPrestamo === "recibido"
+            ? "Préstamo recibido registrado exitosamente"
+            : "Préstamo otorgado registrado exitosamente";
+
+        // Verificar si se configuró recordatorio
+        const recordatorio = document.getElementById("recordatorio").checked;
+        if (recordatorio) {
+          const email = document.getElementById("email").value;
+          if (!email) {
+            Popup.mostrar(
+              "warning",
+              "Se activó el recordatorio pero no se proporcionó email. Los recordatorios podrían no llegar."
+            );
+            return;
+          }
+        }
+
+        // Aquí iría la lógica para guardar el préstamo
+        Popup.mostrar("success", mensajeExito);
+        document.getElementById("prestamoForm").reset();
+      }
+
+      function cancelarPrestamo() {
+        Popup.mostrar(
+          "warning",
+          "¿Está seguro de cancelar el registro? Los datos no guardados se perderán"
+        );
+        document.getElementById("prestamoForm").reset();
+      }
+    </script>
+
+    <footer class="bg-gray-200 text-center p-4 mt-8">
+      <p>Sistema de Finanzas Personales - 2024</p>
+    </footer>
   </body>
 </html>

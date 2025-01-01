@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Compra con Tarjeta - Finanzas Personales</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="componentes/popup.js"></script>
   </head>
-  <body class="bg-gray-100">
+  <body class="bg-gray-100" onload="Popup.init()">
     <nav class="bg-blue-600 text-white p-4">
       <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-2xl font-bold">Registro de Compra con Tarjeta</h1>
@@ -17,192 +18,274 @@
     </nav>
 
     <main class="container mx-auto p-4">
-      <form class="bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto">
+      <form id="compraForm" onsubmit="registrarCompra(event)" class="bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto">
         <!-- Tarjeta y Fecha -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
             <label class="block text-gray-700 text-sm font-bold mb-2">
               Tarjeta de Crédito
             </label>
-            <select class="w-full border rounded-md p-2">
-              <option>Visa Oro Bancolombia (...1234)</option>
-              <option>Mastercard Platinum Davivienda (...5678)</option>
+            <select id="tarjeta" class="w-full border rounded-md p-2" required>
+              <option value="">Seleccione una tarjeta</option>
+              <option value="visa">Visa Oro Bancolombia (...1234)</option>
+              <option value="master">Mastercard Platinum Davivienda (...5678)</option>
             </select>
           </div>
           <div>
             <label class="block text-gray-700 text-sm font-bold mb-2">
               Fecha de Compra
             </label>
-            <input type="date" class="w-full border rounded-md p-2" />
+            <input type="date" id="fecha" class="w-full border rounded-md p-2" required />
           </div>
         </div>
+      </div>
+    </div>
 
-        <!-- Establecimiento y Monto -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <label class="block text-gray-700 text-sm font-bold mb-2">
-              Establecimiento
-            </label>
-            <input
-              type="text"
-              class="w-full border rounded-md p-2"
-              placeholder="Nombre del comercio"
-            />
-          </div>
-          <div>
-            <label class="block text-gray-700 text-sm font-bold mb-2">
-              Monto de la Compra
-            </label>
-            <input
-              type="number"
-              class="w-full border rounded-md p-2"
-              placeholder="0.00"
-            />
-          </div>
-        </div>
+    <!-- Establecimiento y Monto -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div>
+        <label class="block text-gray-700 text-sm font-bold mb-2">
+          Establecimiento
+        </label>
+        <input
+          type="text"
+          id="establecimiento"
+          class="w-full border rounded-md p-2"
+          placeholder="Nombre del comercio"
+          required
+        />
+      </div>
+      <div>
+        <label class="block text-gray-700 text-sm font-bold mb-2">
+          Monto de la Compra
+        </label>
+        <input
+          type="number"
+          id="monto"
+          class="w-full border rounded-md p-2"
+          placeholder="0.00"
+          step="0.01"
+          min="0"
+          required
+        />
+      </div>
+    </div>
 
-        <!-- Categorización -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <label class="block text-gray-700 text-sm font-bold mb-2">
-              Categoría
-            </label>
-            <select
-              class="w-full border rounded-md p-2"
-              onchange="actualizarSubcategorias()"
-            >
-              <option>Alimentación</option>
-              <option>Transporte</option>
-              <option>Entretenimiento</option>
-              <option>Hogar</option>
-              <option>Salud</option>
-              <option>Otros</option>
-            </select>
-          </div>
-          <div>
-            <label class="block text-gray-700 text-sm font-bold mb-2">
-              Subcategoría
-            </label>
-            <select class="w-full border rounded-md p-2" id="subcategoria">
-              <option>Seleccione una subcategoría</option>
-            </select>
-          </div>
-        </div>
+    <!-- Categorización -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div>
+        <label class="block text-gray-700 text-sm font-bold mb-2">
+          Categoría
+        </label>
+        <select id="categoria"
+          class="w-full border rounded-md p-2"
+          onchange="actualizarSubcategorias()"
+          required
+        >
+          <option value="">Seleccione una categoría</option>
+          <option value="alimentacion">Alimentación</option>
+          <option value="transporte">Transporte</option>
+          <option value="entretenimiento">Entretenimiento</option>
+          <option value="hogar">Hogar</option>
+          <option value="salud">Salud</option>
+          <option value="otros">Otros</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-gray-700 text-sm font-bold mb-2">
+          Subcategoría
+        </label>
+        <select class="w-full border rounded-md p-2" id="subcategoria" required>
+          <option value="">Seleccione una subcategoría</option>
+        </select>
+      </div>
+    </div>
+    <!-- Cuotas -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <div>
+        <label class="block text-gray-700 text-sm font-bold mb-2">
+          Número de Cuotas
+        </label>
+        <select id="cuotas" class="w-full border rounded-md p-2" required>
+          <option value="">Seleccione número de cuotas</option>
+          <option value="1">1 cuota</option>
+          <option value="2">2 cuotas</option>
+          <option value="3">3 cuotas</option>
+          <option value="6">6 cuotas</option>
+          <option value="12">12 cuotas</option>
+          <option value="24">24 cuotas</option>
+          <option value="36">36 cuotas</option>
+        </select>
+      </div>
+      <div class="flex items-center pt-8">
+        <input type="checkbox" id="sinIntereses" class="mr-2" />
+        <label class="text-gray-700 text-sm">Compra sin intereses</label>
+      </div>
+    </div>
 
-        <!-- Cuotas -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-          <div>
-            <label class="block text-gray-700 text-sm font-bold mb-2">
-              Número de Cuotas
-            </label>
-            <select class="w-full border rounded-md p-2">
-              <option>1 cuota</option>
-              <option>2 cuotas</option>
-              <option>3 cuotas</option>
-              <option>6 cuotas</option>
-              <option>12 cuotas</option>
-              <option>24 cuotas</option>
-              <option>36 cuotas</option>
-            </select>
-          </div>
-          <div class="flex items-center pt-8">
-            <input type="checkbox" class="mr-2" />
-            <label class="text-gray-700 text-sm">Compra sin intereses</label>
-          </div>
-        </div>
-
-        <!-- Información Fiscal -->
-        <div class="bg-blue-50 p-4 rounded-md mb-4">
-          <h3 class="font-bold text-blue-800 mb-2">Información Fiscal</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-gray-700 text-sm font-bold mb-2">
-                Tipo de Documento Soporte
-              </label>
-              <select class="w-full border rounded-md p-2">
-                <option>Documento Informal / Otros / Sin Soporte</option>
-                <option>Factura Electrónica</option>
-                <option>Factura Física</option>
-                <option>Documento Equivalente</option>
-              </select>
-            </div>
-            <div>
-              <label class="block text-gray-700 text-sm font-bold mb-2">
-                Número de Documento (Opcional)
-              </label>
-              <input
-                type="text"
-                class="w-full border rounded-md p-2"
-                placeholder="Número de factura o documento"
-              />
-            </div>
-          </div>
-          <div class="mt-4 space-y-2">
-            <div class="flex items-center">
-              <input type="checkbox" class="mr-2" id="registrableExogena" />
-              <label class="text-sm">Registrable en exógena</label>
-            </div>
-            <div class="flex items-center">
-              <input type="checkbox" class="mr-2" id="gastoDeducible" />
-              <label class="text-sm"
-                >Gasto deducible de mi actividad económica</label
-              >
-            </div>
-          </div>
-        </div>
-
-        <!-- Descripción -->
-        <div class="mb-4">
+    <!-- Información Fiscal -->
+    <div class="bg-blue-50 p-4 rounded-md mb-4">
+      <h3 class="font-bold text-blue-800 mb-2">Información Fiscal</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
           <label class="block text-gray-700 text-sm font-bold mb-2">
-            Descripción
+            Tipo de Documento Soporte
           </label>
-          <textarea
+          <select id="tipoDocumento" class="w-full border rounded-md p-2" required>
+            <option value="">Seleccione tipo de documento</option>
+            <option value="informal">Documento Informal / Otros / Sin Soporte</option>
+            <option value="electronica">Factura Electrónica</option>
+            <option value="fisica">Factura Física</option>
+            <option value="equivalente">Documento Equivalente</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Número de Documento (Opcional)
+          </label>
+          <input
+            type="text"
+            id="numeroDocumento"
             class="w-full border rounded-md p-2"
-            rows="2"
-            placeholder="Detalles de la compra"
-          ></textarea>
+            placeholder="Número de factura o documento"
+          />
         </div>
-
-        <!-- Archivos Adjuntos -->
-        <div class="mb-6">
-          <label class="block text-gray-700 text-sm font-bold mb-2">
-            Soportes Documentales
-          </label>
-          <div class="border-2 border-dashed border-gray-300 rounded-md p-4">
-            <input type="file" multiple class="w-full" />
-            <p class="text-sm text-gray-500 mt-1">
-              Adjunte facturas, voucher y otros soportes relevantes
-            </p>
-          </div>
+      </div>
+      <div class="mt-4 space-y-2">
+        <div class="flex items-center">
+          <input type="checkbox" class="mr-2" id="registrableExogena" />
+          <label class="text-sm">Registrable en exógena</label>
         </div>
-
-        <!-- Botones -->
-        <div class="flex justify-end space-x-4">
-          <button
-            type="button"
-            class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
-          >
-            Cancelar
-          </button>
-          <button
-            type="submit"
-            class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-          >
-            Registrar Compra
-          </button>
+        <div class="flex items-center">
+          <input type="checkbox" class="mr-2" id="gastoDeducible" />
+          <label class="text-sm">Gasto deducible de mi actividad económica</label>
         </div>
-      </form>
-    </main>
+      </div>
+    </div>
+    <!-- Descripción -->
+    <div class="mb-4">
+      <label class="block text-gray-700 text-sm font-bold mb-2">
+        Descripción (Opcional)
+      </label>
+      <textarea
+        id="descripcion"
+        class="w-full border rounded-md p-2"
+        rows="2"
+        placeholder="Detalles de la compra"
+      ></textarea>
+    </div>
 
-    <script>
-      function actualizarSubcategorias() {
-        const subcategoria = document.getElementById("subcategoria");
-        // Aquí se agregaría la lógica para cargar las subcategorías según la categoría seleccionada
-        subcategoria.innerHTML = `
-                <option>Subcategoría 1</option>
-                <option>Subcategoría 2</option>
-                <option>Subcategoría 3</option>
-            `;
+    <!-- Archivos Adjuntos -->
+    <div class="mb-6">
+      <label class="block text-gray-700 text-sm font-bold mb-2">
+        Soportes Documentales
+      </label>
+      <div class="border-2 border-dashed border-gray-300 rounded-md p-4">
+        <input type="file" id="soportes" multiple class="w-full" />
+        <p class="text-sm text-gray-500 mt-1">
+          Adjunte facturas, voucher y otros soportes relevantes
+        </p>
+      </div>
+    </div>
+
+    <!-- Botones -->
+    <div class="flex justify-end space-x-4">
+      <button
+        type="button"
+        onclick="cancelarCompra()"
+        class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+      >
+        Cancelar
+      </button>
+      <button
+        type="submit"
+        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+      >
+        Registrar Compra
+      </button>
+    </div>
+  </form>
+</main>
+
+<script>
+  function actualizarSubcategorias() {
+    const categoria = document.getElementById("categoria").value;
+    const subcategoria = document.getElementById("subcategoria");
+    
+    // Limpiar subcategorías
+    subcategoria.innerHTML = '<option value="">Seleccione una subcategoría</option>';
+    
+    // Aquí se agregaría la lógica para cargar las subcategorías según la categoría
+    if (categoria) {
+      subcategoria.innerHTML += `
+        <option value="sub1">Subcategoría 1</option>
+        <option value="sub2">Subcategoría 2</option>
+        <option value="sub3">Subcategoría 3</option>
+      `;
+      Popup.mostrar('info', 'Subcategorías actualizadas');
+    }
+  }
+
+  function validarFormulario() {
+        // Validar monto
+        const monto = parseFloat(document.getElementById('monto').value);
+        if (isNaN(monto) || monto <= 0) {
+          Popup.mostrar('error', 'El monto debe ser mayor a 0');
+          return false;
+        }
+
+        // Validar tarjeta
+        const tarjeta = document.getElementById('tarjeta').value;
+        if (!tarjeta) {
+          Popup.mostrar('error', 'Debe seleccionar una tarjeta');
+          return false;
+        }
+
+        // Validar establecimiento
+        const establecimiento = document.getElementById('establecimiento').value.trim();
+        if (!establecimiento) {
+          Popup.mostrar('error', 'Debe ingresar el nombre del establecimiento');
+          return false;
+        }
+
+        // Validar categoría y subcategoría
+        const categoria = document.getElementById('categoria').value;
+        const subcategoria = document.getElementById('subcategoria').value;
+        if (!categoria || !subcategoria) {
+          Popup.mostrar('error', 'Debe seleccionar categoría y subcategoría');
+          return false;
+        }
+
+        // Validar número de cuotas
+        const cuotas = document.getElementById('cuotas').value;
+        if (!cuotas) {
+          Popup.mostrar('error', 'Debe seleccionar el número de cuotas');
+          return false;
+        }
+
+        // Validar tipo de documento
+        const tipoDocumento = document.getElementById('tipoDocumento').value;
+        if (!tipoDocumento) {
+          Popup.mostrar('error', 'Debe seleccionar el tipo de documento soporte');
+          return false;
+        }
+
+        return true;
+      }
+
+      function registrarCompra(event) {
+        event.preventDefault();
+        
+        if (!validarFormulario()) return;
+
+        // Aquí iría la lógica para guardar la compra
+        Popup.mostrar('success', 'Compra registrada exitosamente');
+        document.getElementById('compraForm').reset();
+      }
+
+      function cancelarCompra() {
+        Popup.mostrar('warning', '¿Está seguro de cancelar el registro? Los datos no guardados se perderán');
+        document.getElementById('compraForm').reset();
       }
     </script>
 

@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Pago de Préstamo - Finanzas Personales</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="componentes/popup.js"></script>
   </head>
-  <body class="bg-gray-100">
+  <body class="bg-gray-100" onload="Popup.init()">
     <nav class="bg-blue-600 text-white p-4">
       <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-2xl font-bold">Registro de Pago de Préstamo</h1>
@@ -17,16 +18,31 @@
     </nav>
 
     <main class="container mx-auto p-4">
-      <form class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto">
+      <form
+        id="pagoPrestamoForm"
+        onsubmit="registrarPago(event)"
+        class="bg-white p-6 rounded-lg shadow-md max-w-2xl mx-auto"
+      >
         <!-- Selección de Préstamo -->
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2">
             Seleccionar Préstamo
           </label>
-          <select class="w-full border rounded-md p-2">
-            <option>Préstamo Hipotecario Bancolombia</option>
-            <option>Préstamo Personal Davivienda</option>
-            <option>Préstamo a Juan Pérez</option>
+          <select
+            id="prestamo"
+            class="w-full border rounded-md p-2"
+            required
+            onchange="actualizarInfoPrestamo()"
+          >
+            <option value="">Seleccione un préstamo</option>
+            <option value="debo_1">
+              Pagar Préstamo a Davivienda (...1234)
+            </option>
+            <option value="debo_2">
+              Pagar Préstamo a Bancolombia (...5678)
+            </option>
+            <option value="medeben_1">Recibir Préstamo de David Pérez</option>
+            <option value="medeben_2">Recibir Préstamo de Juan González</option>
           </select>
         </div>
 
@@ -37,12 +53,20 @@
           </h3>
           <div class="grid grid-cols-2 gap-4 text-sm">
             <div>
-              <p class="text-gray-600">Saldo pendiente: $15,000,000</p>
-              <p class="text-gray-600">Cuota esperada: $500,000</p>
+              <p class="text-gray-600">
+                Monto total: <span id="montoTotal">$0</span>
+              </p>
+              <p class="text-gray-600">
+                Saldo restante: <span id="saldoRestante">$0</span>
+              </p>
             </div>
             <div>
-              <p class="text-gray-600">Próximo pago: 15/01/2024</p>
-              <p class="text-gray-600">Pagos realizados: 12 de 36</p>
+              <p class="text-gray-600">
+                Cuota esperada: <span id="cuotaEsperada">$0</span>
+              </p>
+              <p class="text-gray-600">
+                Próximo pago: <span id="proximoPago">--/--/----</span>
+              </p>
             </div>
           </div>
         </div>
@@ -53,7 +77,12 @@
             <label class="block text-gray-700 text-sm font-bold mb-2">
               Fecha de Pago
             </label>
-            <input type="date" class="w-full border rounded-md p-2" />
+            <input
+              type="date"
+              id="fechaPago"
+              class="w-full border rounded-md p-2"
+              required
+            />
           </div>
           <div>
             <label class="block text-gray-700 text-sm font-bold mb-2">
@@ -61,8 +90,12 @@
             </label>
             <input
               type="number"
+              id="montoPago"
               class="w-full border rounded-md p-2"
               placeholder="0.00"
+              step="0.01"
+              min="0"
+              required
             />
           </div>
         </div>
@@ -72,10 +105,11 @@
           <label class="block text-gray-700 text-sm font-bold mb-2">
             Cuenta de Origen/Destino
           </label>
-          <select class="w-full border rounded-md p-2">
-            <option>Cuenta Corriente Principal</option>
-            <option>Cuenta de Ahorros</option>
-            <option>Cuenta Nómina</option>
+          <select id="cuenta" class="w-full border rounded-md p-2" required>
+            <option value="">Seleccione una cuenta</option>
+            <option value="corriente">Cuenta Corriente Principal</option>
+            <option value="ahorros">Cuenta de Ahorros</option>
+            <option value="nomina">Cuenta Nómina</option>
           </select>
         </div>
 
@@ -84,46 +118,52 @@
           <label class="block text-gray-700 text-sm font-bold mb-2">
             Tipo de Pago
           </label>
-          <div class="grid grid-cols-3 gap-4">
-            <button
-              type="button"
-              class="p-2 border rounded-md hover:bg-blue-50"
-            >
-              Cuota Regular
-            </button>
-            <button
-              type="button"
-              class="p-2 border rounded-md hover:bg-blue-50"
-            >
-              Abono a Capital
-            </button>
-            <button
-              type="button"
-              class="p-2 border rounded-md hover:bg-blue-50"
-            >
-              Pago Extra
-            </button>
+          <div class="space-y-2">
+            <div class="flex items-center">
+              <input
+                type="radio"
+                name="tipoPago"
+                value="regular"
+                id="pagoRegular"
+                class="mr-2"
+                checked
+              />
+              <label for="pagoRegular" class="text-sm"
+                >Pago Regular (Cuota Normal)</label
+              >
+            </div>
+            <div class="flex items-center">
+              <input
+                type="radio"
+                name="tipoPago"
+                value="extra"
+                id="pagoExtra"
+                class="mr-2"
+              />
+              <label for="pagoExtra" class="text-sm">Abono Extra/Capital</label>
+            </div>
+            <div class="flex items-center">
+              <input
+                type="radio"
+                name="tipoPago"
+                value="total"
+                id="pagoTotal"
+                class="mr-2"
+              />
+              <label for="pagoTotal" class="text-sm"
+                >Pago Total (Cierra el préstamo)</label
+              >
+            </div>
           </div>
-        </div>
-
-        <!-- Saldo después del pago -->
-        <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2">
-            Nuevo Saldo (después del pago)
-          </label>
-          <input
-            type="number"
-            class="w-full border rounded-md p-2"
-            placeholder="0.00"
-          />
         </div>
 
         <!-- Descripción -->
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2">
-            Notas
+            Notas (Opcional)
           </label>
           <textarea
+            id="notas"
             class="w-full border rounded-md p-2"
             rows="2"
             placeholder="Observaciones sobre el pago"
@@ -135,13 +175,18 @@
           <label class="block text-gray-700 text-sm font-bold mb-2">
             Comprobante de Pago
           </label>
-          <input type="file" class="w-full border rounded-md p-2" />
+          <input
+            type="file"
+            id="comprobante"
+            class="w-full border rounded-md p-2"
+          />
         </div>
 
         <!-- Botones -->
         <div class="flex justify-end space-x-4">
           <button
             type="button"
+            onclick="cancelarPago()"
             class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
           >
             Cancelar
@@ -155,5 +200,141 @@
         </div>
       </form>
     </main>
+
+    <script>
+      // Datos simulados de los préstamos
+      const prestamosInfo = {
+        debo_1: {
+          montoTotal: "30,000,000",
+          saldoRestante: "25,000,000",
+          cuotaEsperada: "850,000",
+          proximoPago: "15/01/2024",
+        },
+        debo_2: {
+          montoTotal: "15,000,000",
+          saldoRestante: "12,000,000",
+          cuotaEsperada: "450,000",
+          proximoPago: "20/01/2024",
+        },
+        medeben_1: {
+          montoTotal: "5,000,000",
+          saldoRestante: "3,000,000",
+          cuotaEsperada: "250,000",
+          proximoPago: "10/01/2024",
+        },
+        medeben_2: {
+          montoTotal: "2,000,000",
+          saldoRestante: "1,500,000",
+          cuotaEsperada: "100,000",
+          proximoPago: "05/01/2024",
+        },
+      };
+
+      function actualizarInfoPrestamo() {
+        const prestamoId = document.getElementById("prestamo").value;
+        const info = prestamosInfo[prestamoId] || {
+          montoTotal: "0",
+          saldoRestante: "0",
+          cuotaEsperada: "0",
+          proximoPago: "--/--/----",
+        };
+
+        document.getElementById(
+          "montoTotal"
+        ).textContent = `$${info.montoTotal}`;
+        document.getElementById(
+          "saldoRestante"
+        ).textContent = `$${info.saldoRestante}`;
+        document.getElementById(
+          "cuotaEsperada"
+        ).textContent = `$${info.cuotaEsperada}`;
+        document.getElementById("proximoPago").textContent = info.proximoPago;
+
+        // Sugerir el monto de la cuota en el input
+        document.getElementById("montoPago").value = info.cuotaEsperada.replace(
+          /,/g,
+          ""
+        );
+
+        Popup.mostrar("info", "Información del préstamo actualizada");
+      }
+
+      function validarFormulario() {
+        const prestamoId = document.getElementById("prestamo").value;
+        if (!prestamoId) {
+          Popup.mostrar("error", "Debe seleccionar un préstamo");
+          return false;
+        }
+
+        const monto = parseFloat(document.getElementById("montoPago").value);
+        if (isNaN(monto) || monto <= 0) {
+          Popup.mostrar("error", "El monto debe ser mayor a 0");
+          return false;
+        }
+
+        const saldoRestante = parseFloat(
+          prestamosInfo[prestamoId].saldoRestante.replace(/,/g, "")
+        );
+        const tipoPago = document.querySelector(
+          'input[name="tipoPago"]:checked'
+        ).value;
+
+        // Validar que el pago total sea igual al saldo restante
+        if (tipoPago === "total" && monto !== saldoRestante) {
+          Popup.mostrar(
+            "error",
+            `Para realizar el pago total, debe ingresar el saldo restante exacto: $${prestamosInfo[prestamoId].saldoRestante}`
+          );
+          return false;
+        }
+
+        // Validar que el pago no exceda el saldo restante
+        if (monto > saldoRestante) {
+          Popup.mostrar(
+            "warning",
+            "El monto ingresado es mayor al saldo restante"
+          );
+          return false;
+        }
+
+        return true;
+      }
+
+      function registrarPago(event) {
+        event.preventDefault();
+
+        if (!validarFormulario()) return;
+
+        const tipoPago = document.querySelector(
+          'input[name="tipoPago"]:checked'
+        ).value;
+        let mensaje = "Pago registrado exitosamente";
+
+        if (tipoPago === "total") {
+          mensaje =
+            "Pago total registrado. El préstamo ha sido cerrado exitosamente";
+        } else if (tipoPago === "extra") {
+          mensaje = "Abono extra registrado exitosamente";
+        }
+
+        // Aquí iría la lógica para registrar el pago
+        Popup.mostrar("success", mensaje);
+        document.getElementById("pagoPrestamoForm").reset();
+        actualizarInfoPrestamo();
+      }
+
+      function cancelarPago() {
+        Popup.mostrar(
+          "warning",
+          "¿Está seguro de cancelar el registro? Los datos no guardados se perderán"
+        );
+        document.getElementById("pagoPrestamoForm").reset();
+        actualizarInfoPrestamo();
+      }
+    </script>
+
+    <footer class="bg-gray-200 text-center p-4 mt-8">
+      <p>Sistema de Finanzas Personales - 2024</p>
+    </footer>
   </body>
 </html>
