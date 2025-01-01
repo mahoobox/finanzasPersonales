@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Registro de Transacción - Finanzas Personales</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="componentes/popup.js"></script>
   </head>
-  <body class="bg-gray-100">
+  <body class="bg-gray-100" onload="Popup.init()">
     <nav class="bg-blue-600 text-white p-4">
       <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-2xl font-bold">Nueva Transacción</h1>
@@ -17,7 +18,11 @@
     </nav>
 
     <main class="container mx-auto p-4">
-      <form class="bg-white p-6 rounded-lg shadow-md max-w-4xl mx-auto">
+      <form
+        id="transaccionForm"
+        class="bg-white p-6 rounded-lg shadow-md max-w-4xl mx-auto"
+        onsubmit="guardarTransaccion(event)"
+      >
         <!-- Tipo de Transacción -->
         <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2">
@@ -208,6 +213,7 @@
         <div class="flex justify-end space-x-4">
           <button
             type="button"
+            onclick="cancelarTransaccion()"
             class="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600"
           >
             Cancelar
@@ -223,6 +229,7 @@
     </main>
 
     <script>
+      // Funciones de la aplicación
       function mostrarCampos() {
         const tipoTransaccion =
           document.getElementById("tipoTransaccion").value;
@@ -238,6 +245,14 @@
         checkboxGasto.classList.add("hidden");
 
         // Mostrar campos según el tipo de transacción
+        if (tipoTransaccion === "") {
+          Popup.mostrar(
+            "warning",
+            "Por favor seleccione un tipo de transacción"
+          );
+          return;
+        }
+
         switch (tipoTransaccion) {
           case "ingreso":
             camposIngreso.classList.remove("hidden");
@@ -254,12 +269,46 @@
       function actualizarSubcategorias() {
         const subcategoria = document.getElementById("subcategoria");
         // Aquí se agregaría la lógica para cargar las subcategorías según la categoría seleccionada
-        // Por ahora solo es un ejemplo
         subcategoria.innerHTML = `
-                <option>Subcategoría 1</option>
-                <option>Subcategoría 2</option>
-                <option>Subcategoría 3</option>
-            `;
+    <option>Subcategoría 1</option>
+    <option>Subcategoría 2</option>
+    <option>Subcategoría 3</option>
+  `;
+        Popup.mostrar("info", "Subcategorías actualizadas");
+      }
+
+      function validarFormulario() {
+        const tipoTransaccion =
+          document.getElementById("tipoTransaccion").value;
+        if (!tipoTransaccion) {
+          Popup.mostrar("error", "Debe seleccionar un tipo de transacción");
+          return false;
+        }
+
+        // Aquí puedes agregar más validaciones
+        return true;
+      }
+
+      function guardarTransaccion(event) {
+        event.preventDefault();
+
+        if (!validarFormulario()) {
+          return;
+        }
+
+        // Aquí iría la lógica de guardado
+        Popup.mostrar("success", "Transacción guardada exitosamente");
+
+        // Opcional: limpiar el formulario después de guardar
+        document.getElementById("transaccionForm").reset();
+      }
+
+      function cancelarTransaccion() {
+        Popup.mostrar(
+          "warning",
+          "¿Seguro que desea cancelar la transacción? Los datos no guardados se perderán"
+        );
+        document.getElementById("transaccionForm").reset();
       }
     </script>
 
