@@ -131,7 +131,12 @@
               <span class="text-sm text-gray-500">(5 subcategorías)</span>
             </div>
             <div class="flex space-x-3">
-              <button class="text-blue-600 hover:text-blue-800">Editar</button>
+              <button
+                onclick="editarCategoria(this)"
+                class="text-blue-600 hover:text-blue-800"
+              >
+                Editar
+              </button>
               <button class="text-red-600 hover:text-red-800">Eliminar</button>
             </div>
           </div>
@@ -145,7 +150,10 @@
                 <span>Supermercado</span>
               </div>
               <div class="flex space-x-3">
-                <button class="text-blue-600 hover:text-blue-800">
+                <button
+                  onclick="editarSubcategoria(this)"
+                  class="text-blue-600 hover:text-blue-800"
+                >
                   Editar
                 </button>
                 <button class="text-red-600 hover:text-red-800">
@@ -161,7 +169,10 @@
                 <span>Restaurantes</span>
               </div>
               <div class="flex space-x-3">
-                <button class="text-blue-600 hover:text-blue-800">
+                <button
+                  onclick="editarSubcategoria(this)"
+                  class="text-blue-600 hover:text-blue-800"
+                >
                   Editar
                 </button>
                 <button class="text-red-600 hover:text-red-800">
@@ -181,7 +192,12 @@
               <span class="text-sm text-gray-500">(3 subcategorías)</span>
             </div>
             <div class="flex space-x-3">
-              <button class="text-blue-600 hover:text-blue-800">Editar</button>
+              <button
+                onclick="editarCategoria(this)"
+                class="text-blue-600 hover:text-blue-800"
+              >
+                Editar
+              </button>
               <button class="text-red-600 hover:text-red-800">Eliminar</button>
             </div>
           </div>
@@ -196,7 +212,12 @@
               <span class="text-sm text-gray-500">(4 subcategorías)</span>
             </div>
             <div class="flex space-x-3">
-              <button class="text-blue-600 hover:text-blue-800">Editar</button>
+              <button
+                onclick="editarCategoria(this)"
+                class="text-blue-600 hover:text-blue-800"
+              >
+                Editar
+              </button>
               <button class="text-red-600 hover:text-red-800">Eliminar</button>
             </div>
           </div>
@@ -236,6 +257,170 @@
           "¿Seguro que desea cancelar? Los cambios no guardados se perderán"
         );
         document.getElementById("categoriaForm").reset();
+      }
+
+      // Añade estas funciones al script existente
+
+      function editarCategoria(element) {
+        const categoryRow = element.closest(".flex.justify-between");
+        const nameContainer = categoryRow.querySelector(".font-bold");
+        const originalName = nameContainer.textContent;
+        const colorDiv = categoryRow.querySelector(".rounded-full");
+        const originalColor = getComputedStyle(colorDiv).backgroundColor;
+
+        // Crear elementos de edición
+        const editContainer = document.createElement("div");
+        editContainer.className = "flex items-center space-x-2";
+        editContainer.innerHTML = `
+        <input type="text" value="${originalName}" class="border rounded p-1 text-sm" />
+        <input type="color" value="${rgbToHex(
+          originalColor
+        )}" class="h-8 w-8" />
+        <button onclick="guardarEdicion(this, '${originalName}')" class="text-green-600 hover:text-green-800">✓</button>
+        <button onclick="cancelarEdicion(this, '${originalName}', '${rgbToHex(
+          originalColor
+        )}')" class="text-red-600 hover:text-red-800">×</button>
+    `;
+
+        // Ocultar contenido original y mostrar edición
+        nameContainer.style.display = "none";
+        categoryRow.querySelector(".flex.space-x-3").style.display = "none";
+        categoryRow.insertBefore(
+          editContainer,
+          categoryRow.querySelector(".flex.space-x-3")
+        );
+      }
+
+      function guardarEdicion(element, originalName) {
+        const editContainer = element.closest(".flex.items-center");
+        const categoryRow = editContainer.closest(".flex.justify-between");
+        const nameContainer = categoryRow.querySelector(".font-bold");
+        const colorDiv = categoryRow.querySelector(".rounded-full");
+
+        const newName = editContainer.querySelector('input[type="text"]').value;
+        const newColor = editContainer.querySelector(
+          'input[type="color"]'
+        ).value;
+
+        if (!newName.trim()) {
+          Popup.mostrar("error", "El nombre no puede estar vacío");
+          return;
+        }
+
+        // Actualizar valores
+        nameContainer.textContent = newName;
+        colorDiv.style.backgroundColor = newColor;
+
+        // Restaurar vista normal
+        finalizarEdicion(editContainer, categoryRow);
+        Popup.mostrar("success", "Categoría actualizada exitosamente");
+      }
+
+      function cancelarEdicion(element, originalName, originalColor) {
+        const editContainer = element.closest(".flex.items-center");
+        const categoryRow = editContainer.closest(".flex.justify-between");
+        const nameContainer = categoryRow.querySelector(".font-bold");
+        const colorDiv = categoryRow.querySelector(".rounded-full");
+
+        // Restaurar valores originales
+        nameContainer.textContent = originalName;
+        colorDiv.style.backgroundColor = originalColor;
+
+        // Restaurar vista normal
+        finalizarEdicion(editContainer, categoryRow);
+        Popup.mostrar("info", "Edición cancelada");
+      }
+
+      function finalizarEdicion(editContainer, categoryRow) {
+        categoryRow.querySelector(".font-bold").style.display = "";
+        categoryRow.querySelector(".flex.space-x-3").style.display = "";
+        editContainer.remove();
+      }
+
+      function rgbToHex(rgb) {
+        const values = rgb.match(/\d+/g);
+        if (!values) return "#000000";
+        return (
+          "#" +
+          values.map((x) => parseInt(x).toString(16).padStart(2, "0")).join("")
+        );
+      }
+
+      function editarSubcategoria(element) {
+        const subcategoryRow = element.closest(".flex.justify-between");
+        const nameContainer = subcategoryRow.querySelector("span");
+        const originalName = nameContainer.textContent;
+        const colorDiv = subcategoryRow.querySelector(".rounded-full");
+        const originalColor = getComputedStyle(colorDiv).backgroundColor;
+
+        const editContainer = document.createElement("div");
+        editContainer.className = "flex items-center space-x-2";
+        editContainer.innerHTML = `
+        <input type="text" value="${originalName}" class="border rounded p-1 text-sm w-40" />
+        <input type="color" value="${rgbToHex(
+          originalColor
+        )}" class="h-6 w-6" />
+        <button onclick="guardarEdicionSubcategoria(this, '${originalName}')" class="text-green-600 hover:text-green-800">✓</button>
+        <button onclick="cancelarEdicionSubcategoria(this, '${originalName}', '${rgbToHex(
+          originalColor
+        )}')" class="text-red-600 hover:text-red-800">×</button>
+    `;
+
+        nameContainer.style.display = "none";
+        subcategoryRow.querySelector(".flex.space-x-3").style.display = "none";
+        subcategoryRow.insertBefore(
+          editContainer,
+          subcategoryRow.querySelector(".flex.space-x-3")
+        );
+      }
+
+      function guardarEdicionSubcategoria(element, originalName) {
+        const editContainer = element.closest(".flex.items-center");
+        const subcategoryRow = editContainer.closest(".flex.justify-between");
+        const nameContainer = subcategoryRow.querySelector("span");
+        const colorDiv = subcategoryRow.querySelector(".rounded-full");
+
+        const newName = editContainer.querySelector('input[type="text"]').value;
+        const newColor = editContainer.querySelector(
+          'input[type="color"]'
+        ).value;
+
+        if (!newName.trim()) {
+          Popup.mostrar(
+            "error",
+            "El nombre de la subcategoría no puede estar vacío"
+          );
+          return;
+        }
+
+        nameContainer.textContent = newName;
+        colorDiv.style.backgroundColor = newColor;
+
+        finalizarEdicionSubcategoria(editContainer, subcategoryRow);
+        Popup.mostrar("success", "Subcategoría actualizada exitosamente");
+      }
+
+      function cancelarEdicionSubcategoria(
+        element,
+        originalName,
+        originalColor
+      ) {
+        const editContainer = element.closest(".flex.items-center");
+        const subcategoryRow = editContainer.closest(".flex.justify-between");
+        const nameContainer = subcategoryRow.querySelector("span");
+        const colorDiv = subcategoryRow.querySelector(".rounded-full");
+
+        nameContainer.textContent = originalName;
+        colorDiv.style.backgroundColor = originalColor;
+
+        finalizarEdicionSubcategoria(editContainer, subcategoryRow);
+        Popup.mostrar("info", "Edición de subcategoría cancelada");
+      }
+
+      function finalizarEdicionSubcategoria(editContainer, subcategoryRow) {
+        subcategoryRow.querySelector("span").style.display = "";
+        subcategoryRow.querySelector(".flex.space-x-3").style.display = "";
+        editContainer.remove();
       }
     </script>
   </body>
