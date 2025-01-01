@@ -5,89 +5,102 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Gestión de Cuentas - Finanzas Personales</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Agregamos el script para popups, con la nueva función confirmar -->
+    <script src="componentes/popup.js"></script>
   </head>
-  <body class="bg-gray-100">
+  <body class="bg-gray-100" onload="Popup.init()">
     <nav class="bg-blue-600 text-white p-4">
       <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-2xl font-bold">Gestión de Cuentas</h1>
-        <a href="index.html" class="text-white hover:text-gray-200"
-          >Volver al Inicio</a
-        >
+        <a href="index.html" class="text-white hover:text-gray-200">
+          Volver al Inicio
+        </a>
       </div>
     </nav>
 
     <main class="container mx-auto p-4">
-      <!-- Formulario Nueva Cuenta (inicialmente oculto) -->
+      <!-- Formulario Nueva Cuenta -->
       <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-        <h2 class="text-xl font-bold mb-4">Nueva Cuenta</h2>
-        <form>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- Banco -->
-            <div>
-              <label class="block text-gray-700 text-sm font-bold mb-2">
-                Banco
-              </label>
-              <input
-                type="text"
-                class="w-full border rounded-md p-2"
-                placeholder="Nombre del banco"
-              />
-            </div>
+        <div class="flex justify-between items-center mb-4">
+          <h2 class="text-xl font-bold">Nueva Cuenta</h2>
+        </div>
+        <form
+          id="cuentaForm"
+          onsubmit="guardarCuenta(event)"
+          class="grid grid-cols-1 md:grid-cols-2 gap-4"
+        >
+          <!-- Banco -->
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Banco
+            </label>
+            <input
+              type="text"
+              id="bancoInput"
+              class="w-full border rounded-md p-2"
+              placeholder="Nombre del banco"
+            />
+          </div>
 
-            <!-- Tipo de Cuenta -->
-            <div>
-              <label class="block text-gray-700 text-sm font-bold mb-2">
-                Tipo de Cuenta
-              </label>
-              <select class="w-full border rounded-md p-2">
-                <option>Cuenta de Ahorros</option>
-                <option>Cuenta Corriente</option>
-                <option>Cuenta Nómina</option>
-                <option>Cuenta de Inversión</option>
-              </select>
-            </div>
+          <!-- Tipo de Cuenta (Select) -->
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Tipo de Cuenta
+            </label>
+            <select id="tipoInput" class="w-full border rounded-md p-2">
+              <option value="">Seleccione un tipo...</option>
+              <option>Cuenta de Ahorros</option>
+              <option>Cuenta Corriente</option>
+              <option>Cuenta Nómina</option>
+              <option>Cuenta de Inversión</option>
+            </select>
+          </div>
 
-            <!-- Número de Cuenta -->
-            <div>
-              <label class="block text-gray-700 text-sm font-bold mb-2">
-                Número de Cuenta
-              </label>
-              <input
-                type="text"
-                class="w-full border rounded-md p-2"
-                placeholder="Últimos 4 dígitos"
-              />
-            </div>
+          <!-- Número de Cuenta (numérico con separación 4 dígitos) -->
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Número de Cuenta
+            </label>
+            <input
+              type="text"
+              id="numeroInput"
+              class="w-full border rounded-md p-2"
+              placeholder="Ej: 1234 5678 9012..."
+              oninput="formatearNumeroCuenta(event)"
+            />
+          </div>
 
-            <!-- Saldo Inicial -->
-            <div>
-              <label class="block text-gray-700 text-sm font-bold mb-2">
-                Saldo Inicial
-              </label>
-              <input
-                type="number"
-                class="w-full border rounded-md p-2"
-                placeholder="0.00"
-              />
-            </div>
+          <!-- Saldo Inicial (solo al crear) -->
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Saldo Inicial
+            </label>
+            <input
+              type="number"
+              id="saldoInput"
+              class="w-full border rounded-md p-2"
+              placeholder="0.00"
+            />
+          </div>
 
-            <!-- Notas -->
-            <div class="md:col-span-2">
-              <label class="block text-gray-700 text-sm font-bold mb-2">
-                Notas
-              </label>
-              <textarea
-                class="w-full border rounded-md p-2"
-                rows="2"
-                placeholder="Información adicional sobre la cuenta"
-              ></textarea>
-            </div>
+          <!-- Notas (opcional) -->
+          <div class="md:col-span-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Notas (opcional)
+            </label>
+            <textarea
+              id="notasInput"
+              class="w-full border rounded-md p-2"
+              rows="2"
+              placeholder="Información adicional sobre la cuenta"
+            ></textarea>
           </div>
 
           <!-- Botones -->
-          <div class="flex justify-end space-x-4 mt-6">
+          <div class="md:col-span-2 flex justify-end space-x-4">
             <button
               type="button"
+              onclick="cancelarCuenta()"
               class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
             >
               Cancelar
@@ -104,16 +117,17 @@
 
       <!-- Lista de Cuentas -->
       <div class="bg-white rounded-lg shadow-md">
-        <div class="p-4 border-b">
+        <div class="p-4 border-b flex justify-between items-center">
           <h2 class="text-xl font-bold">Cuentas Registradas</h2>
         </div>
 
-        <!-- Cuenta 1 -->
+        <!-- Cuenta 1 (ejemplo) -->
         <div class="p-4 border-b hover:bg-gray-50">
           <div class="flex justify-between items-start">
             <div>
               <h3 class="font-bold text-lg">Cuenta Corriente</h3>
-              <p class="text-sm text-gray-500">Bancolombia **** 1234</p>
+              <!-- Mostramos el número completo, sin limitar a 4 dígitos -->
+              <p class="text-sm text-gray-500">Bancolombia 1234 5678 9000</p>
             </div>
             <div class="text-right">
               <p class="font-bold text-lg">$3,500,000</p>
@@ -132,20 +146,28 @@
               </span>
             </div>
             <div class="space-x-2">
-              <button class="text-blue-600 hover:text-blue-800">Editar</button>
-              <button class="text-gray-600 hover:text-gray-800">
+              <button
+                onclick="editarCuenta(this)"
+                class="text-blue-600 hover:text-blue-800"
+              >
+                Editar
+              </button>
+              <button
+                onclick="eliminarCuenta(this)"
+                class="text-gray-600 hover:text-gray-800"
+              >
                 Eliminar
               </button>
             </div>
           </div>
         </div>
 
-        <!-- Cuenta 2 -->
+        <!-- Cuenta 2 (ejemplo) -->
         <div class="p-4 border-b hover:bg-gray-50">
           <div class="flex justify-between items-start">
             <div>
               <h3 class="font-bold text-lg">Cuenta de Ahorros</h3>
-              <p class="text-sm text-gray-500">Davivienda **** 5678</p>
+              <p class="text-sm text-gray-500">Davivienda 1111 2222 3333</p>
             </div>
             <div class="text-right">
               <p class="font-bold text-lg">$8,500,000</p>
@@ -164,20 +186,28 @@
               </span>
             </div>
             <div class="space-x-2">
-              <button class="text-blue-600 hover:text-blue-800">Editar</button>
-              <button class="text-gray-600 hover:text-gray-800">
+              <button
+                onclick="editarCuenta(this)"
+                class="text-blue-600 hover:text-blue-800"
+              >
+                Editar
+              </button>
+              <button
+                onclick="eliminarCuenta(this)"
+                class="text-gray-600 hover:text-gray-800"
+              >
                 Eliminar
               </button>
             </div>
           </div>
         </div>
 
-        <!-- Cuenta 3 -->
-        <div class="p-4 border-b hover:bg-gray-50">
+        <!-- Cuenta 3 (ejemplo) -->
+        <div class="p-4 hover:bg-gray-50">
           <div class="flex justify-between items-start">
             <div>
               <h3 class="font-bold text-lg">Cuenta Nómina</h3>
-              <p class="text-sm text-gray-500">BVVA **** 1454</p>
+              <p class="text-sm text-gray-500">BVVA 9876 5432 1000</p>
             </div>
             <div class="text-right">
               <p class="font-bold text-lg">$7,500,000</p>
@@ -196,8 +226,16 @@
               </span>
             </div>
             <div class="space-x-2">
-              <button class="text-blue-600 hover:text-blue-800">Editar</button>
-              <button class="text-gray-600 hover:text-gray-800">
+              <button
+                onclick="editarCuenta(this)"
+                class="text-blue-600 hover:text-blue-800"
+              >
+                Editar
+              </button>
+              <button
+                onclick="eliminarCuenta(this)"
+                class="text-gray-600 hover:text-gray-800"
+              >
                 Eliminar
               </button>
             </div>
@@ -209,5 +247,267 @@
     <footer class="bg-gray-200 text-center p-4 mt-8">
       <p>Sistema de Finanzas Personales - 2024</p>
     </footer>
+
+    <script>
+      // =======================
+      // 1. Formateo del número
+      // =======================
+      // Cada vez que el usuario escribe, separemos en grupos de 4 dígitos
+      function formatearNumeroCuenta(event) {
+        const input = event.target;
+        // Remover cualquier carácter no numérico
+        let value = input.value.replace(/\D/g, "");
+
+        // Separar en grupos de 4
+        const grupos = value.match(/.{1,4}/g) || [];
+        input.value = grupos.join(" ");
+      }
+
+      // ======================================
+      // 2. Validación y guardado de la cuenta
+      // ======================================
+      function validarFormularioCuenta() {
+        const banco = document.getElementById("bancoInput").value.trim();
+        const tipo = document.getElementById("tipoInput").value.trim();
+        const numero = document.getElementById("numeroInput").value.trim();
+        const saldo = document.getElementById("saldoInput").value.trim();
+
+        if (!banco) {
+          Popup.mostrar("error", "El nombre del banco es obligatorio");
+          return false;
+        }
+
+        if (!tipo) {
+          Popup.mostrar("error", "Debe seleccionar un tipo de cuenta");
+          return false;
+        }
+
+        if (!numero) {
+          Popup.mostrar("error", "El número de cuenta es obligatorio");
+          return false;
+        }
+
+        if (saldo === "") {
+          Popup.mostrar("error", "El saldo inicial es obligatorio");
+          return false;
+        }
+
+        return true;
+      }
+
+      function guardarCuenta(event) {
+        event.preventDefault();
+        if (!validarFormularioCuenta()) return;
+
+        Popup.mostrar("success", "Cuenta guardada exitosamente");
+        document.getElementById("cuentaForm").reset();
+      }
+
+      function cancelarCuenta() {
+        Popup.mostrar(
+          "warning",
+          "¿Seguro que desea cancelar? Los cambios no guardados se perderán"
+        );
+        document.getElementById("cuentaForm").reset();
+      }
+
+      // ===========================================================
+      // 3. Edición de cuenta (solo Banco, Tipo (select), Número, Notas)
+      // ===========================================================
+      function editarCuenta(element) {
+        const cuentaRow =
+          element.closest(".p-4.border-b") || element.closest(".p-4");
+        const titleContainer = cuentaRow.querySelector(".font-bold.text-lg");
+        const bancoLinea = cuentaRow.querySelector(".text-sm.text-gray-500");
+        const infoAdicional = cuentaRow.querySelector(
+          ".mt-4 .text-sm.text-gray-500"
+        );
+
+        // El saldo no será editable, solo se visualiza
+        const originalTitulo = titleContainer
+          ? titleContainer.textContent.trim()
+          : "";
+        // Ej: "Cuenta Corriente", "Cuenta de Ahorros", etc.
+        const originalBancoCompleto = bancoLinea
+          ? bancoLinea.textContent.trim()
+          : "";
+        // Ej: "Bancolombia 1234 5678 9000" -> separar nombre y número
+        let originalBanco = "";
+        let originalNumero = "";
+
+        // Suponemos que la primera "palabra" es el banco, el resto el número
+        // (También se podría buscar la primera coincidencia de dígitos, etc.)
+        // Aquí, para simplificar, dividimos en 2 partes: [0]=Banco, [1..N]=número
+        const partes = originalBancoCompleto.split(/\s+/);
+        if (partes.length > 1) {
+          originalBanco = partes[0];
+          originalNumero = partes.slice(1).join(" ");
+        } else {
+          originalBanco = originalBancoCompleto;
+          originalNumero = "";
+        }
+        const originalNotas = infoAdicional
+          ? infoAdicional.textContent.trim()
+          : "";
+
+        // Contenedor de edición
+        const editContainer = document.createElement("div");
+        editContainer.className = "grid grid-cols-1 md:grid-cols-2 gap-4 mt-4";
+        editContainer.innerHTML = `
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Tipo de Cuenta
+            </label>
+            <select class="w-full border rounded-md p-2">
+              <option ${
+                originalTitulo === "Cuenta de Ahorros" ? "selected" : ""
+              }>Cuenta de Ahorros</option>
+              <option ${
+                originalTitulo === "Cuenta Corriente" ? "selected" : ""
+              }>Cuenta Corriente</option>
+              <option ${
+                originalTitulo === "Cuenta Nómina" ? "selected" : ""
+              }>Cuenta Nómina</option>
+              <option ${
+                originalTitulo === "Cuenta de Inversión" ? "selected" : ""
+              }>Cuenta de Inversión</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Banco
+            </label>
+            <input type="text" value="${originalBanco}" class="w-full border rounded-md p-2" />
+          </div>
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Número de Cuenta
+            </label>
+            <input
+              type="text"
+              value="${originalNumero}"
+              class="w-full border rounded-md p-2"
+              oninput="formatearNumeroCuenta(event)"
+            />
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Notas
+            </label>
+            <textarea
+              class="w-full border rounded-md p-2"
+              rows="2"
+            >${originalNotas}</textarea>
+          </div>
+          <div class="md:col-span-2 flex justify-end space-x-4">
+            <button
+              type="button"
+              onclick="guardarEdicionCuenta(this)"
+              class="text-green-600 hover:text-green-800"
+            >
+              ✓
+            </button>
+            <button
+              type="button"
+              onclick="cancelarEdicionCuenta(this)"
+              class="text-red-600 hover:text-red-800"
+            >
+              ×
+            </button>
+          </div>
+        `;
+
+        // Ocultar info original
+        cuentaRow.querySelector(
+          ".flex.justify-between.items-start"
+        ).style.display = "none";
+        cuentaRow.querySelector(
+          ".mt-4.flex.justify-between.items-center"
+        ).style.display = "none";
+        // Insertar el form de edición
+        cuentaRow.appendChild(editContainer);
+      }
+
+      // Guardar edición
+      function guardarEdicionCuenta(element) {
+        const editContainer = element.closest(".grid");
+        const cuentaRow = editContainer.closest(".p-4");
+
+        // Inputs
+        const [selectTipo, inputBanco, inputNumero, textareaNotas] =
+          editContainer.querySelectorAll("select, input, textarea");
+
+        const newTitulo = selectTipo.value.trim();
+        const newBanco = inputBanco.value.trim();
+        const newNumero = inputNumero.value.trim();
+        const newNotas = textareaNotas.value.trim();
+
+        if (!newTitulo) {
+          Popup.mostrar("error", "El tipo de cuenta no puede estar vacío");
+          return;
+        }
+        if (!newBanco) {
+          Popup.mostrar("error", "El banco no puede estar vacío");
+          return;
+        }
+        if (!newNumero) {
+          Popup.mostrar("error", "El número de cuenta no puede estar vacío");
+          return;
+        }
+
+        // Actualizar vista
+        const titleContainer = cuentaRow.querySelector(".font-bold.text-lg");
+        const bancoLinea = cuentaRow.querySelector(".text-sm.text-gray-500");
+        const infoAdicional = cuentaRow.querySelector(
+          ".mt-4 .text-sm.text-gray-500"
+        );
+
+        titleContainer.textContent = newTitulo;
+        bancoLinea.textContent = `${newBanco} ${newNumero}`;
+        infoAdicional.textContent = newNotas || "Sin información adicional";
+
+        Popup.mostrar("success", "Cuenta actualizada exitosamente");
+        finalizarEdicionCuenta(editContainer, cuentaRow);
+      }
+
+      function cancelarEdicionCuenta(element) {
+        const editContainer = element.closest(".grid");
+        const cuentaRow = editContainer.closest(".p-4");
+        Popup.mostrar("info", "Edición cancelada");
+        finalizarEdicionCuenta(editContainer, cuentaRow);
+      }
+
+      function finalizarEdicionCuenta(editContainer, cuentaRow) {
+        editContainer.remove();
+        cuentaRow.querySelector(
+          ".flex.justify-between.items-start"
+        ).style.display = "";
+        cuentaRow.querySelector(
+          ".mt-4.flex.justify-between.items-center"
+        ).style.display = "";
+      }
+
+      // =======================================
+      // 4. Eliminar cuenta con confirmación Sí/Cancelar
+      // =======================================
+      function eliminarCuenta(element) {
+        const cuentaRow =
+          element.closest(".p-4.border-b") || element.closest(".p-4");
+        Popup.confirmar("¿Está seguro que desea eliminar esta cuenta?", {
+          tipo: "warning",
+          okText: "Sí",
+          cancelText: "Cancelar",
+          onOk: () => {
+            // Remover del DOM
+            cuentaRow.remove();
+            Popup.mostrar("info", "Cuenta eliminada");
+          },
+          onCancel: () => {
+            // Acción opcional al cancelar
+            Popup.mostrar("info", "Operación cancelada");
+          },
+        });
+      }
+    </script>
   </body>
 </html>
