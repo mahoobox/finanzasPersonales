@@ -5,14 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Informe de Tarjetas - Finanzas Personales</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Librería Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
-  <body class="bg-gray-100">
+  <body class="bg-gray-100" onload="iniciarInformeTarjetas()">
     <nav class="bg-blue-600 text-white p-4">
       <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-2xl font-bold">Informe de Tarjetas de Crédito</h1>
-        <a href="index.html" class="text-white hover:text-gray-200"
-          >Volver al Inicio</a
-        >
+        <a href="index.html" class="text-white hover:text-gray-200">
+          Volver al Inicio
+        </a>
       </div>
     </nav>
 
@@ -20,257 +22,548 @@
       <!-- Filtros -->
       <div class="bg-white p-4 rounded-lg shadow-md mb-4">
         <div class="grid grid-cols-4 gap-4">
-          <select class="border rounded-md p-2">
-            <option>Todas las Tarjetas</option>
-            <option>Visa Oro</option>
-            <option>Mastercard Platinum</option>
+          <!-- Selección de Período (como en el dashboard) -->
+          <select
+            id="selectPeriodo"
+            class="border rounded-md p-2"
+            onchange="cambiarRangoFechas()"
+          >
+            <option value="mesActual" selected>Mes Actual</option>
+            <option value="mesAnterior">Mes Anterior</option>
+            <option value="ultimos3">Últimos 3 Meses</option>
+            <option value="anioActual">Año Actual</option>
+            <option value="anioAnterior">Año Anterior</option>
+            <option value="personalizado">Personalizado</option>
           </select>
-          <select class="border rounded-md p-2">
-            <option>Último Mes</option>
-            <option>Últimos 3 Meses</option>
-            <option>Último Año</option>
-          </select>
-          <div class="col-span-2">
-            <button
-              class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-            >
-              Generar Informe
-            </button>
-          </div>
+          <!-- Fecha Inicio -->
+          <input
+            type="date"
+            id="fechaInicio"
+            class="border rounded-md p-2"
+            onchange="verificarPersonalizado()"
+          />
+          <!-- Fecha Fin -->
+          <input
+            type="date"
+            id="fechaFin"
+            class="border rounded-md p-2"
+            onchange="verificarPersonalizado()"
+          />
+          <!-- Botón Actualizar -->
+          <button
+            class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            onclick="actualizarInformeTarjetas()"
+          >
+            Actualizar
+          </button>
         </div>
       </div>
 
-      <!-- Resumen de Tarjetas -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-        <!-- Tarjeta 1 -->
-        <div class="bg-white p-4 rounded-lg shadow-md">
-          <div class="flex justify-between items-start mb-4">
-            <div>
-              <h2 class="text-lg font-bold">Visa Oro Bancolombia</h2>
-              <p class="text-sm text-gray-500">**** 1234</p>
-            </div>
-            <span
-              class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm"
-            >
-              Al día
-            </span>
-          </div>
-
-          <div class="space-y-2 mb-4">
-            <div class="flex justify-between">
-              <span>Límite de Crédito:</span>
-              <span>$5,000,000</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Saldo Actual:</span>
-              <span class="text-red-600">$1,500,000</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Disponible:</span>
-              <span class="text-green-600">$3,500,000</span>
-            </div>
-          </div>
-
-          <div class="border-t pt-2">
-            <div class="grid grid-cols-2 gap-2 text-sm">
-              <div>
-                <p>Fecha de Corte: 15/01/2024</p>
-              </div>
-              <div>
-                <p>Fecha de Pago: 22/01/2024</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tarjeta 2 -->
-        <div class="bg-white p-4 rounded-lg shadow-md">
-          <div class="flex justify-between items-start mb-4">
-            <div>
-              <h2 class="text-lg font-bold">Mastercard Platinum</h2>
-              <p class="text-sm text-gray-500">**** 5678</p>
-            </div>
-            <span
-              class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm"
-            >
-              Pago pendiente
-            </span>
-          </div>
-
-          <div class="space-y-2 mb-4">
-            <div class="flex justify-between">
-              <span>Límite de Crédito:</span>
-              <span>$8,000,000</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Saldo Actual:</span>
-              <span class="text-red-600">$2,800,000</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Disponible:</span>
-              <span class="text-green-600">$5,200,000</span>
-            </div>
-          </div>
-
-          <div class="border-t pt-2">
-            <div class="grid grid-cols-2 gap-2 text-sm">
-              <div>
-                <p>Fecha de Corte: 20/01/2024</p>
-              </div>
-              <div>
-                <p>Fecha de Pago: 27/01/2024</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tarjeta 2 -->
-        <div class="bg-white p-4 rounded-lg shadow-md">
-          <div class="flex justify-between items-start mb-4">
-            <div>
-              <h2 class="text-lg font-bold">Mastercard Platinum</h2>
-              <p class="text-sm text-gray-500">**** 5678</p>
-            </div>
-            <span
-              class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm"
-            >
-              Pago pendiente
-            </span>
-          </div>
-
-          <div class="space-y-2 mb-4">
-            <div class="flex justify-between">
-              <span>Límite de Crédito:</span>
-              <span>$8,000,000</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Saldo Actual:</span>
-              <span class="text-red-600">$2,800,000</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Disponible:</span>
-              <span class="text-green-600">$5,200,000</span>
-            </div>
-          </div>
-
-          <div class="border-t pt-2">
-            <div class="grid grid-cols-2 gap-2 text-sm">
-              <div>
-                <p>Fecha de Corte: 20/01/2024</p>
-              </div>
-              <div>
-                <p>Fecha de Pago: 27/01/2024</p>
-              </div>
-            </div>
-          </div>
-        </div>
+      <!-- Fichas de Tarjetas -->
+      <div
+        id="tarjetasContainer"
+        class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4"
+      >
+        <!-- Se llena dinámicamente con JS -->
       </div>
 
-      <!-- Detalle de Movimientos -->
+      <!-- Tabla de Movimientos -->
       <div class="bg-white p-4 rounded-lg shadow-md mb-4">
-        <h2 class="text-lg font-bold mb-4">Últimos Movimientos</h2>
+        <h2 class="text-lg font-bold mb-4">Movimientos</h2>
         <div class="overflow-x-auto">
           <table class="w-full">
             <thead class="bg-gray-50">
               <tr>
                 <th class="px-4 py-2 text-left">Fecha</th>
                 <th class="px-4 py-2 text-left">Tarjeta</th>
+                <th class="px-4 py-2 text-left">Establecimiento</th>
                 <th class="px-4 py-2 text-left">Descripción</th>
                 <th class="px-4 py-2 text-right">Monto</th>
                 <th class="px-4 py-2 text-center">Cuotas</th>
-                <th class="px-4 py-2 text-center">Estado</th>
                 <th class="px-4 py-2 text-center">Soporte</th>
+                <th class="px-4 py-2 text-center">Detalle</th>
               </tr>
             </thead>
-            <tbody class="divide-y">
-              <tr>
-                <td class="px-4 py-2">20/12/2024</td>
-                <td class="px-4 py-2">Visa Oro</td>
-                <td class="px-4 py-2">Supermercado Éxito</td>
-                <td class="px-4 py-2 text-right">$250,000</td>
-                <td class="px-4 py-2 text-center">1</td>
-                <td class="px-4 py-2 text-center">
-                  <span
-                    class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm"
-                  >
-                    Pendiente
-                  </span>
-                </td>
-                <td class="px-4 py-2 text-center">
-                  <a href="#" class="text-blue-600 hover:underline">Ver</a>
-                </td>
-              </tr>
-              <tr>
-                <td class="px-4 py-2">18/12/2024</td>
-                <td class="px-4 py-2">Mastercard Platinum</td>
-                <td class="px-4 py-2">Falabella</td>
-                <td class="px-4 py-2 text-right">$500,000</td>
-                <td class="px-4 py-2 text-center">6</td>
-                <td class="px-4 py-2 text-center">
-                  <span
-                    class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm"
-                  >
-                    Próximo pago
-                  </span>
-                </td>
-                <td class="px-4 py-2 text-center">
-                  <a href="#" class="text-blue-600 hover:underline">Ver</a>
-                </td>
-              </tr>
+            <tbody id="movimientosTableBody" class="divide-y">
+              <!-- Contenido dinámico con JS -->
             </tbody>
           </table>
         </div>
       </div>
 
-      <!-- Análisis de Gastos -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Gráfico de Gastos por Categoría -->
-        <div class="bg-white p-4 rounded-lg shadow-md">
+      <!-- Gráficos y Próximos Pagos -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Gráfico de Gastos por Categoría (más ancho) -->
+        <div class="bg-white p-4 rounded-lg shadow-md md:col-span-2">
           <h2 class="text-lg font-bold mb-4">Gastos por Categoría</h2>
-          <div
-            class="h-64 bg-gray-100 rounded flex items-center justify-center"
-          >
-            [Gráfico de Distribución]
+          <div style="height: 300px">
+            <canvas id="chartGastosCategoria"></canvas>
           </div>
         </div>
 
-        <!-- Análisis de Cuotas -->
+        <!-- Próximos Pagos Estimados (más angosto) -->
         <div class="bg-white p-4 rounded-lg shadow-md">
-          <h2 class="text-lg font-bold mb-4">Análisis de Cuotas</h2>
-          <div class="space-y-4">
-            <div>
-              <h3 class="font-semibold mb-2">Cuotas Pendientes Totales</h3>
-              <div class="bg-gray-100 p-3 rounded">
-                <div class="flex justify-between mb-2">
-                  <span>Visa Oro</span>
-                  <span>$800,000 (4 compras)</span>
-                </div>
-                <div class="flex justify-between">
-                  <span>Mastercard Platinum</span>
-                  <span>$1,200,000 (3 compras)</span>
-                </div>
-              </div>
-            </div>
-            <div>
-              <h3 class="font-semibold mb-2">Próximas Cuotas (30 días)</h3>
-              <div class="bg-gray-100 p-3 rounded">
-                <div class="flex justify-between mb-2">
-                  <span>Enero 2025</span>
-                  <span>$350,000</span>
-                </div>
-                <div class="flex justify-between">
-                  <span>Febrero 2025</span>
-                  <span>$350,000</span>
-                </div>
-              </div>
-            </div>
+          <h2 class="text-lg font-bold mb-4">Próximos Pagos Estimados</h2>
+          <div id="proximosPagosContainer" class="space-y-2">
+            <!-- Contenido dinámico con JS -->
           </div>
         </div>
       </div>
     </main>
 
     <footer class="bg-gray-200 text-center p-4 mt-8">
-      <p>Última actualización: 25/12/2024 10:30 AM</p>
+      <p id="ultimaActualizacion">Última actualización: --/--/---- --:--</p>
     </footer>
+
+    <script>
+      // ---------------------------------------------------------------------------
+      // 1. DATOS DE EJEMPLO (LUEGO SE REEMPLAZAN POR CONSULTAS AL BACKEND)
+      // ---------------------------------------------------------------------------
+      // Tarjetas
+      const tarjetasData = [
+        {
+          nombre: "Visa Oro",
+          banco: "Bancolombia",
+          numero: "4444333322221111",
+          estado: "Al día",
+          limite: 5000000,
+          saldo: 1500000,
+          disponible: 3500000,
+          fechaCorte: "2024-01-15",
+          fechaPago: "2024-01-22",
+        },
+        {
+          nombre: "Mastercard Platinum",
+          banco: "Davivienda",
+          numero: "5555444433332222",
+          estado: "Pago pendiente",
+          limite: 8000000,
+          saldo: 2800000,
+          disponible: 5200000,
+          fechaCorte: "2024-01-20",
+          fechaPago: "2024-01-27",
+        },
+        {
+          nombre: "Mastercard Black",
+          banco: "BBVA",
+          numero: "6666555544443333",
+          estado: "Al día",
+          limite: 10000000,
+          saldo: 2500000,
+          disponible: 7500000,
+          fechaCorte: "2024-12-10",
+          fechaPago: "2024-12-17",
+        },
+        {
+          nombre: "Visa Clásica",
+          banco: "Scotiabank",
+          numero: "1111222233334444",
+          estado: "Pago pendiente",
+          limite: 3000000,
+          saldo: 800000,
+          disponible: 2200000,
+          fechaCorte: "2025-01-05",
+          fechaPago: "2025-01-12",
+        },
+      ];
+
+      // Movimientos (se ordenarán desde más reciente a más antiguo)
+      // Incluimos datos para 2024 y enero 2025
+      const movimientosData = [
+        {
+          fecha: "2025-01-10",
+          tarjeta: "Visa Clásica",
+          establecimiento: "Amazon",
+          descripcion: "Accesorios de Oficina",
+          monto: 200000,
+          cuotas: 2,
+          soporteLink: "https://drive.google.com/file/d/xxxx1/view?usp=sharing",
+        },
+        {
+          fecha: "2025-01-05",
+          tarjeta: "Mastercard Black",
+          establecimiento: "El Corral",
+          descripcion: "Cena Familiar",
+          monto: 150000,
+          cuotas: 1,
+          soporteLink: "https://drive.google.com/file/d/xxxx2/view?usp=sharing",
+        },
+        {
+          fecha: "2024-12-25",
+          tarjeta: "Visa Oro",
+          establecimiento: "Exito",
+          descripcion: "Compra de Navidad",
+          monto: 600000,
+          cuotas: 1,
+          soporteLink: "https://drive.google.com/file/d/xxxx3/view?usp=sharing",
+        },
+        {
+          fecha: "2024-12-22",
+          tarjeta: "Mastercard Platinum",
+          establecimiento: "Falabella",
+          descripcion: "Regalos",
+          monto: 500000,
+          cuotas: 3,
+          soporteLink: "https://drive.google.com/file/d/xxxx4/view?usp=sharing",
+        },
+        {
+          fecha: "2024-12-20",
+          tarjeta: "Mastercard Black",
+          establecimiento: "Rappi",
+          descripcion: "Compra de víveres",
+          monto: 300000,
+          cuotas: 2,
+          soporteLink: "https://drive.google.com/file/d/xxxx5/view?usp=sharing",
+        },
+        {
+          fecha: "2024-11-18",
+          tarjeta: "Visa Oro",
+          establecimiento: "Steam",
+          descripcion: "Videojuego",
+          monto: 120000,
+          cuotas: 1,
+          soporteLink: "https://drive.google.com/file/d/xxxx6/view?usp=sharing",
+        },
+      ];
+
+      // Gastos por categoría (ejemplo) -> Se ordenará de mayor a menor en el gráfico
+      const gastosPorCategoriaData = [
+        { categoria: "Compras en Línea", valor: 1200000 },
+        { categoria: "Supermercado", valor: 700000 },
+        { categoria: "Restaurantes", valor: 400000 },
+        { categoria: "Entretenimiento", valor: 300000 },
+        { categoria: "Otros", valor: 150000 },
+      ];
+
+      // Próximos Pagos Estimados
+      const proximosPagosEstimados = [
+        { fecha: "2025-01-15", monto: 350000, tarjeta: "Visa Clásica" },
+        { fecha: "2024-12-28", monto: 500000, tarjeta: "Mastercard Platinum" },
+        { fecha: "2025-01-07", monto: 400000, tarjeta: "Mastercard Black" },
+      ];
+
+      // ---------------------------------------------------------------------------
+      // 2. INICIO
+      // ---------------------------------------------------------------------------
+      let chartGastosCategoria = null;
+
+      function iniciarInformeTarjetas() {
+        establecerFechasPorPeriodo("mesActual");
+        actualizarInformeTarjetas();
+      }
+
+      // ---------------------------------------------------------------------------
+      // 3. FILTROS
+      // ---------------------------------------------------------------------------
+      function cambiarRangoFechas() {
+        const valor = document.getElementById("selectPeriodo").value;
+        establecerFechasPorPeriodo(valor);
+      }
+
+      function establecerFechasPorPeriodo(periodo) {
+        const hoy = new Date();
+        const fechaInicio = document.getElementById("fechaInicio");
+        const fechaFin = document.getElementById("fechaFin");
+
+        let primerDia = new Date(hoy);
+        let ultimoDia = new Date(hoy);
+
+        switch (periodo) {
+          case "mesActual": {
+            primerDia = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+            ultimoDia = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
+            break;
+          }
+          case "mesAnterior": {
+            const mesAnterior = hoy.getMonth() - 1;
+            const anio =
+              mesAnterior < 0 ? hoy.getFullYear() - 1 : hoy.getFullYear();
+            const mesAjustado = (mesAnterior + 12) % 12;
+            primerDia = new Date(anio, mesAjustado, 1);
+            ultimoDia = new Date(anio, mesAjustado + 1, 0);
+            break;
+          }
+          case "ultimos3": {
+            const mesActual = hoy.getMonth();
+            const anioActual = hoy.getFullYear();
+            primerDia = new Date(anioActual, mesActual, 1);
+            primerDia.setMonth(primerDia.getMonth() - 2);
+            ultimoDia = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
+            break;
+          }
+          case "anioActual": {
+            primerDia = new Date(hoy.getFullYear(), 0, 1);
+            ultimoDia = new Date(hoy.getFullYear(), 11, 31);
+            break;
+          }
+          case "anioAnterior": {
+            primerDia = new Date(hoy.getFullYear() - 1, 0, 1);
+            ultimoDia = new Date(hoy.getFullYear() - 1, 11, 31);
+            break;
+          }
+          case "personalizado": {
+            return;
+          }
+        }
+
+        fechaInicio.value = formatearFechaISO(primerDia);
+        fechaFin.value = formatearFechaISO(ultimoDia);
+      }
+
+      function verificarPersonalizado() {
+        const selectPeriodo = document.getElementById("selectPeriodo");
+        selectPeriodo.value = "personalizado";
+      }
+
+      function formatearFechaISO(fecha) {
+        const y = fecha.getFullYear();
+        const m = String(fecha.getMonth() + 1).padStart(2, "0");
+        const d = String(fecha.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+      }
+
+      // ---------------------------------------------------------------------------
+      // 4. ACTUALIZAR INFORME
+      // ---------------------------------------------------------------------------
+      function actualizarInformeTarjetas() {
+        renderizarTarjetas();
+        renderizarMovimientos();
+        renderizarProximosPagos();
+        actualizarGraficoGastosCategoria();
+
+        const now = new Date();
+        document.getElementById(
+          "ultimaActualizacion"
+        ).textContent = `Última actualización: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+      }
+
+      // ---------------------------------------------------------------------------
+      // 5. RENDERIZAR TARJETAS, MOVIMIENTOS, Y PRÓXIMOS PAGOS
+      // ---------------------------------------------------------------------------
+      function renderizarTarjetas() {
+        const contenedor = document.getElementById("tarjetasContainer");
+        contenedor.innerHTML = "";
+
+        tarjetasData.forEach((tarj) => {
+          const card = document.createElement("div");
+          card.className = "bg-white p-4 rounded-lg shadow-md";
+
+          // Cabecera
+          const header = document.createElement("div");
+          header.className = "flex justify-between items-start mb-4";
+          const leftHeader = document.createElement("div");
+
+          // Título = Nombre de la Tarjeta
+          const h2 = document.createElement("h2");
+          h2.className = "text-lg font-bold";
+          h2.textContent = tarj.nombre;
+
+          // Subtítulo = Banco + Últimos 4 dígitos
+          const pSub = document.createElement("p");
+          pSub.className = "text-sm text-gray-500";
+          pSub.textContent = `${tarj.banco} ***${tarj.numero.slice(-4)}`;
+
+          leftHeader.appendChild(h2);
+          leftHeader.appendChild(pSub);
+
+          // Estado
+          const spanEstado = document.createElement("span");
+          spanEstado.className = "px-2 py-1 rounded-full text-sm";
+          if (tarj.estado === "Al día") {
+            spanEstado.classList.add("bg-green-100", "text-green-800");
+          } else {
+            spanEstado.classList.add("bg-yellow-100", "text-yellow-800");
+          }
+          spanEstado.textContent = tarj.estado;
+
+          header.appendChild(leftHeader);
+          header.appendChild(spanEstado);
+
+          // Info principal
+          const infoDiv = document.createElement("div");
+          infoDiv.className = "space-y-2 mb-4";
+          infoDiv.innerHTML = `
+            <div class="flex justify-between">
+              <span>Límite de Crédito:</span>
+              <span>$${tarj.limite.toLocaleString()}</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Saldo Actual:</span>
+              <span class="text-red-600">$${tarj.saldo.toLocaleString()}</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Disponible:</span>
+              <span class="text-green-600">$${tarj.disponible.toLocaleString()}</span>
+            </div>
+          `;
+
+          // Fechas
+          const extraDiv = document.createElement("div");
+          extraDiv.className = "border-t pt-2";
+          extraDiv.innerHTML = `
+            <div class="grid grid-cols-2 gap-2 text-sm">
+              <div>
+                <p>Fecha de Corte: ${formatearFechaUI(tarj.fechaCorte)}</p>
+              </div>
+              <div>
+                <p>Fecha de Pago: ${formatearFechaUI(tarj.fechaPago)}</p>
+              </div>
+            </div>
+          `;
+
+          card.appendChild(header);
+          card.appendChild(infoDiv);
+          card.appendChild(extraDiv);
+          contenedor.appendChild(card);
+        });
+      }
+
+      function renderizarMovimientos() {
+        const tbody = document.getElementById("movimientosTableBody");
+        tbody.innerHTML = "";
+
+        // Filtro de fechas
+        const fechaI = document.getElementById("fechaInicio").value;
+        const fechaF = document.getElementById("fechaFin").value;
+        const msIni = fechaI ? new Date(fechaI).getTime() : null;
+        const msFin = fechaF ? new Date(fechaF).getTime() : null;
+
+        // Ordenar desc por fecha
+        const arrOrdenado = movimientosData
+          .slice()
+          .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+        const arrFiltrado = arrOrdenado.filter((mov) => {
+          const msMov = new Date(mov.fecha).getTime();
+          if (msIni && msMov < msIni) return false;
+          if (msFin && msMov > msFin) return false;
+          return true;
+        });
+
+        arrFiltrado.forEach((mov) => {
+          const tr = document.createElement("tr");
+
+          // Fecha
+          const tdFecha = document.createElement("td");
+          tdFecha.className = "px-4 py-2";
+          tdFecha.textContent = formatearFechaUI(mov.fecha);
+
+          // Tarjeta
+          const tdTarjeta = document.createElement("td");
+          tdTarjeta.className = "px-4 py-2";
+          tdTarjeta.textContent = mov.tarjeta;
+
+          // Establecimiento
+          const tdEstablecimiento = document.createElement("td");
+          tdEstablecimiento.className = "px-4 py-2";
+          tdEstablecimiento.textContent = mov.establecimiento;
+
+          // Descripción
+          const tdDesc = document.createElement("td");
+          tdDesc.className = "px-4 py-2";
+          tdDesc.textContent = mov.descripcion;
+
+          // Monto
+          const tdMonto = document.createElement("td");
+          tdMonto.className = "px-4 py-2 text-right";
+          tdMonto.textContent = `$${mov.monto.toLocaleString()}`;
+
+          // Cuotas
+          const tdCuotas = document.createElement("td");
+          tdCuotas.className = "px-4 py-2 text-center";
+          tdCuotas.textContent = mov.cuotas;
+
+          // Soporte (link en nueva pestaña)
+          const tdSoporte = document.createElement("td");
+          tdSoporte.className = "px-4 py-2 text-center";
+          tdSoporte.innerHTML = `
+            <a href="${mov.soporteLink}" target="_blank" class="text-blue-600 hover:underline">Ver</a>
+          `;
+
+          // Detalle
+          const tdDetalle = document.createElement("td");
+          tdDetalle.className = "px-4 py-2 text-center";
+          tdDetalle.innerHTML = `
+            <a href="#" class="text-blue-600 hover:underline">Ver</a>
+          `;
+
+          tr.appendChild(tdFecha);
+          tr.appendChild(tdTarjeta);
+          tr.appendChild(tdEstablecimiento);
+          tr.appendChild(tdDesc);
+          tr.appendChild(tdMonto);
+          tr.appendChild(tdCuotas);
+          tr.appendChild(tdSoporte);
+          tr.appendChild(tdDetalle);
+
+          tbody.appendChild(tr);
+        });
+      }
+
+      function renderizarProximosPagos() {
+        const contenedor = document.getElementById("proximosPagosContainer");
+        contenedor.innerHTML = "";
+
+        proximosPagosEstimados.forEach((p) => {
+          const divPago = document.createElement("div");
+          divPago.className = "flex justify-between items-center border-b py-2";
+          divPago.innerHTML = `
+            <span>${formatearFechaUI(p.fecha)} - ${p.tarjeta}</span>
+            <span class="font-bold text-red-600">$${p.monto.toLocaleString()}</span>
+          `;
+          contenedor.appendChild(divPago);
+        });
+      }
+
+      // ---------------------------------------------------------------------------
+      // 6. GRÁFICO GASTOS POR CATEGORÍA
+      // ---------------------------------------------------------------------------
+      function actualizarGraficoGastosCategoria() {
+        const ctxCat = document
+          .getElementById("chartGastosCategoria")
+          .getContext("2d");
+        if (chartGastosCategoria) chartGastosCategoria.destroy();
+
+        // Ordenar de mayor a menor
+        const datosOrdenados = gastosPorCategoriaData
+          .slice()
+          .sort((a, b) => b.valor - a.valor);
+
+        chartGastosCategoria = new Chart(ctxCat, {
+          type: "bar",
+          data: {
+            labels: datosOrdenados.map((item) => item.categoria),
+            datasets: [
+              {
+                label: "Gastos",
+                data: datosOrdenados.map((item) => item.valor),
+                backgroundColor: "rgba(54, 162, 235, 0.5)",
+                borderColor: "rgba(54, 162, 235, 1)",
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            indexAxis: "y",
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                beginAtZero: true,
+              },
+            },
+          },
+        });
+      }
+
+      // ---------------------------------------------------------------------------
+      // 7. UTILIDADES
+      // ---------------------------------------------------------------------------
+      function formatearFechaUI(yyyy_mm_dd) {
+        if (!yyyy_mm_dd.includes("-")) return yyyy_mm_dd;
+        const [year, month, day] = yyyy_mm_dd.split("-");
+        return `${day}/${month}/${year}`;
+      }
+    </script>
   </body>
 </html>
