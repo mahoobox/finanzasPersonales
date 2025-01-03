@@ -42,17 +42,13 @@
             />
           </div>
 
-          <!-- Tipo de Cuenta (Select) -->
+          <!-- Tipo de Cuenta (Select rellenado dinámicamente con JS) -->
           <div>
             <label class="block text-gray-700 text-sm font-bold mb-2">
               Tipo de Cuenta
             </label>
             <select id="tipoInput" class="w-full border rounded-md p-2">
-              <option value="">Seleccione un tipo...</option>
-              <option>Cuenta de Ahorros</option>
-              <option>Cuenta Corriente</option>
-              <option>Cuenta Nómina</option>
-              <option>Cuenta de Inversión</option>
+              <!-- Se llena con JS -->
             </select>
           </div>
 
@@ -120,127 +116,8 @@
         <div class="p-4 border-b flex justify-between items-center">
           <h2 class="text-xl font-bold">Cuentas Registradas</h2>
         </div>
-
-        <!-- Cuenta 1 (ejemplo) -->
-        <div class="p-4 border-b hover:bg-gray-50">
-          <div class="flex justify-between items-start">
-            <div>
-              <h3 class="font-bold text-lg">Cuenta Corriente</h3>
-              <!-- Mostramos el número completo, sin limitar a 4 dígitos -->
-              <p class="text-sm text-gray-500">Bancolombia 1234 5678 9000</p>
-            </div>
-            <div class="text-right">
-              <p class="font-bold text-lg">$3,500,000</p>
-              <p class="text-sm text-gray-500">Actualizado: 25/12/2024</p>
-            </div>
-          </div>
-          <div class="mt-4 flex justify-between items-center">
-            <div class="flex space-x-4">
-              <span
-                class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
-              >
-                Sin movimientos
-              </span>
-              <span class="text-sm text-gray-500">
-                Información adicional sobre esta cuenta.
-              </span>
-            </div>
-            <div class="space-x-2">
-              <button
-                onclick="editarCuenta(this)"
-                class="text-blue-600 hover:text-blue-800"
-              >
-                Editar
-              </button>
-              <button
-                onclick="eliminarCuenta(this)"
-                class="text-gray-600 hover:text-gray-800"
-              >
-                Eliminar
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Cuenta 2 (ejemplo) -->
-        <div class="p-4 border-b hover:bg-gray-50">
-          <div class="flex justify-between items-start">
-            <div>
-              <h3 class="font-bold text-lg">Cuenta de Ahorros</h3>
-              <p class="text-sm text-gray-500">Davivienda 1111 2222 3333</p>
-            </div>
-            <div class="text-right">
-              <p class="font-bold text-lg">$8,500,000</p>
-              <p class="text-sm text-gray-500">Actualizado: 25/12/2024</p>
-            </div>
-          </div>
-          <div class="mt-4 flex justify-between items-center">
-            <div class="flex space-x-4">
-              <span
-                class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm"
-              >
-                3 movimientos este mes
-              </span>
-              <span class="text-sm text-gray-500">
-                Información adicional sobre esta cuenta.
-              </span>
-            </div>
-            <div class="space-x-2">
-              <button
-                onclick="editarCuenta(this)"
-                class="text-blue-600 hover:text-blue-800"
-              >
-                Editar
-              </button>
-              <button
-                onclick="eliminarCuenta(this)"
-                class="text-gray-600 hover:text-gray-800"
-              >
-                Eliminar
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Cuenta 3 (ejemplo) -->
-        <div class="p-4 hover:bg-gray-50">
-          <div class="flex justify-between items-start">
-            <div>
-              <h3 class="font-bold text-lg">Cuenta Nómina</h3>
-              <p class="text-sm text-gray-500">BVVA 9876 5432 1000</p>
-            </div>
-            <div class="text-right">
-              <p class="font-bold text-lg">$7,500,000</p>
-              <p class="text-sm text-gray-500">Actualizado: 25/12/2024</p>
-            </div>
-          </div>
-          <div class="mt-4 flex justify-between items-center">
-            <div class="flex space-x-4">
-              <span
-                class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
-              >
-                Sin movimientos
-              </span>
-              <span class="text-sm text-gray-500">
-                Información adicional sobre esta cuenta.
-              </span>
-            </div>
-            <div class="space-x-2">
-              <button
-                onclick="editarCuenta(this)"
-                class="text-blue-600 hover:text-blue-800"
-              >
-                Editar
-              </button>
-              <button
-                onclick="eliminarCuenta(this)"
-                class="text-gray-600 hover:text-gray-800"
-              >
-                Eliminar
-              </button>
-            </div>
-          </div>
-        </div>
+        <!-- Contenedor dinámico donde se cargarán las cuentas de ejemplo -->
+        <div id="cuentasContainer"></div>
       </div>
     </main>
 
@@ -249,23 +126,71 @@
     </footer>
 
     <script>
-      // =======================
-      // 1. Formateo del número
-      // =======================
-      // Cada vez que el usuario escribe, separemos en grupos de 4 dígitos
+      // ====================================
+      // 1. Datos y llenado del select (JS)
+      // ====================================
+      // Manejo de tipos de cuenta de forma dinámica
+      const tiposCuenta = [
+        { value: "", label: "Seleccione un tipo..." },
+        { value: "ahorros", label: "Cuenta de Ahorros" },
+        { value: "corriente", label: "Cuenta Corriente" },
+        { value: "bajoMonto", label: "Depósito de Bajo Monto" },
+        { value: "nomina", label: "Cuenta Nómina" },
+        { value: "inversion", label: "Cuenta de Inversión" },
+      ];
+
+      // Simulación de data recibida desde el backend
+      const cuentasEjemplo = [
+        {
+          tipo: "Cuenta Corriente",
+          banco: "Bancolombia",
+          numero: "1234 5678 9000",
+          saldo: 3500000,
+          actualizado: "25/12/2024",
+          movimientos: 0,
+          notas: "Información adicional sobre esta cuenta.",
+        },
+        {
+          tipo: "Cuenta de Ahorros",
+          banco: "Davivienda",
+          numero: "1111 2222 3333",
+          saldo: 8500000,
+          actualizado: "25/12/2024",
+          movimientos: 3,
+          notas: "Información adicional sobre esta cuenta.",
+        },
+        {
+          tipo: "Cuenta Nómina",
+          banco: "BVVA",
+          numero: "9876 5432 1000",
+          saldo: 7500000,
+          actualizado: "25/12/2024",
+          movimientos: 0,
+          notas: "Información adicional sobre esta cuenta.",
+        },
+        {
+          tipo: "Depósito de Bajo Monto",
+          banco: "Banco Agrario",
+          numero: "1122 3344 5566",
+          saldo: 1000000,
+          actualizado: "31/12/2024",
+          movimientos: 1,
+          notas: "Cuenta de uso restringido.",
+        },
+      ];
+
+      // ======================================
+      // 2. Funciones para formateo y validación
+      // ======================================
+      // Formatear número de cuenta en grupos de 4
       function formatearNumeroCuenta(event) {
         const input = event.target;
-        // Remover cualquier carácter no numérico
         let value = input.value.replace(/\D/g, "");
-
-        // Separar en grupos de 4
         const grupos = value.match(/.{1,4}/g) || [];
         input.value = grupos.join(" ");
       }
 
-      // ======================================
-      // 2. Validación y guardado de la cuenta
-      // ======================================
+      // Validar formulario antes de guardar
       function validarFormularioCuenta() {
         const banco = document.getElementById("bancoInput").value.trim();
         const tipo = document.getElementById("tipoInput").value.trim();
@@ -295,10 +220,12 @@
         return true;
       }
 
+      // Guardar cuenta al enviar formulario
       function guardarCuenta(event) {
         event.preventDefault();
         if (!validarFormularioCuenta()) return;
 
+        // Aquí podríamos hacer un fetch o similar para enviar data al backend
         Popup.mostrar("success", "Cuenta guardada exitosamente");
         document.getElementById("cuentaForm").reset();
       }
@@ -311,9 +238,70 @@
         document.getElementById("cuentaForm").reset();
       }
 
-      // ===========================================================
-      // 3. Edición de cuenta (solo Banco, Tipo (select), Número, Notas)
-      // ===========================================================
+      // ======================================
+      // 3. Renderizado dinámico de las cuentas
+      // ======================================
+      function renderCuentas() {
+        const container = document.getElementById("cuentasContainer");
+        container.innerHTML = ""; // Limpiar antes de renderizar
+
+        cuentasEjemplo.forEach((cuenta) => {
+          // Creamos un div con la misma estructura que los ejemplos estáticos
+          const cuentaDiv = document.createElement("div");
+          cuentaDiv.className = "p-4 border-b hover:bg-gray-50";
+          cuentaDiv.innerHTML = `
+            <div class="flex justify-between items-start">
+              <div>
+                <h3 class="font-bold text-lg">${cuenta.tipo}</h3>
+                <p class="text-sm text-gray-500">${cuenta.banco} ${
+            cuenta.numero
+          }</p>
+              </div>
+              <div class="text-right">
+                <p class="font-bold text-lg">$${cuenta.saldo.toLocaleString()}</p>
+                <p class="text-sm text-gray-500">Actualizado: ${
+                  cuenta.actualizado
+                }</p>
+              </div>
+            </div>
+            <div class="mt-4 flex justify-between items-center">
+              <div class="flex space-x-4">
+                ${
+                  cuenta.movimientos > 0
+                    ? `<span class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm">${
+                        cuenta.movimientos
+                      } movimiento${
+                        cuenta.movimientos > 1 ? "s" : ""
+                      } este mes</span>`
+                    : `<span class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">Sin movimientos</span>`
+                }
+                <span class="text-sm text-gray-500">${
+                  cuenta.notas || "Sin información adicional"
+                }</span>
+              </div>
+              <div class="space-x-2">
+                <button
+                  onclick="editarCuenta(this)"
+                  class="text-blue-600 hover:text-blue-800"
+                >
+                  Editar
+                </button>
+                <button
+                  onclick="eliminarCuenta(this)"
+                  class="text-gray-600 hover:text-gray-800"
+                >
+                  Eliminar
+                </button>
+              </div>
+            </div>
+          `;
+          container.appendChild(cuentaDiv);
+        });
+      }
+
+      // ============================================
+      // 4. Edición de cuenta (editar y guardar)
+      // ============================================
       function editarCuenta(element) {
         const cuentaRow =
           element.closest(".p-4.border-b") || element.closest(".p-4");
@@ -323,21 +311,15 @@
           ".mt-4 .text-sm.text-gray-500"
         );
 
-        // El saldo no será editable, solo se visualiza
         const originalTitulo = titleContainer
           ? titleContainer.textContent.trim()
           : "";
-        // Ej: "Cuenta Corriente", "Cuenta de Ahorros", etc.
         const originalBancoCompleto = bancoLinea
           ? bancoLinea.textContent.trim()
           : "";
-        // Ej: "Bancolombia 1234 5678 9000" -> separar nombre y número
         let originalBanco = "";
         let originalNumero = "";
 
-        // Suponemos que la primera "palabra" es el banco, el resto el número
-        // (También se podría buscar la primera coincidencia de dígitos, etc.)
-        // Aquí, para simplificar, dividimos en 2 partes: [0]=Banco, [1..N]=número
         const partes = originalBancoCompleto.split(/\s+/);
         if (partes.length > 1) {
           originalBanco = partes[0];
@@ -350,7 +332,6 @@
           ? infoAdicional.textContent.trim()
           : "";
 
-        // Contenedor de edición
         const editContainer = document.createElement("div");
         editContainer.className = "grid grid-cols-1 md:grid-cols-2 gap-4 mt-4";
         editContainer.innerHTML = `
@@ -365,6 +346,9 @@
               <option ${
                 originalTitulo === "Cuenta Corriente" ? "selected" : ""
               }>Cuenta Corriente</option>
+              <option ${
+                originalTitulo === "Depósito de Bajo Monto" ? "selected" : ""
+              }>Depósito de Bajo Monto</option>
               <option ${
                 originalTitulo === "Cuenta Nómina" ? "selected" : ""
               }>Cuenta Nómina</option>
@@ -417,23 +401,19 @@
           </div>
         `;
 
-        // Ocultar info original
         cuentaRow.querySelector(
           ".flex.justify-between.items-start"
         ).style.display = "none";
         cuentaRow.querySelector(
           ".mt-4.flex.justify-between.items-center"
         ).style.display = "none";
-        // Insertar el form de edición
         cuentaRow.appendChild(editContainer);
       }
 
-      // Guardar edición
       function guardarEdicionCuenta(element) {
         const editContainer = element.closest(".grid");
         const cuentaRow = editContainer.closest(".p-4");
 
-        // Inputs
         const [selectTipo, inputBanco, inputNumero, textareaNotas] =
           editContainer.querySelectorAll("select, input, textarea");
 
@@ -455,7 +435,6 @@
           return;
         }
 
-        // Actualizar vista
         const titleContainer = cuentaRow.querySelector(".font-bold.text-lg");
         const bancoLinea = cuentaRow.querySelector(".text-sm.text-gray-500");
         const infoAdicional = cuentaRow.querySelector(
@@ -488,7 +467,7 @@
       }
 
       // =======================================
-      // 4. Eliminar cuenta con confirmación Sí/Cancelar
+      // 5. Eliminar cuenta con confirmación
       // =======================================
       function eliminarCuenta(element) {
         const cuentaRow =
@@ -498,16 +477,31 @@
           okText: "Sí",
           cancelText: "Cancelar",
           onOk: () => {
-            // Remover del DOM
             cuentaRow.remove();
             Popup.mostrar("info", "Cuenta eliminada");
           },
           onCancel: () => {
-            // Acción opcional al cancelar
             Popup.mostrar("info", "Operación cancelada");
           },
         });
       }
+
+      // ====================
+      // 6. Inicialización
+      // ====================
+      window.addEventListener("DOMContentLoaded", () => {
+        // Llenamos el select con los tipos de cuenta
+        const selectTipo = document.getElementById("tipoInput");
+        tiposCuenta.forEach((tipo) => {
+          const option = document.createElement("option");
+          option.value = tipo.value;
+          option.textContent = tipo.label;
+          selectTipo.appendChild(option);
+        });
+
+        // Renderizamos las cuentas de ejemplo
+        renderCuentas();
+      });
     </script>
   </body>
 </html>
