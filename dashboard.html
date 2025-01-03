@@ -5,14 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Dashboard - Finanzas Personales</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Librería Chart.js para gráficos -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
-  <body class="bg-gray-100">
+  <body class="bg-gray-100" onload="iniciarDashboard()">
     <nav class="bg-blue-600 text-white p-4">
       <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-2xl font-bold">Dashboard Financiero</h1>
-        <a href="index.html" class="text-white hover:text-gray-200"
-          >Volver al Inicio</a
-        >
+        <a href="index.html" class="text-white hover:text-gray-200">
+          Volver al Inicio
+        </a>
       </div>
     </nav>
 
@@ -20,24 +22,35 @@
       <!-- Filtros de Período -->
       <div class="bg-white p-4 rounded-lg shadow-md mb-4">
         <div class="grid grid-cols-4 gap-4">
-          <select class="border rounded-md p-2">
-            <option>Último Mes</option>
-            <option>Últimos 3 Meses</option>
-            <option>Último Año</option>
-            <option>Personalizado</option>
+          <select
+            id="selectPeriodo"
+            class="border rounded-md p-2"
+            onchange="cambiarRangoFechas()"
+          >
+            <option value="mesActual" selected>Mes Actual</option>
+            <option value="mesAnterior">Mes Anterior</option>
+            <option value="ultimos3">Últimos 3 Meses</option>
+            <option value="anioActual">Año Actual</option>
+            <option value="anioAnterior">Año Anterior</option>
+            <option value="personalizado">Personalizado</option>
           </select>
           <input
             type="date"
+            id="fechaInicio"
             class="border rounded-md p-2"
             placeholder="Fecha Inicio"
+            onchange="verificarPersonalizado()"
           />
           <input
             type="date"
+            id="fechaFin"
             class="border rounded-md p-2"
             placeholder="Fecha Fin"
+            onchange="verificarPersonalizado()"
           />
           <button
             class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            onclick="actualizarDashboard()"
           >
             Actualizar
           </button>
@@ -45,140 +58,796 @@
       </div>
 
       <!-- Resumen General -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-4">
         <!-- Balance General -->
         <div class="bg-white p-4 rounded-lg shadow-md">
           <h2 class="text-lg font-bold mb-4">Balance General</h2>
           <div class="space-y-2">
             <div class="flex justify-between">
               <span>Total Activos:</span>
-              <span class="font-bold text-green-600">$25,000,000</span>
+              <span id="totalActivos" class="font-bold text-green-600">$0</span>
             </div>
             <div class="flex justify-between">
               <span>Total Deudas:</span>
-              <span class="font-bold text-red-600">$8,000,000</span>
+              <span id="totalDeudas" class="font-bold text-red-600">$0</span>
             </div>
             <div class="flex justify-between pt-2 border-t">
               <span>Balance Neto:</span>
-              <span class="font-bold text-blue-600">$17,000,000</span>
+              <span id="balanceNeto" class="font-bold text-blue-600">$0</span>
             </div>
           </div>
         </div>
 
-        <!-- Flujo de Efectivo -->
+        <!-- Flujo -->
         <div class="bg-white p-4 rounded-lg shadow-md">
-          <h2 class="text-lg font-bold mb-4">Flujo del Mes</h2>
+          <h2 class="text-lg font-bold mb-4">Flujo</h2>
           <div class="space-y-2">
             <div class="flex justify-between">
               <span>Ingresos:</span>
-              <span class="font-bold text-green-600">$4,500,000</span>
+              <span id="flujoIngresos" class="font-bold text-green-600"
+                >$0</span
+              >
             </div>
             <div class="flex justify-between">
               <span>Gastos:</span>
-              <span class="font-bold text-red-600">$3,200,000</span>
+              <span id="flujoGastos" class="font-bold text-red-600">$0</span>
             </div>
             <div class="flex justify-between pt-2 border-t">
               <span>Neto:</span>
-              <span class="font-bold text-blue-600">$1,300,000</span>
+              <span id="flujoNeto" class="font-bold text-blue-600">$0</span>
             </div>
           </div>
         </div>
 
-        <!-- Próximos Pagos -->
+        <!-- Deuda Recibida -->
         <div class="bg-white p-4 rounded-lg shadow-md">
-          <h2 class="text-lg font-bold mb-4">Próximos Pagos</h2>
+          <h2 class="text-lg font-bold mb-4">Deuda Recibida</h2>
           <div class="space-y-2">
-            <div class="text-sm">
-              <div class="flex justify-between text-red-600">
-                <span>TC Bancolombia</span>
-                <span>$500,000 (2 días)</span>
-              </div>
-              <div class="flex justify-between">
-                <span>Préstamo Casa</span>
-                <span>$1,200,000 (5 días)</span>
-              </div>
-              <div class="flex justify-between">
-                <span>TC Davivienda</span>
-                <span>$300,000 (8 días)</span>
-              </div>
+            <div class="flex justify-between">
+              <span>Total:</span>
+              <span id="deudaRecibidaTotal" class="font-bold">$0</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Pagado:</span>
+              <span id="deudaRecibidaPagado" class="text-green-600 font-bold"
+                >$0</span
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Deuda Otorgada -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h2 class="text-lg font-bold mb-4">Deuda Otorgada</h2>
+          <div class="space-y-2">
+            <div class="flex justify-between">
+              <span>Total:</span>
+              <span id="deudaOtorgadaTotal" class="font-bold">$0</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Recuperado:</span>
+              <span id="deudaOtorgadaPagado" class="text-green-600 font-bold"
+                >$0</span
+              >
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Estado de Cuentas -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+      <!-- Próximos Pagos, Cuentas Bancarias y Tarjetas (3 columnas) -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <!-- Próximos Pagos -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-bold">Próximos Pagos</h2>
+            <span id="sumaProximosPagos" class="text-sm font-bold text-gray-400"
+              >$0</span
+            >
+          </div>
+          <div id="listaProximosPagos" class="space-y-2">
+            <!-- Se llena dinámicamente con JS -->
+          </div>
+        </div>
+
         <!-- Cuentas Bancarias -->
         <div class="bg-white p-4 rounded-lg shadow-md">
-          <h2 class="text-lg font-bold mb-4">Cuentas Bancarias</h2>
-          <div class="divide-y">
-            <div class="py-2 flex justify-between">
-              <span>Cuenta Corriente Principal</span>
-              <span class="font-bold">$3,500,000</span>
-            </div>
-            <div class="py-2 flex justify-between">
-              <span>Cuenta de Ahorros</span>
-              <span class="font-bold">$8,500,000</span>
-            </div>
-            <div class="py-2 flex justify-between">
-              <span>Cuenta Nómina</span>
-              <span class="font-bold">$2,000,000</span>
-            </div>
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-bold">Cuentas Bancarias</h2>
+            <span
+              id="sumaCuentasBancarias"
+              class="text-sm font-bold text-gray-400"
+              >$0</span
+            >
+          </div>
+          <div id="listaCuentas" class="divide-y">
+            <!-- Se llena dinámicamente con JS -->
           </div>
         </div>
 
         <!-- Tarjetas de Crédito -->
         <div class="bg-white p-4 rounded-lg shadow-md">
-          <h2 class="text-lg font-bold mb-4">Tarjetas de Crédito</h2>
-          <div class="divide-y">
-            <div class="py-2">
-              <div class="flex justify-between">
-                <span>Visa Oro</span>
-                <span class="font-bold text-red-600">$1,500,000</span>
-              </div>
-              <div class="text-sm text-gray-500">
-                <span>Disponible: $3,500,000</span>
-              </div>
-            </div>
-            <div class="py-2">
-              <div class="flex justify-between">
-                <span>Mastercard Platinum</span>
-                <span class="font-bold text-red-600">$2,800,000</span>
-              </div>
-              <div class="text-sm text-gray-500">
-                <span>Disponible: $2,200,000</span>
-              </div>
-            </div>
+          <div class="flex justify-between items-center mb-4">
+            <h2 class="text-lg font-bold">Tarjetas de Crédito</h2>
+            <span
+              id="sumaTarjetasCredito"
+              class="text-sm font-bold text-gray-400"
+              >$0</span
+            >
+          </div>
+          <div id="listaTarjetas" class="divide-y">
+            <!-- Se llena dinámicamente con JS -->
           </div>
         </div>
       </div>
 
+      <!-- Límites Tributarios -->
+      <div
+        class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4"
+        id="limitesTributariosContainer"
+      >
+        <!-- Se llena dinámicamente con JS -->
+      </div>
+
       <!-- Gráficos -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Gastos por Categoría -->
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+        <!-- Gastos por Categoría (Bar Horizontal) -->
         <div class="bg-white p-4 rounded-lg shadow-md">
           <h2 class="text-lg font-bold mb-4">Gastos por Categoría</h2>
-          <div
-            class="h-64 bg-gray-100 rounded flex items-center justify-center"
-          >
-            [Gráfico de Torta]
+          <div style="height: 300px">
+            <canvas id="chartGastosCategoria"></canvas>
           </div>
         </div>
 
-        <!-- Tendencia de Gastos -->
+        <!-- Tendencia de Gastos (Línea) -->
         <div class="bg-white p-4 rounded-lg shadow-md">
           <h2 class="text-lg font-bold mb-4">Tendencia de Gastos</h2>
-          <div
-            class="h-64 bg-gray-100 rounded flex items-center justify-center"
-          >
-            [Gráfico de Línea]
+          <div style="height: 300px">
+            <canvas id="chartTendenciaGastos"></canvas>
           </div>
+        </div>
+      </div>
+
+      <!-- Notas y Observaciones -->
+      <div class="bg-yellow-50 p-4 rounded-lg shadow-md">
+        <h2 class="text-lg font-bold mb-4">Notas y Observaciones</h2>
+        <div id="notasObservacionesContainer" class="space-y-4">
+          <!-- Se llena dinámicamente con JS -->
         </div>
       </div>
     </main>
 
     <footer class="bg-gray-200 text-center p-4 mt-8">
-      <p>Última actualización: 25/12/2024 10:30 AM</p>
+      <p id="ultimaActualizacion">Última actualización: --/--/---- --:--</p>
     </footer>
+
+    <script>
+      // ------------------------------------------------------------------------
+      // 1. DATOS DE EJEMPLO (LUEGO SE REMPLAZAN POR CONSULTAS BACKEND)
+      // ------------------------------------------------------------------------
+      // Ejemplo de cuentas bancarias
+      const cuentasData = [
+        {
+          banco: "Bancolombia",
+          numero: "123456789000",
+          tipo: "Cuenta Corriente",
+          saldo: 3500000,
+        },
+        {
+          banco: "Davivienda",
+          numero: "111122223333",
+          tipo: "Cuenta de Ahorros",
+          saldo: 8500000,
+        },
+        {
+          banco: "BVVA",
+          numero: "987654321000",
+          tipo: "Cuenta Nómina",
+          saldo: 2000000,
+        },
+      ];
+
+      // Ejemplo de tarjetas de crédito
+      const tarjetasData = [
+        {
+          nombreTarjeta: "Visa Oro",
+          bancoEmisor: "Bancolombia",
+          numero: "4444333322221111",
+          cupoTotal: 5000000,
+          disponible: 3500000,
+          saldoPagar: 1500000,
+        },
+        {
+          nombreTarjeta: "Mastercard Platinum",
+          bancoEmisor: "Davivienda",
+          numero: "5555444433332222",
+          cupoTotal: 4000000,
+          disponible: 2200000,
+          saldoPagar: 1800000,
+        },
+      ];
+
+      // Balance general, flujo, etc.
+      const balanceData = {
+        totalActivos: 25000000,
+        totalDeudas: 8000000,
+        balanceNeto: 17000000,
+      };
+
+      const flujoData = {
+        ingresos: 4500000,
+        gastos: 3200000,
+        neto: 1300000,
+      };
+
+      // Deudas
+      const deudaRecibida = {
+        total: 20000000,
+        pagado: 5000000,
+      };
+
+      const deudaOtorgada = {
+        total: 5000000,
+        pagado: 2000000,
+      };
+
+      // Próximos pagos (ejemplo)
+      const proximosPagosData = [
+        {
+          descripcion: "TC Bancolombia",
+          monto: 500000,
+          dias: 2,
+        },
+        {
+          descripcion: "Préstamo Casa",
+          monto: 1200000,
+          dias: 5,
+        },
+        {
+          descripcion: "TC Davivienda",
+          monto: 300000,
+          dias: 8,
+        },
+      ];
+
+      // Límites tributarios (ejemplo simplificado)
+      const limitesTributariosData = [
+        {
+          titulo: "Consignaciones Bancarias",
+          actualUVT: 750,
+          maxUVT: 1400,
+          actualPesos: 35298750,
+          maxPesos: 65891000,
+          conLabel: "Formales",
+          conUVT: 600,
+          conPesos: 28239000,
+          sinLabel: "Informales",
+          sinUVT: 150,
+          sinPesos: 7059750,
+        },
+        {
+          titulo: "Tarjetas de Crédito",
+          actualUVT: 600,
+          maxUVT: 1400,
+          actualPesos: 28239000,
+          maxPesos: 65891000,
+          conLabel: "Con Factura",
+          conUVT: 450,
+          conPesos: 21179250,
+          sinLabel: "Sin Factura",
+          sinUVT: 150,
+          sinPesos: 7059750,
+        },
+        {
+          titulo: "Compras y Consumos",
+          actualUVT: 920,
+          maxUVT: 1400,
+          actualPesos: 43299800,
+          maxPesos: 65891000,
+          conLabel: "Con Factura",
+          conUVT: 720,
+          conPesos: 33886800,
+          sinLabel: "Sin Factura",
+          sinUVT: 200,
+          sinPesos: 9413000,
+        },
+      ];
+
+      // Gastos por categoría (ejemplo) para el gráfico
+      const gastosPorCategoriaData = [
+        { categoria: "Alimentación", valor: 800000 },
+        { categoria: "Transporte", valor: 400000 },
+        { categoria: "Servicios", valor: 300000 },
+        { categoria: "Entretenimiento", valor: 600000 },
+        { categoria: "Educación", valor: 500000 },
+      ];
+
+      // Tendencia de gastos (ejemplo)
+      const tendenciaGastosData = [
+        { mes: "2024-08", valor: 2200000 },
+        { mes: "2024-09", valor: 2600000 },
+        { mes: "2024-10", valor: 2400000 },
+        { mes: "2024-11", valor: 3100000 },
+        { mes: "2024-12", valor: 2800000 },
+        { mes: "2025-01", valor: 3200000 },
+      ];
+
+      // Notas y Observaciones (ejemplo)
+      const notasObservacionesData = [
+        {
+          tipo: "alerta",
+          titulo: "Aproximación a Topes",
+          mensajes: [
+            "Compras y Consumos Totales al 65.7% del tope anual (920/1400 UVT)",
+            "Consignaciones Bancarias al 53.5% del tope anual (750/1400 UVT)",
+          ],
+        },
+        {
+          tipo: "tarjetas",
+          titulo: "Uso de Tarjetas de Crédito",
+          mensajes: [
+            "Uso total en tarjetas al 42.8% del tope (600/1400 UVT)",
+            "Saldo a pagar en tarjetas: $1.8 millones aprox.",
+          ],
+        },
+        {
+          tipo: "categorias",
+          titulo: "Principales Categorías de Gasto",
+          mensajes: [
+            "1) Alimentación: $800.000",
+            "2) Entretenimiento: $600.000",
+            "3) Educación: $500.000",
+          ],
+        },
+        {
+          tipo: "gastos",
+          titulo: "Gastos Más Altos Registrados",
+          mensajes: [
+            "1) Laptop Dell: $4.500.000",
+            "2) Pago de Arriendo: $1.800.000",
+            "3) Viaje (Hotel + Vuelos): $1.500.000",
+          ],
+        },
+        {
+          tipo: "proyeccion",
+          titulo: "Proyección al Cierre del Año",
+          mensajes: [
+            "Al ritmo actual, se estima alcanzar el 85% de los topes de 2024.",
+          ],
+        },
+      ];
+
+      // ------------------------------------------------------------------------
+      // 2. INICIO DEL DASHBOARD
+      // ------------------------------------------------------------------------
+      function iniciarDashboard() {
+        establecerFechasPorPeriodo("mesActual");
+        actualizarDashboard();
+      }
+
+      // ------------------------------------------------------------------------
+      // 3. FILTROS DE FECHA Y PERÍODO
+      // ------------------------------------------------------------------------
+      function cambiarRangoFechas() {
+        const valor = document.getElementById("selectPeriodo").value;
+        establecerFechasPorPeriodo(valor);
+      }
+
+      function establecerFechasPorPeriodo(periodo) {
+        const hoy = new Date();
+        const fechaInicio = document.getElementById("fechaInicio");
+        const fechaFin = document.getElementById("fechaFin");
+
+        let primerDia = new Date(hoy);
+        let ultimoDia = new Date(hoy);
+
+        switch (periodo) {
+          case "mesActual": {
+            primerDia = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+            ultimoDia = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
+            break;
+          }
+          case "mesAnterior": {
+            const mesAnterior = hoy.getMonth() - 1;
+            const anio =
+              mesAnterior < 0 ? hoy.getFullYear() - 1 : hoy.getFullYear();
+            const mesAjustado = (mesAnterior + 12) % 12;
+            primerDia = new Date(anio, mesAjustado, 1);
+            ultimoDia = new Date(anio, mesAjustado + 1, 0);
+            break;
+          }
+          case "ultimos3": {
+            const mesActual = hoy.getMonth();
+            const anioActual = hoy.getFullYear();
+            primerDia = new Date(anioActual, mesActual, 1);
+            primerDia.setMonth(primerDia.getMonth() - 2);
+            ultimoDia = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
+            break;
+          }
+          case "anioActual": {
+            primerDia = new Date(hoy.getFullYear(), 0, 1);
+            ultimoDia = new Date(hoy.getFullYear(), 11, 31);
+            break;
+          }
+          case "anioAnterior": {
+            primerDia = new Date(hoy.getFullYear() - 1, 0, 1);
+            ultimoDia = new Date(hoy.getFullYear() - 1, 11, 31);
+            break;
+          }
+          case "personalizado": {
+            return;
+          }
+        }
+
+        fechaInicio.value = formatearFechaISO(primerDia);
+        fechaFin.value = formatearFechaISO(ultimoDia);
+      }
+
+      function verificarPersonalizado() {
+        const selectPeriodo = document.getElementById("selectPeriodo");
+        selectPeriodo.value = "personalizado";
+      }
+
+      function formatearFechaISO(fecha) {
+        const y = fecha.getFullYear();
+        const m = String(fecha.getMonth() + 1).padStart(2, "0");
+        const d = String(fecha.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+      }
+
+      // ------------------------------------------------------------------------
+      // 4. ACTUALIZAR DASHBOARD
+      // ------------------------------------------------------------------------
+      function actualizarDashboard() {
+        document.getElementById("totalActivos").textContent = formatoMoneda(
+          balanceData.totalActivos
+        );
+        document.getElementById("totalDeudas").textContent = formatoMoneda(
+          balanceData.totalDeudas
+        );
+        document.getElementById("balanceNeto").textContent = formatoMoneda(
+          balanceData.balanceNeto
+        );
+
+        document.getElementById("flujoIngresos").textContent = formatoMoneda(
+          flujoData.ingresos
+        );
+        document.getElementById("flujoGastos").textContent = formatoMoneda(
+          flujoData.gastos
+        );
+        document.getElementById("flujoNeto").textContent = formatoMoneda(
+          flujoData.neto
+        );
+
+        document.getElementById("deudaRecibidaTotal").textContent =
+          formatoMoneda(deudaRecibida.total);
+        document.getElementById("deudaRecibidaPagado").textContent =
+          formatoMoneda(deudaRecibida.pagado);
+        document.getElementById("deudaOtorgadaTotal").textContent =
+          formatoMoneda(deudaOtorgada.total);
+        document.getElementById("deudaOtorgadaPagado").textContent =
+          formatoMoneda(deudaOtorgada.pagado);
+
+        renderizarProximosPagos();
+        renderizarCuentas();
+        renderizarTarjetas();
+        renderizarLimitesTributarios();
+        actualizarGraficos();
+        renderizarNotasObservaciones();
+
+        const now = new Date();
+        document.getElementById(
+          "ultimaActualizacion"
+        ).textContent = `Última actualización: ${now.toLocaleDateString()} ${now.toLocaleTimeString()}`;
+      }
+
+      // ------------------------------------------------------------------------
+      // 5. RENDERIZADO DE LISTAS (PAGOS, CUENTAS, TARJETAS, LÍMITES, NOTAS)
+      // ------------------------------------------------------------------------
+      function renderizarProximosPagos() {
+        const contenedor = document.getElementById("listaProximosPagos");
+        const spanSuma = document.getElementById("sumaProximosPagos");
+        contenedor.innerHTML = "";
+
+        let total = 0;
+        proximosPagosData.forEach((pago) => {
+          total += pago.monto;
+          const divPago = document.createElement("div");
+          divPago.className = "flex justify-between items-center border-b py-2";
+
+          const desc = document.createElement("span");
+          desc.textContent = pago.descripcion;
+          const infoMonto = document.createElement("span");
+          infoMonto.textContent = `${formatoMoneda(pago.monto)} (${
+            pago.dias
+          } días)`;
+
+          divPago.appendChild(desc);
+          divPago.appendChild(infoMonto);
+          contenedor.appendChild(divPago);
+        });
+
+        spanSuma.textContent = formatoMoneda(total);
+      }
+
+      function renderizarCuentas() {
+        const contenedor = document.getElementById("listaCuentas");
+        const spanSuma = document.getElementById("sumaCuentasBancarias");
+        contenedor.innerHTML = "";
+
+        let total = 0;
+        cuentasData.forEach((cuenta) => {
+          total += cuenta.saldo;
+          const ultimos4 = cuenta.numero.slice(-4);
+          const fila = document.createElement("div");
+          fila.className = "py-2 flex justify-between items-center";
+
+          const bloqueIzq = document.createElement("div");
+          const bancoYNum = document.createElement("p");
+          bancoYNum.className = "font-bold";
+          bancoYNum.textContent = `${cuenta.banco} ***${ultimos4}`;
+          const tipoCuenta = document.createElement("p");
+          tipoCuenta.className = "text-sm text-gray-400";
+          tipoCuenta.textContent = cuenta.tipo;
+
+          bloqueIzq.appendChild(bancoYNum);
+          bloqueIzq.appendChild(tipoCuenta);
+
+          const saldoSpan = document.createElement("span");
+          saldoSpan.className = "font-bold";
+          saldoSpan.textContent = formatoMoneda(cuenta.saldo);
+
+          fila.appendChild(bloqueIzq);
+          fila.appendChild(saldoSpan);
+          contenedor.appendChild(fila);
+        });
+
+        spanSuma.textContent = formatoMoneda(total);
+      }
+
+      function renderizarTarjetas() {
+        const contenedor = document.getElementById("listaTarjetas");
+        const spanSuma = document.getElementById("sumaTarjetasCredito");
+        contenedor.innerHTML = "";
+
+        let total = 0;
+        tarjetasData.forEach((tarjeta) => {
+          total += tarjeta.saldoPagar;
+
+          const ultimos4 = tarjeta.numero.slice(-4);
+          const fila = document.createElement("div");
+          fila.className = "py-2";
+
+          const cabecera = document.createElement("div");
+          cabecera.className = "flex justify-between";
+          const nombreTarjeta = document.createElement("span");
+          nombreTarjeta.className = "font-bold";
+          nombreTarjeta.textContent = `${tarjeta.nombreTarjeta} ***${ultimos4}`;
+          const saldoPagar = document.createElement("span");
+          saldoPagar.className = "font-bold text-red-600";
+          saldoPagar.textContent = formatoMoneda(tarjeta.saldoPagar);
+          cabecera.appendChild(nombreTarjeta);
+          cabecera.appendChild(saldoPagar);
+
+          const subtitulo = document.createElement("div");
+          subtitulo.className = "text-sm text-gray-400";
+          subtitulo.textContent = tarjeta.bancoEmisor;
+
+          const infoCupo = document.createElement("div");
+          infoCupo.className = "text-sm mt-1";
+          infoCupo.innerHTML = `
+            <strong>Cupo Total:</strong> ${formatoMoneda(tarjeta.cupoTotal)}<br>
+            <strong>Disponible:</strong> ${formatoMoneda(tarjeta.disponible)}
+          `;
+
+          fila.appendChild(cabecera);
+          fila.appendChild(subtitulo);
+          fila.appendChild(infoCupo);
+          contenedor.appendChild(fila);
+        });
+
+        spanSuma.textContent = formatoMoneda(total);
+      }
+
+      function renderizarLimitesTributarios() {
+        const container = document.getElementById(
+          "limitesTributariosContainer"
+        );
+        container.innerHTML = "";
+
+        limitesTributariosData.forEach((item) => {
+          const wrapper = document.createElement("div");
+          wrapper.className = "bg-white p-4 rounded-lg shadow-md";
+
+          const title = document.createElement("h3");
+          title.className = "font-bold text-lg mb-3";
+          title.textContent = item.titulo;
+
+          const porcentaje = Math.round((item.actualUVT / item.maxUVT) * 100);
+
+          const topLine = document.createElement("div");
+          topLine.className = "flex justify-between text-sm mb-1";
+          const uvts = document.createElement("span");
+          uvts.textContent = `${item.actualUVT}/${item.maxUVT} UVT`;
+          const pesos = document.createElement("span");
+          pesos.className = "text-gray-500";
+          pesos.textContent = `($${item.actualPesos.toLocaleString()} / $${item.maxPesos.toLocaleString()})`;
+          topLine.appendChild(uvts);
+          topLine.appendChild(pesos);
+
+          const progressBarBg = document.createElement("div");
+          progressBarBg.className = "bg-gray-200 h-2 rounded-full";
+          const progressBarFill = document.createElement("div");
+          progressBarFill.className = "bg-blue-600 h-2 rounded-full";
+          progressBarFill.style.width = `${porcentaje}%`;
+          progressBarBg.appendChild(progressBarFill);
+
+          const detalleGrid = document.createElement("div");
+          detalleGrid.className = "grid grid-cols-2 text-sm mt-2";
+
+          const colIzq = document.createElement("div");
+          colIzq.innerHTML = `
+            <div>${item.conLabel}: ${item.conUVT} UVT</div>
+            <div class="text-gray-500">$${item.conPesos.toLocaleString()}</div>
+          `;
+          const colDer = document.createElement("div");
+          colDer.innerHTML = `
+            <div>${item.sinLabel}: ${item.sinUVT} UVT</div>
+            <div class="text-gray-500">$${item.sinPesos.toLocaleString()}</div>
+          `;
+
+          detalleGrid.appendChild(colIzq);
+          detalleGrid.appendChild(colDer);
+
+          wrapper.appendChild(title);
+          wrapper.appendChild(topLine);
+          wrapper.appendChild(progressBarBg);
+          wrapper.appendChild(detalleGrid);
+
+          container.appendChild(wrapper);
+        });
+      }
+
+      function renderizarNotasObservaciones() {
+        const container = document.getElementById(
+          "notasObservacionesContainer"
+        );
+        container.innerHTML = "";
+
+        notasObservacionesData.forEach((item) => {
+          const wrapper = document.createElement("div");
+          wrapper.className = "flex items-start space-x-2";
+
+          const icono = document.createElement("div");
+          icono.className = "flex-shrink-0";
+
+          let svgColor = "text-green-500";
+          let svgPath = "";
+
+          if (item.tipo === "alerta") {
+            svgColor = "text-yellow-500";
+            svgPath =
+              "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z";
+          } else if (item.tipo === "tarjetas") {
+            svgColor = "text-blue-500";
+            svgPath =
+              "M2 7a2 2 0 012-2h16a2 2 0 012 2v3H2V7zm0 5h20v5a2 2 0 01-2 2H4a2 2 0 01-2-2v-5z";
+          } else if (item.tipo === "categorias") {
+            svgColor = "text-purple-500";
+            svgPath = "M4 6h16M4 10h16M4 14h16M4 18h16";
+          } else if (item.tipo === "gastos") {
+            svgColor = "text-red-500";
+            svgPath = "M9 14V9a3 3 0 013-3h7m-9 8l5 5m0 0l5-5m-5 5V9";
+          } else if (item.tipo === "proyeccion") {
+            svgColor = "text-green-500";
+            svgPath =
+              "M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z";
+          }
+
+          icono.innerHTML = `
+            <svg class="h-6 w-6 ${svgColor}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${svgPath}" />
+            </svg>
+          `;
+          wrapper.appendChild(icono);
+
+          const content = document.createElement("div");
+          const title = document.createElement("p");
+          title.className = "text-sm font-semibold";
+          title.textContent = item.titulo;
+
+          const list = document.createElement("ul");
+          list.className = "text-sm list-disc list-inside pl-4 mt-1 space-y-1";
+
+          item.mensajes.forEach((msg) => {
+            const li = document.createElement("li");
+            li.textContent = msg;
+            list.appendChild(li);
+          });
+
+          content.appendChild(title);
+          content.appendChild(list);
+
+          wrapper.appendChild(content);
+          container.appendChild(wrapper);
+        });
+      }
+
+      // ------------------------------------------------------------------------
+      // 6. GRÁFICOS
+      // ------------------------------------------------------------------------
+      let chartGastosCategoria = null;
+      let chartTendenciaGastos = null;
+
+      function actualizarGraficos() {
+        const ctxCat = document
+          .getElementById("chartGastosCategoria")
+          .getContext("2d");
+        const ctxTen = document
+          .getElementById("chartTendenciaGastos")
+          .getContext("2d");
+
+        if (chartGastosCategoria) chartGastosCategoria.destroy();
+        if (chartTendenciaGastos) chartTendenciaGastos.destroy();
+
+        // Ordenamos de mayor a menor según el valor
+        const datosOrdenados = gastosPorCategoriaData
+          .slice()
+          .sort((a, b) => b.valor - a.valor);
+
+        chartGastosCategoria = new Chart(ctxCat, {
+          type: "bar",
+          data: {
+            labels: datosOrdenados.map((item) => item.categoria),
+            datasets: [
+              {
+                label: "Gastos",
+                data: datosOrdenados.map((item) => item.valor),
+                backgroundColor: "rgba(54, 162, 235, 0.5)",
+                borderColor: "rgba(54, 162, 235, 1)",
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            indexAxis: "y",
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                beginAtZero: true,
+              },
+            },
+          },
+        });
+
+        chartTendenciaGastos = new Chart(ctxTen, {
+          type: "line",
+          data: {
+            labels: tendenciaGastosData.map((item) => item.mes),
+            datasets: [
+              {
+                label: "Gastos",
+                data: tendenciaGastosData.map((item) => item.valor),
+                borderColor: "rgba(255, 99, 132, 1)",
+                backgroundColor: "rgba(255, 99, 132, 0.2)",
+                fill: true,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+          },
+        });
+      }
+
+      // ------------------------------------------------------------------------
+      // 7. UTILIDADES
+      // ------------------------------------------------------------------------
+      function formatoMoneda(valor) {
+        if (!valor || isNaN(valor)) return "$0";
+        return "$" + valor.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      }
+    </script>
   </body>
 </html>
