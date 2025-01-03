@@ -5,19 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Informe de Préstamos - Finanzas Personales</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Librería Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
   <body class="bg-gray-100" onload="iniciarInformePrestamos()">
     <nav class="bg-blue-600 text-white p-4">
       <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-2xl font-bold">Informe de Préstamos</h1>
-        <a href="index.html" class="text-white hover:text-gray-200"
-          >Volver al Inicio</a
+        <!-- Botón Volver al Inicio (azul) -->
+        <a
+          href="index.html"
+          class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md"
         >
+          Volver al Inicio
+        </a>
       </div>
     </nav>
 
     <main class="container mx-auto p-4">
-      <!-- Resumen General -->
+      <!-- Bloques de Resumen de Préstamos (Recibidos, Otorgados, Pagos del Mes) -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <!-- Total Préstamos Recibidos -->
         <div class="bg-white p-4 rounded-lg shadow-md">
@@ -71,15 +77,50 @@
             </div>
             <div class="flex justify-between pt-2 border-t">
               <span>Neto:</span>
-              <span class="" id="netoMes">$0</span>
+              <span id="netoMes">$0</span>
             </div>
           </div>
         </div>
       </div>
 
-      <!-- Filtros -->
+      <!-- Gráficos de Análisis -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+        <!-- Tendencia de Pagos (Line) -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h2 class="text-lg font-bold mb-4">Tendencia de Pagos</h2>
+          <!-- Contenedor con altura fija para evitar crecimiento infinito -->
+          <div style="height: 250px">
+            <canvas id="chartTendencia"></canvas>
+          </div>
+        </div>
+
+        <!-- Deuda Recibida (Bar) -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h2 class="text-lg font-bold mb-4">Distribución de Deuda Recibida</h2>
+          <div style="height: 250px">
+            <canvas id="chartDeudaRecibida"></canvas>
+          </div>
+        </div>
+
+        <!-- Deuda Otorgada (Pie) -->
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h2 class="text-lg font-bold mb-4">Distribución de Deuda Otorgada</h2>
+          <div style="height: 250px">
+            <canvas id="chartDeudaOtorgada"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Caja Principal de Préstamos -->
       <div class="bg-white p-4 rounded-lg shadow-md mb-4">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- Título "Préstamos" -->
+        <h2 class="text-lg font-bold mb-4" id="tituloListadoPrestamos">
+          Préstamos
+        </h2>
+
+        <!-- Filtros -->
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-4 mb-4">
+          <!-- Filtro Tipo -->
           <select
             class="border rounded-md p-2"
             id="filtroTipo"
@@ -89,6 +130,8 @@
             <option value="recibido">Préstamos Recibidos</option>
             <option value="otorgado">Préstamos Otorgados</option>
           </select>
+
+          <!-- Filtro Estado -->
           <select
             class="border rounded-md p-2"
             id="filtroEstado"
@@ -99,6 +142,24 @@
             <option value="pagado">Pagados</option>
             <option value="mora">En Mora</option>
           </select>
+
+          <!-- Fecha Inicial -->
+          <input
+            type="date"
+            id="fechaInicial"
+            class="border rounded-md p-2"
+            onchange="actualizarListado()"
+          />
+
+          <!-- Fecha Final -->
+          <input
+            type="date"
+            id="fechaFinal"
+            class="border rounded-md p-2"
+            onchange="actualizarListado()"
+          />
+
+          <!-- Botón Actualizar -->
           <button
             class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
             onclick="actualizarListado()"
@@ -106,57 +167,48 @@
             Actualizar
           </button>
         </div>
-      </div>
 
-      <!-- Lista de Préstamos -->
-      <div class="bg-white p-4 rounded-lg shadow-md mb-4">
-        <h2 class="text-lg font-bold mb-4" id="tituloListadoPrestamos">
-          Préstamos
-        </h2>
+        <!-- Listado de Préstamos -->
         <div id="contenedorPrestamos"><!-- Contenido dinámico --></div>
-      </div>
 
-      <!-- Gráficos de Análisis (solo maquetado) -->
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <!-- Tendencia de Pagos -->
-        <div class="bg-white p-4 rounded-lg shadow-md">
-          <h2 class="text-lg font-bold mb-4">Tendencia de Pagos</h2>
-          <div
-            class="h-64 bg-gray-100 rounded flex items-center justify-center"
+        <!-- Botones finales -->
+        <div class="flex justify-end space-x-4 mt-4">
+          <!-- Botón Volver (gris) -->
+          <button
+            class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+            onclick="volverAtras()"
           >
-            [Gráfico de Tendencia]
-          </div>
-        </div>
-
-        <!-- Distribución de Deuda -->
-        <div class="bg-white p-4 rounded-lg shadow-md">
-          <h2 class="text-lg font-bold mb-4">Distribución de Deuda</h2>
-          <div
-            class="h-64 bg-gray-100 rounded flex items-center justify-center"
+            Volver
+          </button>
+          <!-- Botón Exportar (verde) -->
+          <button
+            class="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700"
+            onclick="exportarExcel()"
           >
-            [Gráfico de Distribución]
-          </div>
+            Exportar a Excel
+          </button>
         </div>
       </div>
     </main>
 
     <footer class="bg-gray-200 text-center p-4 mt-8">
-      <p id="ultimaActualizacion">Última actualización: 25/12/2024 10:30 AM</p>
+      <p>Sistema de Finanzas Personales - 2024</p>
     </footer>
 
     <script>
-      // Datos simulados
+      // ------------------------------------------------------------------------------------
+      // 1. DATOS SIMULADOS PARA REEMPLAZAR POR DATA DEL BACKEND
+      // ------------------------------------------------------------------------------------
       const prestamosData = [
         {
           id: 1,
           nombre: "Préstamo Hipotecario Bancolombia",
-          tipo: "recibido", // recibido u otorgado
-          estado: "activo", // activo, pagado, mora
+          tipo: "recibido",
+          estado: "activo",
           montoOriginal: 100000000,
           saldoActual: 85000000,
           pagado: 15000000,
-          fechaInicio: "01/01/2024",
-          fechaFinEstimada: "01/01/2034",
+          fechaInicio: "2024-01-01",
           proximoPago: "15/01/2025",
           cuotaRegular: 1200000,
           totalCuotas: 120,
@@ -164,6 +216,21 @@
           email: "usuario@ejemplo.com",
           recordatorio: true,
           detalles: "Préstamo para comprar casa",
+          pagos: [
+            // Cada objeto representa un pago realizado
+            { fecha: "2024-01-15", monto: 1200000 },
+            { fecha: "2024-02-15", monto: 1200000 },
+            { fecha: "2024-03-15", monto: 1200000 },
+            { fecha: "2024-04-15", monto: 1200000 },
+            { fecha: "2024-05-15", monto: 1200000 },
+            { fecha: "2024-06-15", monto: 1200000 },
+            { fecha: "2024-07-15", monto: 1200000 },
+            { fecha: "2024-08-15", monto: 1200000 },
+            { fecha: "2024-09-15", monto: 1200000 },
+            { fecha: "2024-10-15", monto: 1200000 },
+            { fecha: "2024-11-15", monto: 1200000 },
+            { fecha: "2024-12-15", monto: 1200000 },
+          ],
         },
         {
           id: 2,
@@ -173,8 +240,7 @@
           montoOriginal: 5000000,
           saldoActual: 3000000,
           pagado: 2000000,
-          fechaInicio: "01/09/2024",
-          fechaFinEstimada: "01/06/2025",
+          fechaInicio: "2024-09-01",
           proximoPago: "10/01/2025",
           cuotaRegular: 500000,
           totalCuotas: 10,
@@ -182,6 +248,12 @@
           email: "juan.perez@ejemplo.com",
           recordatorio: false,
           detalles: "Préstamo a un amigo",
+          pagos: [
+            { fecha: "2024-09-15", monto: 500000 },
+            { fecha: "2024-10-15", monto: 500000 },
+            { fecha: "2024-11-15", monto: 500000 },
+            { fecha: "2024-12-15", monto: 500000 },
+          ],
         },
         {
           id: 3,
@@ -191,8 +263,7 @@
           montoOriginal: 20000000,
           saldoActual: 18000000,
           pagado: 2000000,
-          fechaInicio: "01/05/2024",
-          fechaFinEstimada: "01/05/2028",
+          fechaInicio: "2024-05-01",
           proximoPago: "05/01/2025",
           cuotaRegular: 600000,
           totalCuotas: 48,
@@ -200,6 +271,11 @@
           email: "familiar@carro.com",
           recordatorio: true,
           detalles: "Préstamo para automóvil",
+          pagos: [
+            { fecha: "2024-05-15", monto: 600000 },
+            { fecha: "2024-06-15", monto: 600000 },
+            { fecha: "2024-07-15", monto: 800000 }, // pago parcial + mora
+          ],
         },
         {
           id: 4,
@@ -209,8 +285,7 @@
           montoOriginal: 1500000,
           saldoActual: 0,
           pagado: 1500000,
-          fechaInicio: "01/07/2024",
-          fechaFinEstimada: "01/12/2024",
+          fechaInicio: "2024-07-01",
           proximoPago: "--/--/----",
           cuotaRegular: 300000,
           totalCuotas: 5,
@@ -218,18 +293,439 @@
           email: "maria@ejemplo.com",
           recordatorio: false,
           detalles: "Préstamo ya pagado",
+          pagos: [
+            { fecha: "2024-07-15", monto: 300000 },
+            { fecha: "2024-08-15", monto: 300000 },
+            { fecha: "2024-09-15", monto: 300000 },
+            { fecha: "2024-10-15", monto: 300000 },
+            { fecha: "2024-11-15", monto: 300000 },
+          ],
         },
       ];
 
+      // Variables globales para los gráficos
+      let chartTendencia = null;
+      let chartDeudaRecibida = null;
+      let chartDeudaOtorgada = null;
+
+      // ------------------------------------------------------------------------------------
+      // 2. INICIO DEL INFORME
+      // ------------------------------------------------------------------------------------
       function iniciarInformePrestamos() {
         calcularResumenGlobal();
-        actualizarListado(); // Muestra inicialmente todos los préstamos
-        actualizarFecha();
+        inicializarCharts(); // crea las instancias de los gráficos 1 sola vez
+        actualizarListado(); // carga y filtra la info + actualiza gráficas
       }
 
-      // =============================
-      // 1. Cálculo de resumen global
-      // =============================
+      // ------------------------------------------------------------------------------------
+      // 3. INICIALIZAR CHARTS
+      //    Se crean los gráficos pero aún sin datos definitivos. Luego llamaremos
+      //    a actualizarCharts() para actualizar la info según los filtros.
+      // ------------------------------------------------------------------------------------
+      function inicializarCharts() {
+        const ctxTendencia = document
+          .getElementById("chartTendencia")
+          ?.getContext("2d");
+        const ctxDeudaRecibida = document
+          .getElementById("chartDeudaRecibida")
+          ?.getContext("2d");
+        const ctxDeudaOtorgada = document
+          .getElementById("chartDeudaOtorgada")
+          ?.getContext("2d");
+
+        if (!ctxTendencia || !ctxDeudaRecibida || !ctxDeudaOtorgada) {
+          console.warn("Canvas para los gráficos no encontrado.");
+          return;
+        }
+
+        // Gráfico de Tendencia (Line)
+        chartTendencia = new Chart(ctxTendencia, {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: "Préstamos Recibidos",
+                data: [],
+                borderColor: "rgba(75, 192, 192, 1)",
+                backgroundColor: "rgba(75, 192, 192, 0.2)",
+                fill: true,
+              },
+              {
+                label: "Préstamos Otorgados",
+                data: [],
+                borderColor: "rgba(153, 102, 255, 1)",
+                backgroundColor: "rgba(153, 102, 255, 0.2)",
+                fill: true,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+          },
+        });
+
+        // Distribución de Deuda Recibida (Bar)
+        chartDeudaRecibida = new Chart(ctxDeudaRecibida, {
+          type: "bar",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: "Deuda Recibida",
+                data: [],
+                backgroundColor: "rgba(255, 99, 132, 0.5)",
+                borderColor: "rgba(255, 99, 132, 1)",
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            indexAxis: "y",
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                beginAtZero: true,
+              },
+            },
+          },
+        });
+
+        // Distribución de Deuda Otorgada (Pie)
+        chartDeudaOtorgada = new Chart(ctxDeudaOtorgada, {
+          type: "pie",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: "Préstamos Otorgados",
+                data: [],
+                backgroundColor: [
+                  "rgba(54, 162, 235, 0.6)",
+                  "rgba(255, 206, 86, 0.6)",
+                  "rgba(75, 192, 192, 0.6)",
+                  "rgba(153, 102, 255, 0.6)",
+                  "rgba(255, 159, 64, 0.6)",
+                ],
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+          },
+        });
+      }
+
+      // ------------------------------------------------------------------------------------
+      // 4. ACTUALIZAR CHARTS
+      //    Aquí se toman los datos filtrados y se renderizan en los gráficos.
+      // ------------------------------------------------------------------------------------
+      function actualizarCharts() {
+        if (!chartTendencia || !chartDeudaRecibida || !chartDeudaOtorgada)
+          return;
+
+        // Datos filtrados según los select y fechas
+        const arrFiltrados = prestamosDataFiltrados();
+
+        // a) Tendencia (Line) - mostramos la suma de pagos mes a mes
+        const { meses, pagosRecibidos, pagosOtorgados } =
+          generarTendenciaMensual(arrFiltrados);
+
+        chartTendencia.data.labels = meses;
+        // Primer dataset (recibidos)
+        chartTendencia.data.datasets[0].data = pagosRecibidos;
+        // Segundo dataset (otorgados)
+        chartTendencia.data.datasets[1].data = pagosOtorgados;
+        chartTendencia.update();
+
+        // b) Deuda Recibida (Bar)
+        const recibidos = arrFiltrados.filter((p) => p.tipo === "recibido");
+        // Ordenar de mayor a menor según saldoActual
+        recibidos.sort((a, b) => b.saldoActual - a.saldoActual);
+        chartDeudaRecibida.data.labels = recibidos.map((p) => p.nombre);
+        chartDeudaRecibida.data.datasets[0].data = recibidos.map(
+          (p) => p.saldoActual
+        );
+        chartDeudaRecibida.update();
+
+        // c) Deuda Otorgada (Pie)
+        const otorgados = arrFiltrados.filter((p) => p.tipo === "otorgado");
+        chartDeudaOtorgada.data.labels = otorgados.map((p) => p.nombre);
+        chartDeudaOtorgada.data.datasets[0].data = otorgados.map(
+          (p) => p.saldoActual
+        );
+        chartDeudaOtorgada.update();
+      }
+
+      // ------------------------------------------------------------------------------------
+      // 5. GENERAR TENDENCIA MENSUAL DE PAGOS
+      //    Recorremos los préstamos filtrados, juntamos sus pagos y acumulamos
+      //    por mes los montos de préstamos recibidos y otorgados.
+      // ------------------------------------------------------------------------------------
+      function generarTendenciaMensual(prestamos) {
+        // Definimos un rango fijo (ej. enero 2024 a diciembre 2024) o dinámico
+        // Aquí: enero 2024 hasta enero 2025 (13 meses).
+        const inicio = new Date("2024-01-01");
+        const fin = new Date("2025-01-01");
+        const mesesLabels = [];
+        let cursor = new Date(inicio);
+
+        while (cursor <= fin) {
+          // Etiqueta en formato "YYYY-MM"
+          const y = cursor.getFullYear();
+          const m = (cursor.getMonth() + 1).toString().padStart(2, "0");
+          mesesLabels.push(`${y}-${m}`);
+          cursor.setMonth(cursor.getMonth() + 1);
+        }
+
+        // Arrays que llevarán la suma de pagos por cada mes
+        const sumaRecibidos = mesesLabels.map(() => 0);
+        const sumaOtorgados = mesesLabels.map(() => 0);
+
+        // Para cada préstamo, sumamos sus pagos en el mes correspondiente
+        prestamos.forEach((p) => {
+          if (!p.pagos || p.pagos.length === 0) return;
+
+          p.pagos.forEach((pago) => {
+            const fechaPago = new Date(pago.fecha);
+            const yPago = fechaPago.getFullYear();
+            const mPago = (fechaPago.getMonth() + 1)
+              .toString()
+              .padStart(2, "0");
+            const etiqueta = `${yPago}-${mPago}`;
+
+            // Ver si esa etiqueta existe en mesesLabels
+            const indexMes = mesesLabels.indexOf(etiqueta);
+            if (indexMes !== -1) {
+              if (p.tipo === "recibido") {
+                sumaRecibidos[indexMes] += pago.monto;
+              } else {
+                // tipo "otorgado"
+                sumaOtorgados[indexMes] += pago.monto;
+              }
+            }
+          });
+        });
+
+        return {
+          meses: mesesLabels,
+          pagosRecibidos: sumaRecibidos,
+          pagosOtorgados: sumaOtorgados,
+        };
+      }
+
+      // ------------------------------------------------------------------------------------
+      // 6. FILTROS: OBTENER LISTADO FILTRADO
+      // ------------------------------------------------------------------------------------
+      function prestamosDataFiltrados() {
+        const tipoSeleccionado = document.getElementById("filtroTipo").value;
+        const estadoSeleccionado =
+          document.getElementById("filtroEstado").value;
+        const fechaIni = document.getElementById("fechaInicial").value;
+        const fechaFin = document.getElementById("fechaFinal").value;
+
+        let msIni = fechaIni ? new Date(fechaIni).getTime() : null;
+        let msFin = fechaFin ? new Date(fechaFin).getTime() : null;
+        if (msIni && msFin && msFin < msIni) {
+          // Intercambiamos para corregir el rango invertido
+          const tmp = msIni;
+          msIni = msFin;
+          msFin = tmp;
+        }
+
+        return prestamosData.filter((p) => {
+          // Filtro tipo
+          if (tipoSeleccionado !== "todos" && p.tipo !== tipoSeleccionado) {
+            return false;
+          }
+          // Filtro estado
+          if (
+            estadoSeleccionado !== "todos" &&
+            p.estado !== estadoSeleccionado
+          ) {
+            return false;
+          }
+          // Filtro fechas (por fechaInicio)
+          const msPrestamo = new Date(p.fechaInicio).getTime();
+          if (msIni && msPrestamo < msIni) return false;
+          if (msFin && msPrestamo > msFin) return false;
+
+          return true;
+        });
+      }
+
+      // ------------------------------------------------------------------------------------
+      // 7. ACTUALIZAR LISTADO EN PANTALLA
+      // ------------------------------------------------------------------------------------
+      function actualizarListado() {
+        const contenedor = document.getElementById("contenedorPrestamos");
+        contenedor.innerHTML = "";
+
+        const arr = prestamosDataFiltrados();
+        if (arr.length === 0) {
+          const noHay = document.createElement("p");
+          noHay.className = "text-gray-500";
+          noHay.textContent =
+            "No se encontraron préstamos con los filtros seleccionados.";
+          contenedor.appendChild(noHay);
+        } else {
+          arr.forEach((prestamo) => {
+            const card = document.createElement("div");
+            card.className = "border rounded-lg p-4 mb-4";
+
+            // Encabezado
+            const header = document.createElement("div");
+            header.className = "flex justify-between items-start mb-4";
+            const headerLeft = document.createElement("div");
+            const h3 = document.createElement("h3");
+            h3.className = "font-bold";
+            h3.textContent = prestamo.nombre;
+            const pTipo = document.createElement("p");
+            pTipo.className = "text-sm text-gray-500";
+            pTipo.textContent =
+              prestamo.tipo === "recibido"
+                ? "Préstamo Recibido"
+                : "Préstamo Otorgado";
+            headerLeft.appendChild(h3);
+            headerLeft.appendChild(pTipo);
+
+            // Estado
+            const spanEstado = document.createElement("span");
+            spanEstado.className = "px-2 py-1 rounded-full text-sm";
+            switch (prestamo.estado) {
+              case "activo":
+                spanEstado.textContent = "Al día";
+                spanEstado.classList.add("bg-green-100", "text-green-800");
+                break;
+              case "pagado":
+                spanEstado.textContent = "Pagado";
+                spanEstado.classList.add("bg-blue-100", "text-blue-800");
+                break;
+              case "mora":
+                spanEstado.textContent = "En mora";
+                spanEstado.classList.add("bg-red-100", "text-red-800");
+                break;
+              default:
+                spanEstado.textContent = "Desconocido";
+                spanEstado.classList.add("bg-gray-100", "text-gray-800");
+            }
+
+            header.appendChild(headerLeft);
+            header.appendChild(spanEstado);
+
+            // Grid 3 columnas
+            const cuerpoGrid = document.createElement("div");
+            cuerpoGrid.className = "grid grid-cols-1 md:grid-cols-3 gap-4 mb-4";
+
+            // Col 1
+            const col1 = document.createElement("div");
+            col1.className = "space-y-2";
+            col1.innerHTML = `
+              <div class="flex justify-between">
+                <span>Monto Original:</span>
+                <span>${formatoMoneda(prestamo.montoOriginal)}</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Saldo Actual:</span>
+                <span>${formatoMoneda(prestamo.saldoActual)}</span>
+              </div>
+              <div class="flex justify-between">
+                <span>${
+                  prestamo.tipo === "recibido" ? "Pagado:" : "Recibido:"
+                }</span>
+                <span>${formatoMoneda(prestamo.pagado)}</span>
+              </div>
+              <div class="flex justify-between">
+                <span>${
+                  prestamo.tipo === "recibido"
+                    ? "Cuota Regular:"
+                    : "Cuota Esperada:"
+                }</span>
+                <span>${formatoMoneda(prestamo.cuotaRegular)}</span>
+              </div>
+            `;
+
+            // Col 2
+            const col2 = document.createElement("div");
+            col2.className = "space-y-2";
+            col2.innerHTML = `
+              <div class="flex justify-between">
+                <span>Fecha de Inicio:</span>
+                <span>${formatoFechaUI(prestamo.fechaInicio)}</span>
+              </div>
+              <div class="flex justify-between">
+                <span>${
+                  prestamo.tipo === "recibido"
+                    ? "Próximo Pago:"
+                    : "Próximo Cobro:"
+                }</span>
+                <span>${prestamo.proximoPago}</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Pagos Realizados:</span>
+                <span>${prestamo.cuotasPagadas}</span>
+              </div>
+              <div class="flex justify-between">
+                <span>Email:</span>
+                <span>${prestamo.email || "No registrado"}</span>
+              </div>
+            `;
+
+            // Col 3
+            const col3 = document.createElement("div");
+            col3.className = "space-y-2";
+            col3.innerHTML = `
+              <div class="flex justify-between">
+                <span>Recordatorio de pago:</span>
+                <span>${prestamo.recordatorio ? "Activo" : "No"}</span>
+              </div>
+              <div>
+                <span class="block text-gray-600 text-sm font-bold">Detalles:</span>
+                <p class="text-sm">${prestamo.detalles || "Sin detalles"}</p>
+              </div>
+              <div class="flex justify-between">
+                <a href="#" class="text-blue-600 hover:underline">Ver Documentos</a>
+                <a href="#" class="text-blue-600 hover:underline">Ver Pagos</a>
+              </div>
+            `;
+
+            cuerpoGrid.appendChild(col1);
+            cuerpoGrid.appendChild(col2);
+            cuerpoGrid.appendChild(col3);
+
+            // Barra de Progreso
+            const progreso =
+              prestamo.totalCuotas > 0
+                ? (prestamo.cuotasPagadas / prestamo.totalCuotas) * 100
+                : 0;
+            const barraProgreso = document.createElement("div");
+            barraProgreso.className = "bg-gray-100 rounded-full h-2 mb-2";
+            barraProgreso.innerHTML = `
+              <div class="bg-green-600 h-2 rounded-full" style="width: ${progreso}%;"></div>
+            `;
+            const pProgreso = document.createElement("p");
+            pProgreso.className = "text-sm text-gray-500 text-center";
+            pProgreso.textContent = `${Math.round(progreso)}% Completado`;
+
+            card.appendChild(header);
+            card.appendChild(cuerpoGrid);
+            card.appendChild(barraProgreso);
+            card.appendChild(pProgreso);
+
+            contenedor.appendChild(card);
+          });
+        }
+
+        // Actualizamos los gráficos con base en los datos filtrados
+        actualizarCharts();
+      }
+
+      // ------------------------------------------------------------------------------------
+      // 8. CÁLCULO DE RESUMEN GLOBAL (PARTE SUPERIOR)
+      // ------------------------------------------------------------------------------------
       function calcularResumenGlobal() {
         let totalOriginalRecibidos = 0;
         let saldoRecibidos = 0;
@@ -242,35 +738,26 @@
         let pagosMesAPagar = 0;
         let pagosMesARecibir = 0;
 
-        // Suponemos que el "pago del mes" es la cuotaRegular,
-        // si está en estado activo y la fecha del próximo pago es en este mes
-        // (Para el ejemplo, lo calculamos de forma simplificada,
-        //  no validamos la fecha, solo filtramos "activo")
         prestamosData.forEach((prestamo) => {
           if (prestamo.tipo === "recibido") {
-            // Recibidos
             totalOriginalRecibidos += prestamo.montoOriginal;
             saldoRecibidos += prestamo.saldoActual;
             pagadoRecibidos += prestamo.pagado;
 
-            // Pagos del mes (a pagar)
             if (prestamo.estado === "activo") {
               pagosMesAPagar += prestamo.cuotaRegular;
             }
-          } else if (prestamo.tipo === "otorgado") {
-            // Otorgados
+          } else {
             totalOriginalOtorgados += prestamo.montoOriginal;
             saldoOtorgados += prestamo.saldoActual;
             pagadoOtorgados += prestamo.pagado;
 
-            // Pagos del mes (a recibir)
             if (prestamo.estado === "activo") {
               pagosMesARecibir += prestamo.cuotaRegular;
             }
           }
         });
 
-        // Actualizar en el DOM
         document.getElementById("totalOriginalRecibidos").textContent =
           formatoMoneda(totalOriginalRecibidos);
         document.getElementById("saldoActualRecibidos").textContent =
@@ -285,256 +772,45 @@
         document.getElementById("pagadoOtorgados").textContent =
           formatoMoneda(pagadoOtorgados);
 
-        // Pagos del Mes
         document.getElementById("aPagarMes").textContent =
           formatoMoneda(pagosMesAPagar);
         document.getElementById("aRecibirMes").textContent =
           formatoMoneda(pagosMesARecibir);
-        document.getElementById("netoMes").textContent = formatoMoneda(
-          pagosMesARecibir - pagosMesAPagar
-        );
-        document
-          .getElementById("netoMes")
-          .classList.remove("text-green-600", "text-red-600");
-        if (pagosMesARecibir - pagosMesAPagar < 0) {
-          document.getElementById("netoMes").classList.add("text-red-600");
+        const neto = pagosMesARecibir - pagosMesAPagar;
+        const netoElem = document.getElementById("netoMes");
+        netoElem.textContent = formatoMoneda(neto);
+        netoElem.classList.remove("text-green-600", "text-red-600");
+        if (neto < 0) {
+          netoElem.classList.add("text-red-600");
         } else {
-          document.getElementById("netoMes").classList.add("text-green-600");
+          netoElem.classList.add("text-green-600");
         }
       }
 
-      // =============================
-      // 2. Filtro y listado dinámico
-      // =============================
-      function actualizarListado() {
-        const tipoSeleccionado = document.getElementById("filtroTipo").value; // todos, recibido, otorgado
-        const estadoSeleccionado =
-          document.getElementById("filtroEstado").value; // todos, activo, pagado, mora
-
-        const contenedor = document.getElementById("contenedorPrestamos");
-        contenedor.innerHTML = "";
-
-        // Filtrar
-        const prestamosFiltrados = prestamosData.filter((prestamo) => {
-          // Filtro por tipo
-          if (
-            tipoSeleccionado !== "todos" &&
-            prestamo.tipo !== tipoSeleccionado
-          ) {
-            return false;
-          }
-          // Filtro por estado
-          if (
-            estadoSeleccionado !== "todos" &&
-            prestamo.estado !== estadoSeleccionado
-          ) {
-            return false;
-          }
-          return true;
-        });
-
-        // Mostrar cada préstamo
-        if (prestamosFiltrados.length === 0) {
-          const noHay = document.createElement("p");
-          noHay.className = "text-gray-500";
-          noHay.textContent =
-            "No se encontraron préstamos con los filtros seleccionados.";
-          contenedor.appendChild(noHay);
-          return;
-        }
-
-        prestamosFiltrados.forEach((prestamo) => {
-          const card = document.createElement("div");
-          card.className = "border rounded-lg p-4 mb-4";
-
-          // Encabezado
-          const header = document.createElement("div");
-          header.className = "flex justify-between items-start mb-4";
-
-          const headerLeft = document.createElement("div");
-          const h3 = document.createElement("h3");
-          h3.className = "font-bold";
-          h3.textContent = prestamo.nombre;
-
-          const pTipo = document.createElement("p");
-          pTipo.className = "text-sm text-gray-500";
-          pTipo.textContent =
-            prestamo.tipo === "recibido"
-              ? "Préstamo Recibido"
-              : "Préstamo Otorgado";
-
-          headerLeft.appendChild(h3);
-          headerLeft.appendChild(pTipo);
-
-          // Etiqueta de estado
-          const spanEstado = document.createElement("span");
-          spanEstado.className = "px-2 py-1 rounded-full text-sm";
-          switch (prestamo.estado) {
-            case "activo":
-              spanEstado.textContent = "Al día";
-              spanEstado.classList.add("bg-green-100", "text-green-800");
-              break;
-            case "pagado":
-              spanEstado.textContent = "Pagado";
-              spanEstado.classList.add("bg-blue-100", "text-blue-800");
-              break;
-            case "mora":
-              spanEstado.textContent = "En mora";
-              spanEstado.classList.add("bg-red-100", "text-red-800");
-              break;
-            default:
-              spanEstado.textContent = "Desconocido";
-              spanEstado.classList.add("bg-gray-100", "text-gray-800");
-          }
-
-          header.appendChild(headerLeft);
-          header.appendChild(spanEstado);
-
-          // Cuerpo: info en grid
-          const cuerpoGrid = document.createElement("div");
-          cuerpoGrid.className = "grid grid-cols-1 md:grid-cols-3 gap-4 mb-4";
-
-          // Columna 1
-          const col1 = document.createElement("div");
-          col1.className = "space-y-2";
-          col1.innerHTML = `
-            <div class="flex justify-between">
-              <span>Monto Original:</span>
-              <span>${formatoMoneda(prestamo.montoOriginal)}</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Saldo Actual:</span>
-              <span>${formatoMoneda(prestamo.saldoActual)}</span>
-            </div>
-            <div class="flex justify-between">
-              <span>${
-                prestamo.tipo === "recibido" ? "Pagado:" : "Recibido:"
-              }</span>
-              <span>${formatoMoneda(prestamo.pagado)}</span>
-            </div>
-          `;
-
-          // Columna 2
-          const col2 = document.createElement("div");
-          col2.className = "space-y-2";
-          col2.innerHTML = `
-            <div class="flex justify-between">
-              <span>${
-                prestamo.tipo === "recibido"
-                  ? "Cuota Regular:"
-                  : "Cuota Esperada:"
-              }</span>
-              <span>${formatoMoneda(prestamo.cuotaRegular)}</span>
-            </div>
-            <div class="flex justify-between">
-              <span>${
-                prestamo.tipo === "recibido"
-                  ? "Próximo Pago:"
-                  : "Próximo Cobro:"
-              }</span>
-              <span>${prestamo.proximoPago}</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Pagos Realizados:</span>
-              <span>${prestamo.cuotasPagadas} ${
-            prestamo.totalCuotas > 0 ? `de ${prestamo.totalCuotas}` : ""
-          }</span>
-            </div>
-          `;
-
-          // Columna 3
-          const col3 = document.createElement("div");
-          col3.className = "space-y-2";
-          col3.innerHTML = `
-            <div class="flex justify-between">
-              <span>Inicio:</span>
-              <span>${prestamo.fechaInicio}</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Fin Estimado:</span>
-              <span>${prestamo.fechaFinEstimada}</span>
-            </div>
-            <div class="flex justify-between">
-              <a href="#" class="text-blue-600 hover:underline">Ver Documentos</a>
-              <a href="#" class="text-blue-600 hover:underline">Ver Pagos</a>
-            </div>
-          `;
-
-          cuerpoGrid.appendChild(col1);
-          cuerpoGrid.appendChild(col2);
-          cuerpoGrid.appendChild(col3);
-
-          // Barra de progreso
-          // Si totalCuotas es 0, evitamos la división por 0
-          const progreso =
-            prestamo.totalCuotas > 0
-              ? (prestamo.cuotasPagadas / prestamo.totalCuotas) * 100
-              : 0;
-          const barraProgreso = document.createElement("div");
-          barraProgreso.className = "bg-gray-100 rounded-full h-2 mb-2";
-          barraProgreso.innerHTML = `
-            <div class="bg-green-600 h-2 rounded-full" style="width: ${progreso}%"></div>
-          `;
-          const pProgreso = document.createElement("p");
-          pProgreso.className = "text-sm text-gray-500 text-center";
-          pProgreso.textContent = `${Math.round(progreso)}% Completado`;
-
-          // Extra: Email, Detalles, Recordatorio
-          const extraInfo = document.createElement("div");
-          extraInfo.className = "mt-4 grid grid-cols-1 md:grid-cols-3 gap-4";
-          extraInfo.innerHTML = `
-            <div>
-              <span class="block text-gray-600 text-sm font-bold">Email:</span>
-              <p class="text-sm">${prestamo.email || "No registrado"}</p>
-            </div>
-            <div>
-              <span class="block text-gray-600 text-sm font-bold">Detalles:</span>
-              <p class="text-sm">${prestamo.detalles || "Sin detalles"}</p>
-            </div>
-            <div>
-              <span class="block text-gray-600 text-sm font-bold">Recordatorio de pago:</span>
-              <p class="text-sm">
-                ${prestamo.recordatorio ? "Activo" : "No"}
-              </p>
-            </div>
-          `;
-
-          // Juntar todo
-          card.appendChild(header);
-          card.appendChild(cuerpoGrid);
-          card.appendChild(barraProgreso);
-          card.appendChild(pProgreso);
-          card.appendChild(extraInfo);
-
-          contenedor.appendChild(card);
-        });
-      }
-
-      // ===========================
-      // 3. Formato y utilidades
-      // ===========================
+      // ------------------------------------------------------------------------------------
+      // 9. UTILIDADES
+      // ------------------------------------------------------------------------------------
       function formatoMoneda(num) {
-        // Simple formateo en pesos COP
         if (!num || isNaN(num)) return "$0";
         return "$" + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
       }
 
-      function actualizarFecha() {
-        // Ejemplo: actualizamos la fecha del footer a la fecha/hora actual
-        const fechaActual = new Date();
-        const opciones = {
-          year: "numeric",
-          month: "2-digit",
-          day: "2-digit",
-          hour: "2-digit",
-          minute: "2-digit",
-        };
-        const fechaFormateada = fechaActual.toLocaleDateString(
-          "es-CO",
-          opciones
-        );
-        document.getElementById("ultimaActualizacion").textContent =
-          "Última actualización: " + fechaFormateada;
+      function formatoFechaUI(yyyy_mm_dd) {
+        if (!yyyy_mm_dd.includes("-")) return yyyy_mm_dd;
+        const [year, month, day] = yyyy_mm_dd.split("-");
+        return `${day}/${month}/${year}`;
+      }
+
+      // ------------------------------------------------------------------------------------
+      // 10. BOTONES FINALES
+      // ------------------------------------------------------------------------------------
+      function exportarExcel() {
+        // Placeholder de exportar
+        alert("Exportando a Excel (demo)");
+      }
+      function volverAtras() {
+        // Placeholder de volver
+        alert("Volver (demo)");
       }
     </script>
   </body>
