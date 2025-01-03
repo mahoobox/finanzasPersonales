@@ -7,15 +7,15 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="componentes/popup.js"></script>
   </head>
-  <body class="bg-gray-100" onload="Popup.init()">
+  <body class="bg-gray-100" onload="Popup.init(); cargarDatosSimulados()">
     <nav class="bg-blue-600 text-white p-4">
       <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-2xl font-bold">
           Registro de Costos/Rendimientos Bancarios
         </h1>
-        <a href="index.html" class="text-white hover:text-gray-200"
-          >Volver al Inicio</a
-        >
+        <a href="index.html" class="text-white hover:text-gray-200">
+          Volver al Inicio
+        </a>
       </div>
     </nav>
 
@@ -62,9 +62,6 @@
           </label>
           <select id="cuenta" class="w-full border rounded-md p-2" required>
             <option value="">Seleccione una cuenta</option>
-            <option value="corriente">Cuenta Corriente Principal</option>
-            <option value="ahorros">Cuenta de Ahorros</option>
-            <option value="nomina">Cuenta Nómina</option>
           </select>
         </div>
 
@@ -140,11 +137,30 @@
     </main>
 
     <script>
+      // Objeto que simula datos provenientes del backend
+      const datosSimulados = {
+        cuentas: [
+          { id: "corriente", nombre: "Cuenta Corriente Principal" },
+          { id: "ahorros", nombre: "Cuenta de Ahorros" },
+          { id: "nomina", nombre: "Cuenta Nómina" },
+        ],
+      };
+
+      // Cargar datos simulados al iniciar
+      function cargarDatosSimulados() {
+        const selectCuenta = document.getElementById("cuenta");
+        datosSimulados.cuentas.forEach((cta) => {
+          const option = document.createElement("option");
+          option.value = cta.id;
+          option.textContent = cta.nombre;
+          selectCuenta.appendChild(option);
+        });
+      }
+
       function actualizarConceptos() {
         const tipoRegistro = document.getElementById("tipoRegistro").value;
         const conceptoSelect = document.getElementById("concepto");
 
-        // Limpiar opciones actuales
         conceptoSelect.innerHTML =
           '<option value="">Seleccione un concepto</option>';
 
@@ -167,10 +183,10 @@
             "Rendimientos Inversión",
             "Otro Rendimiento",
           ];
-          rendimientos.forEach((rendimiento) => {
+          rendimientos.forEach((rend) => {
             const option = document.createElement("option");
-            option.value = rendimiento.toLowerCase().replace(/\s+/g, "_");
-            option.textContent = rendimiento;
+            option.value = rend.toLowerCase().replace(/\s+/g, "_");
+            option.textContent = rend;
             conceptoSelect.appendChild(option);
           });
         }
@@ -182,13 +198,11 @@
           Popup.mostrar("error", "El monto debe ser mayor a 0");
           return false;
         }
-
         return true;
       }
 
       function guardarRegistro(event) {
         event.preventDefault();
-
         if (!validarFormulario()) return;
 
         // Aquí iría la lógica para guardar el registro

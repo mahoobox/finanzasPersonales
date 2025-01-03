@@ -7,15 +7,16 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="componentes/popup.js"></script>
   </head>
-  <body class="bg-gray-100" onload="Popup.init()">
+  <body class="bg-gray-100" onload="Popup.init(); cargarDatosSimulados()">
     <nav class="bg-blue-600 text-white p-4">
       <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-2xl font-bold">Transferencia entre Cuentas</h1>
-        <a href="index.html" class="text-white hover:text-gray-200"
-          >Volver al Inicio</a
-        >
+        <a href="index.html" class="text-white hover:text-gray-200">
+          Volver al Inicio
+        </a>
       </div>
     </nav>
+
     <main class="container mx-auto p-4">
       <form
         id="transferenciasForm"
@@ -24,9 +25,9 @@
       >
         <!-- Fecha -->
         <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2"
-            >Fecha</label
-          >
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Fecha
+          </label>
           <input
             type="date"
             id="fecha"
@@ -34,11 +35,12 @@
             required
           />
         </div>
+
         <!-- Cuenta Origen -->
         <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2"
-            >Cuenta Origen</label
-          >
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Cuenta Origen
+          </label>
           <select
             id="cuentaOrigen"
             onchange="validarCuentas()"
@@ -46,17 +48,14 @@
             required
           >
             <option value="">Seleccione cuenta origen</option>
-            <option value="efectivo">Efectivo</option>
-            <option value="corriente">Cuenta Corriente Principal</option>
-            <option value="ahorros">Cuenta de Ahorros</option>
-            <option value="nomina">Cuenta Nómina</option>
           </select>
         </div>
+
         <!-- Cuenta Destino -->
         <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2"
-            >Cuenta Destino</label
-          >
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Cuenta Destino
+          </label>
           <select
             id="cuentaDestino"
             onchange="validarCuentas()"
@@ -64,17 +63,14 @@
             required
           >
             <option value="">Seleccione cuenta destino</option>
-            <option value="efectivo">Efectivo</option>
-            <option value="corriente">Cuenta Corriente Principal</option>
-            <option value="ahorros">Cuenta de Ahorros</option>
-            <option value="nomina">Cuenta Nómina</option>
           </select>
         </div>
+
         <!-- Monto -->
         <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2"
-            >Monto</label
-          >
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Monto
+          </label>
           <input
             type="number"
             id="monto"
@@ -85,11 +81,12 @@
             required
           />
         </div>
+
         <!-- Descripción -->
         <div class="mb-4">
-          <label class="block text-gray-700 text-sm font-bold mb-2"
-            >Descripción</label
-          >
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Descripción
+          </label>
           <textarea
             id="descripcion"
             class="w-full border rounded-md p-2"
@@ -97,17 +94,19 @@
             placeholder="Motivo de la transferencia"
           ></textarea>
         </div>
+
         <!-- Comprobante -->
         <div class="mb-6">
-          <label class="block text-gray-700 text-sm font-bold mb-2"
-            >Comprobante</label
-          >
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Comprobante
+          </label>
           <input
             type="file"
             id="comprobante"
             class="w-full border rounded-md p-2"
           />
         </div>
+
         <!-- Botones -->
         <div class="flex justify-end space-x-4">
           <button
@@ -128,6 +127,36 @@
     </main>
 
     <script>
+      // Objeto que simula datos provenientes del backend
+      const datosSimulados = {
+        cuentas: [
+          { id: "efectivo", nombre: "Efectivo" },
+          { id: "corriente", nombre: "Cuenta Corriente Principal" },
+          { id: "ahorros", nombre: "Cuenta de Ahorros" },
+          { id: "nomina", nombre: "Cuenta Nómina" },
+        ],
+      };
+
+      // Carga dinámica de cuentas en los select
+      function cargarDatosSimulados() {
+        const origenSelect = document.getElementById("cuentaOrigen");
+        const destinoSelect = document.getElementById("cuentaDestino");
+
+        datosSimulados.cuentas.forEach((cta) => {
+          // Cuenta Origen
+          const optionOrigen = document.createElement("option");
+          optionOrigen.value = cta.id;
+          optionOrigen.textContent = cta.nombre;
+          origenSelect.appendChild(optionOrigen);
+
+          // Cuenta Destino
+          const optionDestino = document.createElement("option");
+          optionDestino.value = cta.id;
+          optionDestino.textContent = cta.nombre;
+          destinoSelect.appendChild(optionDestino);
+        });
+      }
+
       function validarCuentas() {
         const origen = document.getElementById("cuentaOrigen").value;
         const destino = document.getElementById("cuentaDestino").value;

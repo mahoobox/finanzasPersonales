@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="componentes/popup.js"></script>
   </head>
-  <body class="bg-gray-100" onload="Popup.init()">
+  <body class="bg-gray-100" onload="Popup.init(); cargarDatosSimulados()">
     <nav class="bg-blue-600 text-white p-4">
       <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-2xl font-bold">Registro de Nuevo Préstamo</h1>
@@ -89,9 +89,6 @@
           </label>
           <select id="cuenta" class="w-full border rounded-md p-2" required>
             <option value="">Seleccione una cuenta</option>
-            <option value="corriente">Cuenta Corriente Principal</option>
-            <option value="ahorros">Cuenta de Ahorros</option>
-            <option value="nomina">Cuenta Nómina</option>
           </select>
         </div>
 
@@ -206,6 +203,26 @@
     </main>
 
     <script>
+      // Objeto que simula datos provenientes del backend
+      const datosSimulados = {
+        cuentas: [
+          { id: "corriente", nombre: "Cuenta Corriente Principal" },
+          { id: "ahorros", nombre: "Cuenta de Ahorros" },
+          { id: "nomina", nombre: "Cuenta Nómina" },
+        ],
+      };
+
+      function cargarDatosSimulados() {
+        // Cargar las cuentas en el select
+        const selectCuenta = document.getElementById("cuenta");
+        datosSimulados.cuentas.forEach((cta) => {
+          const option = document.createElement("option");
+          option.value = cta.id;
+          option.textContent = cta.nombre;
+          selectCuenta.appendChild(option);
+        });
+      }
+
       function validarFormulario() {
         // Validar monto original
         const monto = parseFloat(

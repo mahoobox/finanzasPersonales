@@ -7,18 +7,22 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="componentes/popup.js"></script>
   </head>
-  <body class="bg-gray-100" onload="Popup.init()">
+  <body class="bg-gray-100" onload="Popup.init(); cargarDatosSimulados()">
     <nav class="bg-blue-600 text-white p-4">
       <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-2xl font-bold">Registro de Compra con Tarjeta</h1>
-        <a href="index.html" class="text-white hover:text-gray-200"
-          >Volver al Inicio</a
-        >
+        <a href="index.html" class="text-white hover:text-gray-200">
+          Volver al Inicio
+        </a>
       </div>
     </nav>
 
     <main class="container mx-auto p-4">
-      <form id="compraForm" onsubmit="registrarCompra(event)" class="bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto">
+      <form
+        id="compraForm"
+        onsubmit="registrarCompra(event)"
+        class="bg-white p-6 rounded-lg shadow-md max-w-3xl mx-auto"
+      >
         <!-- Tarjeta y Fecha -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           <div>
@@ -27,246 +31,344 @@
             </label>
             <select id="tarjeta" class="w-full border rounded-md p-2" required>
               <option value="">Seleccione una tarjeta</option>
-              <option value="visa">Visa Oro Bancolombia (...1234)</option>
-              <option value="master">Mastercard Platinum Davivienda (...5678)</option>
             </select>
           </div>
           <div>
             <label class="block text-gray-700 text-sm font-bold mb-2">
               Fecha de Compra
             </label>
-            <input type="date" id="fecha" class="w-full border rounded-md p-2" required />
+            <input
+              type="date"
+              id="fecha"
+              class="w-full border rounded-md p-2"
+              required
+            />
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- Establecimiento y Monto -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-      <div>
-        <label class="block text-gray-700 text-sm font-bold mb-2">
-          Establecimiento
-        </label>
-        <input
-          type="text"
-          id="establecimiento"
-          class="w-full border rounded-md p-2"
-          placeholder="Nombre del comercio"
-          required
-        />
-      </div>
-      <div>
-        <label class="block text-gray-700 text-sm font-bold mb-2">
-          Monto de la Compra
-        </label>
-        <input
-          type="number"
-          id="monto"
-          class="w-full border rounded-md p-2"
-          placeholder="0.00"
-          step="0.01"
-          min="0"
-          required
-        />
-      </div>
-    </div>
-
-    <!-- Categorización -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-      <div>
-        <label class="block text-gray-700 text-sm font-bold mb-2">
-          Categoría
-        </label>
-        <select id="categoria"
-          class="w-full border rounded-md p-2"
-          onchange="actualizarSubcategorias()"
-          required
-        >
-          <option value="">Seleccione una categoría</option>
-          <option value="alimentacion">Alimentación</option>
-          <option value="transporte">Transporte</option>
-          <option value="entretenimiento">Entretenimiento</option>
-          <option value="hogar">Hogar</option>
-          <option value="salud">Salud</option>
-          <option value="otros">Otros</option>
-        </select>
-      </div>
-      <div>
-        <label class="block text-gray-700 text-sm font-bold mb-2">
-          Subcategoría
-        </label>
-        <select class="w-full border rounded-md p-2" id="subcategoria" required>
-          <option value="">Seleccione una subcategoría</option>
-        </select>
-      </div>
-    </div>
-    <!-- Cuotas -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
-      <div>
-        <label class="block text-gray-700 text-sm font-bold mb-2">
-          Número de Cuotas
-        </label>
-        <select id="cuotas" class="w-full border rounded-md p-2" required>
-          <option value="">Seleccione número de cuotas</option>
-          <option value="1">1 cuota</option>
-          <option value="2">2 cuotas</option>
-          <option value="3">3 cuotas</option>
-          <option value="6">6 cuotas</option>
-          <option value="12">12 cuotas</option>
-          <option value="24">24 cuotas</option>
-          <option value="36">36 cuotas</option>
-        </select>
-      </div>
-      <div class="flex items-center pt-8">
-        <input type="checkbox" id="sinIntereses" class="mr-2" />
-        <label class="text-gray-700 text-sm">Compra sin intereses</label>
-      </div>
-    </div>
-
-    <!-- Información Fiscal -->
-    <div class="bg-blue-50 p-4 rounded-md mb-4">
-      <h3 class="font-bold text-blue-800 mb-2">Información Fiscal</h3>
-      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div>
-          <label class="block text-gray-700 text-sm font-bold mb-2">
-            Tipo de Documento Soporte
-          </label>
-          <select id="tipoDocumento" class="w-full border rounded-md p-2" required>
-            <option value="">Seleccione tipo de documento</option>
-            <option value="informal">Documento Informal / Otros / Sin Soporte</option>
-            <option value="electronica">Factura Electrónica</option>
-            <option value="fisica">Factura Física</option>
-            <option value="equivalente">Documento Equivalente</option>
-          </select>
+        <!-- Establecimiento y Monto -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Establecimiento
+            </label>
+            <input
+              type="text"
+              id="establecimiento"
+              class="w-full border rounded-md p-2"
+              placeholder="Nombre del comercio"
+              required
+            />
+          </div>
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Monto de la Compra
+            </label>
+            <input
+              type="number"
+              id="monto"
+              class="w-full border rounded-md p-2"
+              placeholder="0.00"
+              step="0.01"
+              min="0"
+              required
+            />
+          </div>
         </div>
-        <div>
+
+        <!-- Categorización -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Categoría
+            </label>
+            <select
+              id="categoria"
+              class="w-full border rounded-md p-2"
+              onchange="actualizarSubcategorias()"
+              required
+            >
+              <option value="">Seleccione una categoría</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Subcategoría
+            </label>
+            <select
+              class="w-full border rounded-md p-2"
+              id="subcategoria"
+              required
+            >
+              <option value="">Seleccione una subcategoría</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Cuotas -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+          <div>
+            <label class="block text-gray-700 text-sm font-bold mb-2">
+              Número de Cuotas
+            </label>
+            <select id="cuotas" class="w-full border rounded-md p-2" required>
+              <option value="">Seleccione número de cuotas</option>
+              <option value="1">1 cuota</option>
+              <option value="2">2 cuotas</option>
+              <option value="3">3 cuotas</option>
+              <option value="6">6 cuotas</option>
+              <option value="12">12 cuotas</option>
+              <option value="24">24 cuotas</option>
+              <option value="36">36 cuotas</option>
+            </select>
+          </div>
+          <div class="flex items-center pt-8">
+            <input type="checkbox" id="sinIntereses" class="mr-2" />
+            <label class="text-gray-700 text-sm">Compra sin intereses</label>
+          </div>
+        </div>
+
+        <!-- Información Fiscal -->
+        <div class="bg-blue-50 p-4 rounded-md mb-4">
+          <h3 class="font-bold text-blue-800 mb-2">Información Fiscal</h3>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-gray-700 text-sm font-bold mb-2">
+                Tipo de Documento Soporte
+              </label>
+              <select
+                id="tipoDocumento"
+                class="w-full border rounded-md p-2"
+                required
+              >
+                <option value="">Seleccione tipo de documento</option>
+                <option value="informal">
+                  Documento Informal / Otros / Sin Soporte
+                </option>
+                <option value="electronica">Factura Electrónica</option>
+                <option value="fisica">Factura Física</option>
+                <option value="equivalente">Documento Equivalente</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-gray-700 text-sm font-bold mb-2">
+                Número de Documento (Opcional)
+              </label>
+              <input
+                type="text"
+                id="numeroDocumento"
+                class="w-full border rounded-md p-2"
+                placeholder="Número de factura o documento"
+              />
+            </div>
+          </div>
+          <div class="mt-4 space-y-2">
+            <div class="flex items-center">
+              <input type="checkbox" class="mr-2" id="registrableExogena" />
+              <label class="text-sm">Registrable en exógena</label>
+            </div>
+            <div class="flex items-center">
+              <input type="checkbox" class="mr-2" id="gastoDeducible" />
+              <label class="text-sm"
+                >Gasto deducible de mi actividad económica</label
+              >
+            </div>
+          </div>
+        </div>
+
+        <!-- Descripción -->
+        <div class="mb-4">
           <label class="block text-gray-700 text-sm font-bold mb-2">
-            Número de Documento (Opcional)
+            Descripción (Opcional)
           </label>
-          <input
-            type="text"
-            id="numeroDocumento"
+          <textarea
+            id="descripcion"
             class="w-full border rounded-md p-2"
-            placeholder="Número de factura o documento"
-          />
+            rows="2"
+            placeholder="Detalles de la compra"
+          ></textarea>
         </div>
-      </div>
-      <div class="mt-4 space-y-2">
-        <div class="flex items-center">
-          <input type="checkbox" class="mr-2" id="registrableExogena" />
-          <label class="text-sm">Registrable en exógena</label>
+
+        <!-- Archivos Adjuntos -->
+        <div class="mb-6">
+          <label class="block text-gray-700 text-sm font-bold mb-2">
+            Soportes Documentales
+          </label>
+          <div class="border-2 border-dashed border-gray-300 rounded-md p-4">
+            <input type="file" id="soportes" multiple class="w-full" />
+            <p class="text-sm text-gray-500 mt-1">
+              Adjunte facturas, voucher y otros soportes relevantes
+            </p>
+          </div>
         </div>
-        <div class="flex items-center">
-          <input type="checkbox" class="mr-2" id="gastoDeducible" />
-          <label class="text-sm">Gasto deducible de mi actividad económica</label>
+
+        <!-- Botones -->
+        <div class="flex justify-end space-x-4">
+          <button
+            type="button"
+            onclick="cancelarCompra()"
+            class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
+          >
+            Cancelar
+          </button>
+          <button
+            type="submit"
+            class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+          >
+            Registrar Compra
+          </button>
         </div>
-      </div>
-    </div>
-    <!-- Descripción -->
-    <div class="mb-4">
-      <label class="block text-gray-700 text-sm font-bold mb-2">
-        Descripción (Opcional)
-      </label>
-      <textarea
-        id="descripcion"
-        class="w-full border rounded-md p-2"
-        rows="2"
-        placeholder="Detalles de la compra"
-      ></textarea>
-    </div>
+      </form>
+    </main>
 
-    <!-- Archivos Adjuntos -->
-    <div class="mb-6">
-      <label class="block text-gray-700 text-sm font-bold mb-2">
-        Soportes Documentales
-      </label>
-      <div class="border-2 border-dashed border-gray-300 rounded-md p-4">
-        <input type="file" id="soportes" multiple class="w-full" />
-        <p class="text-sm text-gray-500 mt-1">
-          Adjunte facturas, voucher y otros soportes relevantes
-        </p>
-      </div>
-    </div>
+    <script>
+      // Objeto que simula datos del backend
+      const datosSimulados = {
+        tarjetas: [
+          { id: "visa", nombre: "Visa Oro Bancolombia (...1234)" },
+          { id: "master", nombre: "Mastercard Platinum Davivienda (...5678)" },
+        ],
+        categorias: [
+          {
+            id: "alimentacion",
+            nombre: "Alimentación",
+            subcategorias: [
+              { id: "mercado", nombre: "Mercado" },
+              { id: "restaurantes", nombre: "Restaurantes" },
+            ],
+          },
+          {
+            id: "transporte",
+            nombre: "Transporte",
+            subcategorias: [
+              { id: "publico", nombre: "Transporte Público" },
+              { id: "combustible", nombre: "Combustible" },
+            ],
+          },
+          {
+            id: "entretenimiento",
+            nombre: "Entretenimiento",
+            subcategorias: [
+              { id: "cine", nombre: "Cine" },
+              { id: "juegos", nombre: "Juegos" },
+            ],
+          },
+          {
+            id: "hogar",
+            nombre: "Hogar",
+            subcategorias: [
+              { id: "supermercado", nombre: "Supermercado" },
+              { id: "mantenimiento", nombre: "Mantenimiento" },
+            ],
+          },
+          {
+            id: "salud",
+            nombre: "Salud",
+            subcategorias: [
+              { id: "medicamentos", nombre: "Medicamentos" },
+              { id: "consultas", nombre: "Consultas Médicas" },
+            ],
+          },
+          {
+            id: "otros",
+            nombre: "Otros",
+            subcategorias: [
+              { id: "varios", nombre: "Varios" },
+              { id: "miscelaneos", nombre: "Misceláneos" },
+            ],
+          },
+        ],
+      };
 
-    <!-- Botones -->
-    <div class="flex justify-end space-x-4">
-      <button
-        type="button"
-        onclick="cancelarCompra()"
-        class="bg-gray-500 text-white px-4 py-2 rounded-md hover:bg-gray-600"
-      >
-        Cancelar
-      </button>
-      <button
-        type="submit"
-        class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-      >
-        Registrar Compra
-      </button>
-    </div>
-  </form>
-</main>
+      // Cargar datos simulados en los select
+      function cargarDatosSimulados() {
+        // Cargar tarjetas
+        const selectTarjeta = document.getElementById("tarjeta");
+        datosSimulados.tarjetas.forEach((t) => {
+          const option = document.createElement("option");
+          option.value = t.id;
+          option.textContent = t.nombre;
+          selectTarjeta.appendChild(option);
+        });
 
-<script>
-  function actualizarSubcategorias() {
-    const categoria = document.getElementById("categoria").value;
-    const subcategoria = document.getElementById("subcategoria");
-    
-    // Limpiar subcategorías
-    subcategoria.innerHTML = '<option value="">Seleccione una subcategoría</option>';
-    
-    // Aquí se agregaría la lógica para cargar las subcategorías según la categoría
-    if (categoria) {
-      subcategoria.innerHTML += `
-        <option value="sub1">Subcategoría 1</option>
-        <option value="sub2">Subcategoría 2</option>
-        <option value="sub3">Subcategoría 3</option>
-      `;
-      Popup.mostrar('info', 'Subcategorías actualizadas');
-    }
-  }
+        // Cargar categorías
+        const selectCategoria = document.getElementById("categoria");
+        datosSimulados.categorias.forEach((cat) => {
+          const option = document.createElement("option");
+          option.value = cat.id;
+          option.textContent = cat.nombre;
+          selectCategoria.appendChild(option);
+        });
+      }
 
-  function validarFormulario() {
+      // Actualizar subcategorías dinámicamente
+      function actualizarSubcategorias() {
+        const categoriaValue = document.getElementById("categoria").value;
+        const subcategoria = document.getElementById("subcategoria");
+        subcategoria.innerHTML =
+          '<option value="">Seleccione una subcategoría</option>';
+
+        const categoriaSeleccionada = datosSimulados.categorias.find(
+          (cat) => cat.id === categoriaValue
+        );
+
+        if (categoriaSeleccionada) {
+          categoriaSeleccionada.subcategorias.forEach((subcat) => {
+            const option = document.createElement("option");
+            option.value = subcat.id;
+            option.textContent = subcat.nombre;
+            subcategoria.appendChild(option);
+          });
+        }
+      }
+
+      // Validar el formulario
+      function validarFormulario() {
         // Validar monto
-        const monto = parseFloat(document.getElementById('monto').value);
+        const monto = parseFloat(document.getElementById("monto").value);
         if (isNaN(monto) || monto <= 0) {
-          Popup.mostrar('error', 'El monto debe ser mayor a 0');
+          Popup.mostrar("error", "El monto debe ser mayor a 0");
           return false;
         }
 
         // Validar tarjeta
-        const tarjeta = document.getElementById('tarjeta').value;
+        const tarjeta = document.getElementById("tarjeta").value;
         if (!tarjeta) {
-          Popup.mostrar('error', 'Debe seleccionar una tarjeta');
+          Popup.mostrar("error", "Debe seleccionar una tarjeta");
           return false;
         }
 
         // Validar establecimiento
-        const establecimiento = document.getElementById('establecimiento').value.trim();
+        const establecimiento = document
+          .getElementById("establecimiento")
+          .value.trim();
         if (!establecimiento) {
-          Popup.mostrar('error', 'Debe ingresar el nombre del establecimiento');
+          Popup.mostrar("error", "Debe ingresar el nombre del establecimiento");
           return false;
         }
 
         // Validar categoría y subcategoría
-        const categoria = document.getElementById('categoria').value;
-        const subcategoria = document.getElementById('subcategoria').value;
-        if (!categoria || !subcategoria) {
-          Popup.mostrar('error', 'Debe seleccionar categoría y subcategoría');
+        const categoria = document.getElementById("categoria").value;
+        const subcat = document.getElementById("subcategoria").value;
+        if (!categoria || !subcat) {
+          Popup.mostrar("error", "Debe seleccionar categoría y subcategoría");
           return false;
         }
 
         // Validar número de cuotas
-        const cuotas = document.getElementById('cuotas').value;
+        const cuotas = document.getElementById("cuotas").value;
         if (!cuotas) {
-          Popup.mostrar('error', 'Debe seleccionar el número de cuotas');
+          Popup.mostrar("error", "Debe seleccionar el número de cuotas");
           return false;
         }
 
         // Validar tipo de documento
-        const tipoDocumento = document.getElementById('tipoDocumento').value;
+        const tipoDocumento = document.getElementById("tipoDocumento").value;
         if (!tipoDocumento) {
-          Popup.mostrar('error', 'Debe seleccionar el tipo de documento soporte');
+          Popup.mostrar(
+            "error",
+            "Debe seleccionar el tipo de documento soporte"
+          );
           return false;
         }
 
@@ -275,17 +377,19 @@
 
       function registrarCompra(event) {
         event.preventDefault();
-        
         if (!validarFormulario()) return;
 
         // Aquí iría la lógica para guardar la compra
-        Popup.mostrar('success', 'Compra registrada exitosamente');
-        document.getElementById('compraForm').reset();
+        Popup.mostrar("success", "Compra registrada exitosamente");
+        document.getElementById("compraForm").reset();
       }
 
       function cancelarCompra() {
-        Popup.mostrar('warning', '¿Está seguro de cancelar el registro? Los datos no guardados se perderán');
-        document.getElementById('compraForm').reset();
+        Popup.mostrar(
+          "warning",
+          "¿Está seguro de cancelar el registro? Los datos no guardados se perderán"
+        );
+        document.getElementById("compraForm").reset();
       }
     </script>
 

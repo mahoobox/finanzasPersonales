@@ -7,13 +7,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="componentes/popup.js"></script>
   </head>
-  <body class="bg-gray-100" onload="Popup.init()">
+  <body class="bg-gray-100" onload="Popup.init(); cargarDatosSimulados()">
     <nav class="bg-blue-600 text-white p-4">
       <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-2xl font-bold">Registro de Pago de Préstamo</h1>
-        <a href="index.html" class="text-white hover:text-gray-200"
-          >Volver al Inicio</a
-        >
+        <a href="index.html" class="text-white hover:text-gray-200">
+          Volver al Inicio
+        </a>
       </div>
     </nav>
 
@@ -107,9 +107,6 @@
           </label>
           <select id="cuenta" class="w-full border rounded-md p-2" required>
             <option value="">Seleccione una cuenta</option>
-            <option value="corriente">Cuenta Corriente Principal</option>
-            <option value="ahorros">Cuenta de Ahorros</option>
-            <option value="nomina">Cuenta Nómina</option>
           </select>
         </div>
 
@@ -202,6 +199,26 @@
     </main>
 
     <script>
+      // Objeto que simula datos del backend para las cuentas
+      const datosSimulados = {
+        cuentas: [
+          { id: "corriente", nombre: "Cuenta Corriente Principal" },
+          { id: "ahorros", nombre: "Cuenta de Ahorros" },
+          { id: "nomina", nombre: "Cuenta Nómina" },
+        ],
+      };
+
+      // Cargar cuentas simuladas en el select
+      function cargarDatosSimulados() {
+        const selectCuenta = document.getElementById("cuenta");
+        datosSimulados.cuentas.forEach((cta) => {
+          const option = document.createElement("option");
+          option.value = cta.id;
+          option.textContent = cta.nombre;
+          selectCuenta.appendChild(option);
+        });
+      }
+
       // Datos simulados de los préstamos
       const prestamosInfo = {
         debo_1: {
@@ -255,8 +272,6 @@
           /,/g,
           ""
         );
-
-        Popup.mostrar("info", "Información del préstamo actualizada");
       }
 
       function validarFormulario() {
@@ -272,12 +287,12 @@
           return false;
         }
 
-        const saldoRestante = parseFloat(
-          prestamosInfo[prestamoId].saldoRestante.replace(/,/g, "")
-        );
         const tipoPago = document.querySelector(
           'input[name="tipoPago"]:checked'
         ).value;
+        const saldoRestante = parseFloat(
+          prestamosInfo[prestamoId].saldoRestante.replace(/,/g, "")
+        );
 
         // Validar que el pago total sea igual al saldo restante
         if (tipoPago === "total" && monto !== saldoRestante) {
