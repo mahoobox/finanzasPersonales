@@ -6,7 +6,7 @@
     <title>Informe de Préstamos - Finanzas Personales</title>
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
-  <body class="bg-gray-100">
+  <body class="bg-gray-100" onload="iniciarInformePrestamos()">
     <nav class="bg-blue-600 text-white p-4">
       <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-2xl font-bold">Informe de Préstamos</h1>
@@ -17,29 +17,6 @@
     </nav>
 
     <main class="container mx-auto p-4">
-      <!-- Filtros -->
-      <div class="bg-white p-4 rounded-lg shadow-md mb-4">
-        <div class="grid grid-cols-4 gap-4">
-          <select class="border rounded-md p-2">
-            <option>Todos los Préstamos</option>
-            <option>Préstamos Recibidos</option>
-            <option>Préstamos Otorgados</option>
-          </select>
-          <select class="border rounded-md p-2">
-            <option>Todos los Estados</option>
-            <option>Activos</option>
-            <option>Pagados</option>
-            <option>En Mora</option>
-          </select>
-          <input type="month" class="border rounded-md p-2" />
-          <button
-            class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-          >
-            Actualizar
-          </button>
-        </div>
-      </div>
-
       <!-- Resumen General -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
         <!-- Total Préstamos Recibidos -->
@@ -48,15 +25,15 @@
           <div class="space-y-2">
             <div class="flex justify-between">
               <span>Total Original:</span>
-              <span>$150,000,000</span>
+              <span id="totalOriginalRecibidos">$0</span>
             </div>
             <div class="flex justify-between">
               <span>Saldo Actual:</span>
-              <span class="text-red-600">$120,000,000</span>
+              <span class="text-red-600" id="saldoActualRecibidos">$0</span>
             </div>
             <div class="flex justify-between pt-2 border-t">
               <span>Pagado:</span>
-              <span class="text-green-600">$30,000,000</span>
+              <span class="text-green-600" id="pagadoRecibidos">$0</span>
             </div>
           </div>
         </div>
@@ -67,15 +44,15 @@
           <div class="space-y-2">
             <div class="flex justify-between">
               <span>Total Original:</span>
-              <span>$20,000,000</span>
+              <span id="totalOriginalOtorgados">$0</span>
             </div>
             <div class="flex justify-between">
               <span>Saldo Actual:</span>
-              <span class="text-green-600">$15,000,000</span>
+              <span class="text-green-600" id="saldoActualOtorgados">$0</span>
             </div>
             <div class="flex justify-between pt-2 border-t">
               <span>Recibido:</span>
-              <span class="text-green-600">$5,000,000</span>
+              <span class="text-green-600" id="pagadoOtorgados">$0</span>
             </div>
           </div>
         </div>
@@ -86,166 +63,60 @@
           <div class="space-y-2">
             <div class="flex justify-between">
               <span>A Pagar:</span>
-              <span class="text-red-600">$2,500,000</span>
+              <span class="text-red-600" id="aPagarMes">$0</span>
             </div>
             <div class="flex justify-between">
               <span>A Recibir:</span>
-              <span class="text-green-600">$500,000</span>
+              <span class="text-green-600" id="aRecibirMes">$0</span>
             </div>
             <div class="flex justify-between pt-2 border-t">
               <span>Neto:</span>
-              <span class="text-red-600">-$2,000,000</span>
+              <span class="" id="netoMes">$0</span>
             </div>
           </div>
+        </div>
+      </div>
+
+      <!-- Filtros -->
+      <div class="bg-white p-4 rounded-lg shadow-md mb-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <select
+            class="border rounded-md p-2"
+            id="filtroTipo"
+            onchange="actualizarListado()"
+          >
+            <option value="todos">Todos los Préstamos</option>
+            <option value="recibido">Préstamos Recibidos</option>
+            <option value="otorgado">Préstamos Otorgados</option>
+          </select>
+          <select
+            class="border rounded-md p-2"
+            id="filtroEstado"
+            onchange="actualizarListado()"
+          >
+            <option value="todos">Todos los Estados</option>
+            <option value="activo">Activos</option>
+            <option value="pagado">Pagados</option>
+            <option value="mora">En Mora</option>
+          </select>
+          <button
+            class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            onclick="actualizarListado()"
+          >
+            Actualizar
+          </button>
         </div>
       </div>
 
       <!-- Lista de Préstamos -->
       <div class="bg-white p-4 rounded-lg shadow-md mb-4">
-        <h2 class="text-lg font-bold mb-4">Préstamos Activos</h2>
-
-        <!-- Préstamo 1 -->
-        <div class="border rounded-lg p-4 mb-4">
-          <div class="flex justify-between items-start mb-4">
-            <div>
-              <h3 class="font-bold">Préstamo Hipotecario Bancolombia</h3>
-              <p class="text-sm text-gray-500">Préstamo Recibido</p>
-            </div>
-            <span
-              class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm"
-            >
-              Al día
-            </span>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <div class="space-y-2">
-              <div class="flex justify-between">
-                <span>Monto Original:</span>
-                <span>$100,000,000</span>
-              </div>
-              <div class="flex justify-between">
-                <span>Saldo Actual:</span>
-                <span>$85,000,000</span>
-              </div>
-              <div class="flex justify-between">
-                <span>Pagado:</span>
-                <span>$15,000,000</span>
-              </div>
-            </div>
-
-            <div class="space-y-2">
-              <div class="flex justify-between">
-                <span>Cuota Regular:</span>
-                <span>$1,200,000</span>
-              </div>
-              <div class="flex justify-between">
-                <span>Próximo Pago:</span>
-                <span>15/01/2025</span>
-              </div>
-              <div class="flex justify-between">
-                <span>Pagos Realizados:</span>
-                <span>15 de 120</span>
-              </div>
-            </div>
-
-            <div class="space-y-2">
-              <div class="flex justify-between">
-                <span>Inicio:</span>
-                <span>01/01/2024</span>
-              </div>
-              <div class="flex justify-between">
-                <span>Fin Estimado:</span>
-                <span>01/01/2034</span>
-              </div>
-              <div class="flex justify-between">
-                <a href="#" class="text-blue-600 hover:underline"
-                  >Ver Documentos</a
-                >
-                <a href="#" class="text-blue-600 hover:underline">Ver Pagos</a>
-              </div>
-            </div>
-          </div>
-
-          <!-- Gráfico de Progreso -->
-          <div class="bg-gray-100 rounded-full h-2 mb-2">
-            <div class="bg-green-600 h-2 rounded-full" style="width: 15%"></div>
-          </div>
-          <p class="text-sm text-gray-500 text-center">15% Completado</p>
-        </div>
-
-        <!-- Préstamo 2 -->
-        <div class="border rounded-lg p-4 mb-4">
-          <div class="flex justify-between items-start mb-4">
-            <div>
-              <h3 class="font-bold">Préstamo a Juan Pérez</h3>
-              <p class="text-sm text-gray-500">Préstamo Otorgado</p>
-            </div>
-            <span
-              class="px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full text-sm"
-            >
-              Pago pendiente
-            </span>
-          </div>
-
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-            <div class="space-y-2">
-              <div class="flex justify-between">
-                <span>Monto Original:</span>
-                <span>$5,000,000</span>
-              </div>
-              <div class="flex justify-between">
-                <span>Saldo Actual:</span>
-                <span>$3,000,000</span>
-              </div>
-              <div class="flex justify-between">
-                <span>Recibido:</span>
-                <span>$2,000,000</span>
-              </div>
-            </div>
-
-            <div class="space-y-2">
-              <div class="flex justify-between">
-                <span>Cuota Esperada:</span>
-                <span>$500,000</span>
-              </div>
-              <div class="flex justify-between">
-                <span>Próximo Cobro:</span>
-                <span>10/01/2025</span>
-              </div>
-              <div class="flex justify-between">
-                <span>Pagos Recibidos:</span>
-                <span>4 de 10</span>
-              </div>
-            </div>
-
-            <div class="space-y-2">
-              <div class="flex justify-between">
-                <span>Inicio:</span>
-                <span>01/09/2024</span>
-              </div>
-              <div class="flex justify-between">
-                <span>Fin Estimado:</span>
-                <span>01/06/2025</span>
-              </div>
-              <div class="flex justify-between">
-                <a href="#" class="text-blue-600 hover:underline"
-                  >Ver Documentos</a
-                >
-                <a href="#" class="text-blue-600 hover:underline">Ver Pagos</a>
-              </div>
-            </div>
-          </div>
-
-          <!-- Gráfico de Progreso -->
-          <div class="bg-gray-100 rounded-full h-2 mb-2">
-            <div class="bg-green-600 h-2 rounded-full" style="width: 40%"></div>
-          </div>
-          <p class="text-sm text-gray-500 text-center">40% Completado</p>
-        </div>
+        <h2 class="text-lg font-bold mb-4" id="tituloListadoPrestamos">
+          Préstamos
+        </h2>
+        <div id="contenedorPrestamos"><!-- Contenido dinámico --></div>
       </div>
 
-      <!-- Gráficos de Análisis -->
+      <!-- Gráficos de Análisis (solo maquetado) -->
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <!-- Tendencia de Pagos -->
         <div class="bg-white p-4 rounded-lg shadow-md">
@@ -270,7 +141,401 @@
     </main>
 
     <footer class="bg-gray-200 text-center p-4 mt-8">
-      <p>Última actualización: 25/12/2024 10:30 AM</p>
+      <p id="ultimaActualizacion">Última actualización: 25/12/2024 10:30 AM</p>
     </footer>
+
+    <script>
+      // Datos simulados
+      const prestamosData = [
+        {
+          id: 1,
+          nombre: "Préstamo Hipotecario Bancolombia",
+          tipo: "recibido", // recibido u otorgado
+          estado: "activo", // activo, pagado, mora
+          montoOriginal: 100000000,
+          saldoActual: 85000000,
+          pagado: 15000000,
+          fechaInicio: "01/01/2024",
+          fechaFinEstimada: "01/01/2034",
+          proximoPago: "15/01/2025",
+          cuotaRegular: 1200000,
+          totalCuotas: 120,
+          cuotasPagadas: 15,
+          email: "usuario@ejemplo.com",
+          recordatorio: true,
+          detalles: "Préstamo para comprar casa",
+        },
+        {
+          id: 2,
+          nombre: "Préstamo a Juan Pérez",
+          tipo: "otorgado",
+          estado: "activo",
+          montoOriginal: 5000000,
+          saldoActual: 3000000,
+          pagado: 2000000,
+          fechaInicio: "01/09/2024",
+          fechaFinEstimada: "01/06/2025",
+          proximoPago: "10/01/2025",
+          cuotaRegular: 500000,
+          totalCuotas: 10,
+          cuotasPagadas: 4,
+          email: "juan.perez@ejemplo.com",
+          recordatorio: false,
+          detalles: "Préstamo a un amigo",
+        },
+        {
+          id: 3,
+          nombre: "Préstamo de Carro Familiar",
+          tipo: "recibido",
+          estado: "mora",
+          montoOriginal: 20000000,
+          saldoActual: 18000000,
+          pagado: 2000000,
+          fechaInicio: "01/05/2024",
+          fechaFinEstimada: "01/05/2028",
+          proximoPago: "05/01/2025",
+          cuotaRegular: 600000,
+          totalCuotas: 48,
+          cuotasPagadas: 3,
+          email: "familiar@carro.com",
+          recordatorio: true,
+          detalles: "Préstamo para automóvil",
+        },
+        {
+          id: 4,
+          nombre: "Préstamo Otorgado a María",
+          tipo: "otorgado",
+          estado: "pagado",
+          montoOriginal: 1500000,
+          saldoActual: 0,
+          pagado: 1500000,
+          fechaInicio: "01/07/2024",
+          fechaFinEstimada: "01/12/2024",
+          proximoPago: "--/--/----",
+          cuotaRegular: 300000,
+          totalCuotas: 5,
+          cuotasPagadas: 5,
+          email: "maria@ejemplo.com",
+          recordatorio: false,
+          detalles: "Préstamo ya pagado",
+        },
+      ];
+
+      function iniciarInformePrestamos() {
+        calcularResumenGlobal();
+        actualizarListado(); // Muestra inicialmente todos los préstamos
+        actualizarFecha();
+      }
+
+      // =============================
+      // 1. Cálculo de resumen global
+      // =============================
+      function calcularResumenGlobal() {
+        let totalOriginalRecibidos = 0;
+        let saldoRecibidos = 0;
+        let pagadoRecibidos = 0;
+
+        let totalOriginalOtorgados = 0;
+        let saldoOtorgados = 0;
+        let pagadoOtorgados = 0;
+
+        let pagosMesAPagar = 0;
+        let pagosMesARecibir = 0;
+
+        // Suponemos que el "pago del mes" es la cuotaRegular,
+        // si está en estado activo y la fecha del próximo pago es en este mes
+        // (Para el ejemplo, lo calculamos de forma simplificada,
+        //  no validamos la fecha, solo filtramos "activo")
+        prestamosData.forEach((prestamo) => {
+          if (prestamo.tipo === "recibido") {
+            // Recibidos
+            totalOriginalRecibidos += prestamo.montoOriginal;
+            saldoRecibidos += prestamo.saldoActual;
+            pagadoRecibidos += prestamo.pagado;
+
+            // Pagos del mes (a pagar)
+            if (prestamo.estado === "activo") {
+              pagosMesAPagar += prestamo.cuotaRegular;
+            }
+          } else if (prestamo.tipo === "otorgado") {
+            // Otorgados
+            totalOriginalOtorgados += prestamo.montoOriginal;
+            saldoOtorgados += prestamo.saldoActual;
+            pagadoOtorgados += prestamo.pagado;
+
+            // Pagos del mes (a recibir)
+            if (prestamo.estado === "activo") {
+              pagosMesARecibir += prestamo.cuotaRegular;
+            }
+          }
+        });
+
+        // Actualizar en el DOM
+        document.getElementById("totalOriginalRecibidos").textContent =
+          formatoMoneda(totalOriginalRecibidos);
+        document.getElementById("saldoActualRecibidos").textContent =
+          formatoMoneda(saldoRecibidos);
+        document.getElementById("pagadoRecibidos").textContent =
+          formatoMoneda(pagadoRecibidos);
+
+        document.getElementById("totalOriginalOtorgados").textContent =
+          formatoMoneda(totalOriginalOtorgados);
+        document.getElementById("saldoActualOtorgados").textContent =
+          formatoMoneda(saldoOtorgados);
+        document.getElementById("pagadoOtorgados").textContent =
+          formatoMoneda(pagadoOtorgados);
+
+        // Pagos del Mes
+        document.getElementById("aPagarMes").textContent =
+          formatoMoneda(pagosMesAPagar);
+        document.getElementById("aRecibirMes").textContent =
+          formatoMoneda(pagosMesARecibir);
+        document.getElementById("netoMes").textContent = formatoMoneda(
+          pagosMesARecibir - pagosMesAPagar
+        );
+        document
+          .getElementById("netoMes")
+          .classList.remove("text-green-600", "text-red-600");
+        if (pagosMesARecibir - pagosMesAPagar < 0) {
+          document.getElementById("netoMes").classList.add("text-red-600");
+        } else {
+          document.getElementById("netoMes").classList.add("text-green-600");
+        }
+      }
+
+      // =============================
+      // 2. Filtro y listado dinámico
+      // =============================
+      function actualizarListado() {
+        const tipoSeleccionado = document.getElementById("filtroTipo").value; // todos, recibido, otorgado
+        const estadoSeleccionado =
+          document.getElementById("filtroEstado").value; // todos, activo, pagado, mora
+
+        const contenedor = document.getElementById("contenedorPrestamos");
+        contenedor.innerHTML = "";
+
+        // Filtrar
+        const prestamosFiltrados = prestamosData.filter((prestamo) => {
+          // Filtro por tipo
+          if (
+            tipoSeleccionado !== "todos" &&
+            prestamo.tipo !== tipoSeleccionado
+          ) {
+            return false;
+          }
+          // Filtro por estado
+          if (
+            estadoSeleccionado !== "todos" &&
+            prestamo.estado !== estadoSeleccionado
+          ) {
+            return false;
+          }
+          return true;
+        });
+
+        // Mostrar cada préstamo
+        if (prestamosFiltrados.length === 0) {
+          const noHay = document.createElement("p");
+          noHay.className = "text-gray-500";
+          noHay.textContent =
+            "No se encontraron préstamos con los filtros seleccionados.";
+          contenedor.appendChild(noHay);
+          return;
+        }
+
+        prestamosFiltrados.forEach((prestamo) => {
+          const card = document.createElement("div");
+          card.className = "border rounded-lg p-4 mb-4";
+
+          // Encabezado
+          const header = document.createElement("div");
+          header.className = "flex justify-between items-start mb-4";
+
+          const headerLeft = document.createElement("div");
+          const h3 = document.createElement("h3");
+          h3.className = "font-bold";
+          h3.textContent = prestamo.nombre;
+
+          const pTipo = document.createElement("p");
+          pTipo.className = "text-sm text-gray-500";
+          pTipo.textContent =
+            prestamo.tipo === "recibido"
+              ? "Préstamo Recibido"
+              : "Préstamo Otorgado";
+
+          headerLeft.appendChild(h3);
+          headerLeft.appendChild(pTipo);
+
+          // Etiqueta de estado
+          const spanEstado = document.createElement("span");
+          spanEstado.className = "px-2 py-1 rounded-full text-sm";
+          switch (prestamo.estado) {
+            case "activo":
+              spanEstado.textContent = "Al día";
+              spanEstado.classList.add("bg-green-100", "text-green-800");
+              break;
+            case "pagado":
+              spanEstado.textContent = "Pagado";
+              spanEstado.classList.add("bg-blue-100", "text-blue-800");
+              break;
+            case "mora":
+              spanEstado.textContent = "En mora";
+              spanEstado.classList.add("bg-red-100", "text-red-800");
+              break;
+            default:
+              spanEstado.textContent = "Desconocido";
+              spanEstado.classList.add("bg-gray-100", "text-gray-800");
+          }
+
+          header.appendChild(headerLeft);
+          header.appendChild(spanEstado);
+
+          // Cuerpo: info en grid
+          const cuerpoGrid = document.createElement("div");
+          cuerpoGrid.className = "grid grid-cols-1 md:grid-cols-3 gap-4 mb-4";
+
+          // Columna 1
+          const col1 = document.createElement("div");
+          col1.className = "space-y-2";
+          col1.innerHTML = `
+            <div class="flex justify-between">
+              <span>Monto Original:</span>
+              <span>${formatoMoneda(prestamo.montoOriginal)}</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Saldo Actual:</span>
+              <span>${formatoMoneda(prestamo.saldoActual)}</span>
+            </div>
+            <div class="flex justify-between">
+              <span>${
+                prestamo.tipo === "recibido" ? "Pagado:" : "Recibido:"
+              }</span>
+              <span>${formatoMoneda(prestamo.pagado)}</span>
+            </div>
+          `;
+
+          // Columna 2
+          const col2 = document.createElement("div");
+          col2.className = "space-y-2";
+          col2.innerHTML = `
+            <div class="flex justify-between">
+              <span>${
+                prestamo.tipo === "recibido"
+                  ? "Cuota Regular:"
+                  : "Cuota Esperada:"
+              }</span>
+              <span>${formatoMoneda(prestamo.cuotaRegular)}</span>
+            </div>
+            <div class="flex justify-between">
+              <span>${
+                prestamo.tipo === "recibido"
+                  ? "Próximo Pago:"
+                  : "Próximo Cobro:"
+              }</span>
+              <span>${prestamo.proximoPago}</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Pagos Realizados:</span>
+              <span>${prestamo.cuotasPagadas} ${
+            prestamo.totalCuotas > 0 ? `de ${prestamo.totalCuotas}` : ""
+          }</span>
+            </div>
+          `;
+
+          // Columna 3
+          const col3 = document.createElement("div");
+          col3.className = "space-y-2";
+          col3.innerHTML = `
+            <div class="flex justify-between">
+              <span>Inicio:</span>
+              <span>${prestamo.fechaInicio}</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Fin Estimado:</span>
+              <span>${prestamo.fechaFinEstimada}</span>
+            </div>
+            <div class="flex justify-between">
+              <a href="#" class="text-blue-600 hover:underline">Ver Documentos</a>
+              <a href="#" class="text-blue-600 hover:underline">Ver Pagos</a>
+            </div>
+          `;
+
+          cuerpoGrid.appendChild(col1);
+          cuerpoGrid.appendChild(col2);
+          cuerpoGrid.appendChild(col3);
+
+          // Barra de progreso
+          // Si totalCuotas es 0, evitamos la división por 0
+          const progreso =
+            prestamo.totalCuotas > 0
+              ? (prestamo.cuotasPagadas / prestamo.totalCuotas) * 100
+              : 0;
+          const barraProgreso = document.createElement("div");
+          barraProgreso.className = "bg-gray-100 rounded-full h-2 mb-2";
+          barraProgreso.innerHTML = `
+            <div class="bg-green-600 h-2 rounded-full" style="width: ${progreso}%"></div>
+          `;
+          const pProgreso = document.createElement("p");
+          pProgreso.className = "text-sm text-gray-500 text-center";
+          pProgreso.textContent = `${Math.round(progreso)}% Completado`;
+
+          // Extra: Email, Detalles, Recordatorio
+          const extraInfo = document.createElement("div");
+          extraInfo.className = "mt-4 grid grid-cols-1 md:grid-cols-3 gap-4";
+          extraInfo.innerHTML = `
+            <div>
+              <span class="block text-gray-600 text-sm font-bold">Email:</span>
+              <p class="text-sm">${prestamo.email || "No registrado"}</p>
+            </div>
+            <div>
+              <span class="block text-gray-600 text-sm font-bold">Detalles:</span>
+              <p class="text-sm">${prestamo.detalles || "Sin detalles"}</p>
+            </div>
+            <div>
+              <span class="block text-gray-600 text-sm font-bold">Recordatorio de pago:</span>
+              <p class="text-sm">
+                ${prestamo.recordatorio ? "Activo" : "No"}
+              </p>
+            </div>
+          `;
+
+          // Juntar todo
+          card.appendChild(header);
+          card.appendChild(cuerpoGrid);
+          card.appendChild(barraProgreso);
+          card.appendChild(pProgreso);
+          card.appendChild(extraInfo);
+
+          contenedor.appendChild(card);
+        });
+      }
+
+      // ===========================
+      // 3. Formato y utilidades
+      // ===========================
+      function formatoMoneda(num) {
+        // Simple formateo en pesos COP
+        if (!num || isNaN(num)) return "$0";
+        return "$" + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+      }
+
+      function actualizarFecha() {
+        // Ejemplo: actualizamos la fecha del footer a la fecha/hora actual
+        const fechaActual = new Date();
+        const opciones = {
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+        };
+        const fechaFormateada = fechaActual.toLocaleDateString(
+          "es-CO",
+          opciones
+        );
+        document.getElementById("ultimaActualizacion").textContent =
+          "Última actualización: " + fechaFormateada;
+      }
+    </script>
   </body>
 </html>

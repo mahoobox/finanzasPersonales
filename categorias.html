@@ -7,13 +7,13 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="componentes/popup.js"></script>
   </head>
-  <body class="bg-gray-100" onload="Popup.init()">
+  <body class="bg-gray-100" onload="Popup.init(); cargarDatosSimulados()">
     <nav class="bg-blue-600 text-white p-4">
       <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-2xl font-bold">Gestión de Categorías</h1>
-        <a href="index.html" class="text-white hover:text-gray-200"
-          >Volver al Inicio</a
-        >
+        <a href="index.html" class="text-white hover:text-gray-200">
+          Volver al Inicio
+        </a>
       </div>
     </nav>
 
@@ -35,6 +35,7 @@
             </label>
             <input
               type="text"
+              id="nombreCategoria"
               class="w-full border rounded-md p-2"
               placeholder="Ej: Alimentación, Transporte"
             />
@@ -45,9 +46,9 @@
             <label class="block text-gray-700 text-sm font-bold mb-2">
               Tipo
             </label>
-            <select class="w-full border rounded-md p-2">
-              <option>Categoría Principal</option>
-              <option>Subcategoría</option>
+            <select id="tipoCategoria" class="w-full border rounded-md p-2">
+              <option value="principal">Categoría Principal</option>
+              <option value="subcategoria">Subcategoría</option>
             </select>
           </div>
 
@@ -56,11 +57,9 @@
             <label class="block text-gray-700 text-sm font-bold mb-2">
               Categoría Padre
             </label>
-            <select class="w-full border rounded-md p-2">
-              <option>Seleccione una categoría...</option>
-              <option>Alimentación</option>
-              <option>Transporte</option>
-              <option>Vivienda</option>
+            <select id="categoriaPadre" class="w-full border rounded-md p-2">
+              <!-- Se llenará dinámicamente -->
+              <option value="">Seleccione una categoría...</option>
             </select>
           </div>
 
@@ -91,6 +90,7 @@
               Descripción
             </label>
             <textarea
+              id="descripcionCategoria"
               class="w-full border rounded-md p-2"
               rows="2"
               placeholder="Descripción breve de la categoría"
@@ -116,126 +116,227 @@
         </form>
       </div>
 
-      <!-- Lista de Categorías -->
-      <div class="bg-white rounded-lg shadow-md">
+      <!-- Lista de Categorías (se llenará dinámicamente) -->
+      <div class="bg-white rounded-lg shadow-md" id="listaCategorias">
         <div class="p-4 border-b flex justify-between items-center">
           <h2 class="text-xl font-bold">Categorías Actuales</h2>
         </div>
-
-        <!-- Categoría Principal: Alimentación -->
-        <div class="p-4 border-b">
-          <div class="flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-              <div class="w-4 h-4 rounded-full bg-blue-500"></div>
-              <h3 class="font-bold">Alimentación</h3>
-              <span class="text-sm text-gray-500">(5 subcategorías)</span>
-            </div>
-            <div class="flex space-x-3">
-              <button
-                onclick="editarCategoria(this)"
-                class="text-blue-600 hover:text-blue-800"
-              >
-                Editar
-              </button>
-              <button class="text-red-600 hover:text-red-800">Eliminar</button>
-            </div>
-          </div>
-          <!-- Subcategorías -->
-          <div class="ml-7 mt-2 space-y-2">
-            <div
-              class="flex justify-between items-center p-2 hover:bg-gray-50 rounded"
-            >
-              <div class="flex items-center space-x-3">
-                <div class="w-3 h-3 rounded-full bg-blue-300"></div>
-                <span>Supermercado</span>
-              </div>
-              <div class="flex space-x-3">
-                <button
-                  onclick="editarSubcategoria(this)"
-                  class="text-blue-600 hover:text-blue-800"
-                >
-                  Editar
-                </button>
-                <button class="text-red-600 hover:text-red-800">
-                  Eliminar
-                </button>
-              </div>
-            </div>
-            <div
-              class="flex justify-between items-center p-2 hover:bg-gray-50 rounded"
-            >
-              <div class="flex items-center space-x-3">
-                <div class="w-3 h-3 rounded-full bg-blue-300"></div>
-                <span>Restaurantes</span>
-              </div>
-              <div class="flex space-x-3">
-                <button
-                  onclick="editarSubcategoria(this)"
-                  class="text-blue-600 hover:text-blue-800"
-                >
-                  Editar
-                </button>
-                <button class="text-red-600 hover:text-red-800">
-                  Eliminar
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Categoría Principal: Transporte -->
-        <div class="p-4 border-b">
-          <div class="flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-              <div class="w-4 h-4 rounded-full bg-green-500"></div>
-              <h3 class="font-bold">Transporte</h3>
-              <span class="text-sm text-gray-500">(3 subcategorías)</span>
-            </div>
-            <div class="flex space-x-3">
-              <button
-                onclick="editarCategoria(this)"
-                class="text-blue-600 hover:text-blue-800"
-              >
-                Editar
-              </button>
-              <button class="text-red-600 hover:text-red-800">Eliminar</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- Categoría Principal: Vivienda -->
-        <div class="p-4">
-          <div class="flex justify-between items-center">
-            <div class="flex items-center space-x-3">
-              <div class="w-4 h-4 rounded-full bg-red-500"></div>
-              <h3 class="font-bold">Vivienda</h3>
-              <span class="text-sm text-gray-500">(4 subcategorías)</span>
-            </div>
-            <div class="flex space-x-3">
-              <button
-                onclick="editarCategoria(this)"
-                class="text-blue-600 hover:text-blue-800"
-              >
-                Editar
-              </button>
-              <button class="text-red-600 hover:text-red-800">Eliminar</button>
-            </div>
-          </div>
-        </div>
+        <!-- Contenido dinámico aquí -->
       </div>
     </main>
 
     <footer class="bg-gray-200 text-center p-4 mt-8">
       <p>Sistema de Finanzas Personales - 2024</p>
     </footer>
+
     <script>
+      // Objeto simulado desde el backend
+      const datosSimulados = {
+        categorias: [
+          {
+            id: 1,
+            nombre: "Alimentaciónes",
+            color: "#1E90FF",
+            descripcion: "Gastos relacionados con comida y restaurantes",
+            subcategorias: [
+              {
+                id: 11,
+                nombre: "Supermercado",
+                color: "#87CEFA",
+                descripcion: "Compras de mercado semanales o mensuales",
+              },
+              {
+                id: 12,
+                nombre: "Restaurantes",
+                color: "#87CEFA",
+                descripcion: "Comidas en restaurantes",
+              },
+            ],
+          },
+          {
+            id: 2,
+            nombre: "Transporte",
+            color: "#32CD32",
+            descripcion: "Gastos relacionados con desplazamientos",
+            subcategorias: [
+              {
+                id: 21,
+                nombre: "Público",
+                color: "#98FB98",
+                descripcion: "Buses, taxis, metro",
+              },
+              {
+                id: 22,
+                nombre: "Combustible",
+                color: "#98FB98",
+                descripcion: "Gasolina, diésel",
+              },
+            ],
+          },
+          {
+            id: 3,
+            nombre: "Vivienda",
+            color: "#FF6347",
+            descripcion: "Gastos relacionados con el hogar",
+            subcategorias: [
+              {
+                id: 31,
+                nombre: "Arriendo",
+                color: "#FFA07A",
+                descripcion: "Pago de arriendo mensual",
+              },
+              {
+                id: 32,
+                nombre: "Servicios",
+                color: "#FFA07A",
+                descripcion: "Luz, agua, gas, internet",
+              },
+            ],
+          },
+        ],
+      };
+
+      // Cargar categorías y subcategorías en el DOM
+      function cargarDatosSimulados() {
+        mostrarCategoriasEnListado();
+        cargarCategoriasPadre();
+      }
+
+      // 1. Mostrar las categorías y subcategorías en el contenedor #listaCategorias
+      function mostrarCategoriasEnListado() {
+        const listaCategorias = document.getElementById("listaCategorias");
+
+        // Eliminamos cualquier bloque adicional que hubiera
+        // y dejamos sólo el primer bloque (el header)
+        Array.from(
+          listaCategorias.querySelectorAll(".categoria-block")
+        ).forEach((block) => block.remove());
+
+        datosSimulados.categorias.forEach((cat) => {
+          // Contenedor de la Categoría Principal
+          const categoriaBlock = document.createElement("div");
+          categoriaBlock.className = "p-4 border-b categoria-block";
+
+          // Encabezado de la Categoría
+          const categoriaHeader = document.createElement("div");
+          categoriaHeader.className = "flex justify-between items-center";
+
+          const leftSide = document.createElement("div");
+          leftSide.className = "flex items-center space-x-3";
+          const colorDiv = document.createElement("div");
+          colorDiv.className = "w-4 h-4 rounded-full";
+          colorDiv.style.backgroundColor = cat.color;
+
+          const title = document.createElement("h3");
+          title.className = "font-bold";
+          title.textContent = cat.nombre;
+
+          const subCatCount = document.createElement("span");
+          subCatCount.className = "text-sm text-gray-500";
+          subCatCount.textContent = `(${cat.subcategorias.length} subcategorías)`;
+
+          leftSide.appendChild(colorDiv);
+          leftSide.appendChild(title);
+          leftSide.appendChild(subCatCount);
+
+          const rightSide = document.createElement("div");
+          rightSide.className = "flex space-x-3";
+
+          const btnEdit = document.createElement("button");
+          btnEdit.className = "text-blue-600 hover:text-blue-800";
+          btnEdit.textContent = "Editar";
+          btnEdit.onclick = () => editarCategoria(btnEdit);
+
+          const btnDelete = document.createElement("button");
+          btnDelete.className = "text-red-600 hover:text-red-800";
+          btnDelete.textContent = "Eliminar";
+          // Aquí usamos la función de eliminación
+          btnDelete.onclick = () => eliminarCategoria(btnDelete, false);
+
+          rightSide.appendChild(btnEdit);
+          rightSide.appendChild(btnDelete);
+
+          categoriaHeader.appendChild(leftSide);
+          categoriaHeader.appendChild(rightSide);
+
+          // Subcategorías
+          const subcatsContainer = document.createElement("div");
+          subcatsContainer.className = "ml-7 mt-2 space-y-2";
+          cat.subcategorias.forEach((subcat) => {
+            const subcatRow = document.createElement("div");
+            subcatRow.className =
+              "flex justify-between items-center p-2 hover:bg-gray-50 rounded subcat-row";
+            // subcatRow ID para manejarlo si fuera necesario
+            // subcatRow.setAttribute('data-subcat-id', subcat.id)
+
+            const leftSubSide = document.createElement("div");
+            leftSubSide.className = "flex items-center space-x-3";
+            const subColorDiv = document.createElement("div");
+            subColorDiv.className = "w-3 h-3 rounded-full";
+            subColorDiv.style.backgroundColor = subcat.color;
+
+            const subName = document.createElement("span");
+            subName.textContent = subcat.nombre;
+
+            leftSubSide.appendChild(subColorDiv);
+            leftSubSide.appendChild(subName);
+
+            const rightSubSide = document.createElement("div");
+            rightSubSide.className = "flex space-x-3";
+
+            const btnSubEdit = document.createElement("button");
+            btnSubEdit.className = "text-blue-600 hover:text-blue-800";
+            btnSubEdit.textContent = "Editar";
+            btnSubEdit.onclick = () => editarSubcategoria(btnSubEdit);
+
+            const btnSubDelete = document.createElement("button");
+            btnSubDelete.className = "text-red-600 hover:text-red-800";
+            btnSubDelete.textContent = "Eliminar";
+            // Aquí usamos la función de eliminación, indicando que es subcategoría
+            btnSubDelete.onclick = () => eliminarCategoria(btnSubDelete, true);
+
+            rightSubSide.appendChild(btnSubEdit);
+            rightSubSide.appendChild(btnSubDelete);
+
+            subcatRow.appendChild(leftSubSide);
+            subcatRow.appendChild(rightSubSide);
+
+            subcatsContainer.appendChild(subcatRow);
+          });
+
+          // Unión de todo
+          categoriaBlock.appendChild(categoriaHeader);
+          categoriaBlock.appendChild(subcatsContainer);
+
+          listaCategorias.appendChild(categoriaBlock);
+        });
+      }
+
+      // 2. Cargar categorías principales en el combo "Categoría Padre"
+      //    para cuando se crea una subcategoría
+      function cargarCategoriasPadre() {
+        const selectPadre = document.getElementById("categoriaPadre");
+        // Limpiar opciones salvo la primera
+        selectPadre.innerHTML = `<option value="">Seleccione una categoría...</option>`;
+
+        datosSimulados.categorias.forEach((cat) => {
+          const option = document.createElement("option");
+          option.value = cat.id;
+          option.textContent = cat.nombre;
+          selectPadre.appendChild(option);
+        });
+      }
+
+      // ===============
+      // Manejo del Form
+      // ===============
       function actualizarColorHex(event) {
         const colorHex = document.getElementById("colorHex");
         colorHex.value = event.target.value.toUpperCase();
       }
 
       function validarFormulario() {
-        const nombre = document.querySelector('input[type="text"]').value;
+        const nombre = document.getElementById("nombreCategoria").value.trim();
         if (!nombre) {
           Popup.mostrar("error", "El nombre de la categoría es obligatorio");
           return false;
@@ -246,6 +347,55 @@
       function guardarCategoria(event) {
         event.preventDefault();
         if (!validarFormulario()) return;
+
+        // Recoger datos del form (en un escenario real, lo mandaríamos a backend)
+        const nombre = document.getElementById("nombreCategoria").value.trim();
+        const tipo = document.getElementById("tipoCategoria").value;
+        const padre = document.getElementById("categoriaPadre").value;
+        const color = document.getElementById("colorHex").value || "#000000";
+        const descripcion = document
+          .getElementById("descripcionCategoria")
+          .value.trim();
+
+        if (tipo === "principal") {
+          // Crear nueva categoría principal
+          const nuevaCat = {
+            id: generarIdUnico(), // Simulamos un ID
+            nombre,
+            color,
+            descripcion,
+            subcategorias: [],
+          };
+          datosSimulados.categorias.push(nuevaCat);
+        } else {
+          // Crear subcategoría dentro de la categoría padre
+          if (!padre) {
+            Popup.mostrar(
+              "error",
+              "Debe seleccionar una categoría padre para la subcategoría"
+            );
+            return;
+          }
+          // Buscar la categoría padre
+          const catPadre = datosSimulados.categorias.find(
+            (c) => c.id === parseInt(padre)
+          );
+          if (!catPadre) {
+            Popup.mostrar("error", "Categoría padre no encontrada");
+            return;
+          }
+          const nuevaSub = {
+            id: generarIdUnico(),
+            nombre,
+            color,
+            descripcion,
+          };
+          catPadre.subcategorias.push(nuevaSub);
+        }
+
+        // Actualizamos la vista
+        mostrarCategoriasEnListado();
+        cargarCategoriasPadre();
 
         Popup.mostrar("success", "Categoría guardada exitosamente");
         document.getElementById("categoriaForm").reset();
@@ -259,8 +409,87 @@
         document.getElementById("categoriaForm").reset();
       }
 
-      // Añade estas funciones al script existente
+      // === FUNCIÓN DE ELIMINAR CORREGIDA ===
+      // - isSubcat: indica si es subcategoría o categoría principal
+      function eliminarCategoria(element, isSubcat = false) {
+        // Para evitar eliminar el padre si es una subcategoría
+        // localizamos el contenedor adecuado:
+        if (isSubcat) {
+          // La subcategoría está en un contenedor con class "flex justify-between items-center p-2"
+          // No queremos remover el padre .p-4
+          const subCatRow = element.closest(".subcat-row"); // Es el div puntual de la subcategoría
 
+          Popup.confirmar(
+            "¿Está seguro que desea eliminar esta subcategoría?",
+            {
+              tipo: "warning",
+              okText: "Sí",
+              cancelText: "Cancelar",
+              onOk: () => {
+                // Removemos de datosSimulados
+                eliminarSubcategoriaDeDatos(subCatRow);
+                // Remover del DOM
+                subCatRow.remove();
+                Popup.mostrar("info", "Subcategoría eliminada");
+              },
+              onCancel: () => {
+                Popup.mostrar("info", "Operación cancelada");
+              },
+            }
+          );
+        } else {
+          // Aquí se trata de la categoría principal (el contenedor es .p-4)
+          const catRow = element.closest(".categoria-block"); // .p-4.border-b
+          Popup.confirmar("¿Está seguro que desea eliminar esta categoría?", {
+            tipo: "warning",
+            okText: "Sí",
+            cancelText: "Cancelar",
+            onOk: () => {
+              eliminarCategoriaDeDatos(catRow);
+              catRow.remove();
+              Popup.mostrar("info", "Categoría eliminada");
+              // Actualizamos el combo
+              cargarCategoriasPadre();
+            },
+            onCancel: () => {
+              Popup.mostrar("info", "Operación cancelada");
+            },
+          });
+        }
+      }
+
+      // Eliminar subcategoría del array en datosSimulados
+      function eliminarSubcategoriaDeDatos(subCatRow) {
+        // Obtenemos el nombre de la subcategoría
+        const subcatName = subCatRow.querySelector("span").textContent.trim();
+
+        // Buscamos en cada categoría
+        datosSimulados.categorias.forEach((cat) => {
+          const index = cat.subcategorias.findIndex(
+            (sc) => sc.nombre === subcatName
+          );
+          if (index !== -1) {
+            cat.subcategorias.splice(index, 1);
+          }
+        });
+      }
+
+      // Eliminar categoría principal del array en datosSimulados
+      function eliminarCategoriaDeDatos(catRow) {
+        // El nombre de la categoría principal está en .font-bold
+        const catName = catRow.querySelector(".font-bold").textContent.trim();
+
+        const index = datosSimulados.categorias.findIndex(
+          (c) => c.nombre === catName
+        );
+        if (index !== -1) {
+          datosSimulados.categorias.splice(index, 1);
+        }
+      }
+
+      // =========
+      // Edición
+      // =========
       function editarCategoria(element) {
         const categoryRow = element.closest(".flex.justify-between");
         const nameContainer = categoryRow.querySelector(".font-bold");
@@ -272,15 +501,21 @@
         const editContainer = document.createElement("div");
         editContainer.className = "flex items-center space-x-2";
         editContainer.innerHTML = `
-        <input type="text" value="${originalName}" class="border rounded p-1 text-sm" />
-        <input type="color" value="${rgbToHex(
-          originalColor
-        )}" class="h-8 w-8" />
-        <button onclick="guardarEdicion(this, '${originalName}')" class="text-green-600 hover:text-green-800">✓</button>
-        <button onclick="cancelarEdicion(this, '${originalName}', '${rgbToHex(
+          <input
+            type="text"
+            value="${originalName}"
+            class="border rounded p-1 text-sm"
+          />
+          <input
+            type="color"
+            value="${rgbToHex(originalColor)}"
+            class="h-8 w-8"
+          />
+          <button onclick="guardarEdicion(this, '${originalName}')" class="text-green-600 hover:text-green-800">✓</button>
+          <button onclick="cancelarEdicion(this, '${originalName}', '${rgbToHex(
           originalColor
         )}')" class="text-red-600 hover:text-red-800">×</button>
-    `;
+        `;
 
         // Ocultar contenido original y mostrar edición
         nameContainer.style.display = "none";
@@ -307,11 +542,13 @@
           return;
         }
 
-        // Actualizar valores
+        // Actualizar valores en el DOM
         nameContainer.textContent = newName;
         colorDiv.style.backgroundColor = newColor;
 
-        // Restaurar vista normal
+        // También actualizamos en datosSimulados
+        actualizarCategoriaEnDatos(originalName, newName, newColor);
+
         finalizarEdicion(editContainer, categoryRow);
         Popup.mostrar("success", "Categoría actualizada exitosamente");
       }
@@ -322,11 +559,10 @@
         const nameContainer = categoryRow.querySelector(".font-bold");
         const colorDiv = categoryRow.querySelector(".rounded-full");
 
-        // Restaurar valores originales
+        // Restaurar valores originales en DOM
         nameContainer.textContent = originalName;
         colorDiv.style.backgroundColor = originalColor;
 
-        // Restaurar vista normal
         finalizarEdicion(editContainer, categoryRow);
         Popup.mostrar("info", "Edición cancelada");
       }
@@ -337,15 +573,20 @@
         editContainer.remove();
       }
 
-      function rgbToHex(rgb) {
-        const values = rgb.match(/\d+/g);
-        if (!values) return "#000000";
-        return (
-          "#" +
-          values.map((x) => parseInt(x).toString(16).padStart(2, "0")).join("")
+      // Actualiza la categoría principal en el array
+      function actualizarCategoriaEnDatos(originalName, newName, newColor) {
+        const cat = datosSimulados.categorias.find(
+          (c) => c.nombre === originalName
         );
+        if (cat) {
+          cat.nombre = newName.trim();
+          cat.color = newColor;
+        }
       }
 
+      // ==============
+      // Subcategorías
+      // ==============
       function editarSubcategoria(element) {
         const subcategoryRow = element.closest(".flex.justify-between");
         const nameContainer = subcategoryRow.querySelector("span");
@@ -356,15 +597,21 @@
         const editContainer = document.createElement("div");
         editContainer.className = "flex items-center space-x-2";
         editContainer.innerHTML = `
-        <input type="text" value="${originalName}" class="border rounded p-1 text-sm w-40" />
-        <input type="color" value="${rgbToHex(
-          originalColor
-        )}" class="h-6 w-6" />
-        <button onclick="guardarEdicionSubcategoria(this, '${originalName}')" class="text-green-600 hover:text-green-800">✓</button>
-        <button onclick="cancelarEdicionSubcategoria(this, '${originalName}', '${rgbToHex(
+          <input
+            type="text"
+            value="${originalName}"
+            class="border rounded p-1 text-sm w-40"
+          />
+          <input
+            type="color"
+            value="${rgbToHex(originalColor)}"
+            class="h-6 w-6"
+          />
+          <button onclick="guardarEdicionSubcategoria(this, '${originalName}')" class="text-green-600 hover:text-green-800">✓</button>
+          <button onclick="cancelarEdicionSubcategoria(this, '${originalName}', '${rgbToHex(
           originalColor
         )}')" class="text-red-600 hover:text-red-800">×</button>
-    `;
+        `;
 
         nameContainer.style.display = "none";
         subcategoryRow.querySelector(".flex.space-x-3").style.display = "none";
@@ -393,8 +640,12 @@
           return;
         }
 
+        // Actualizar en DOM
         nameContainer.textContent = newName;
         colorDiv.style.backgroundColor = newColor;
+
+        // Actualizar en datosSimulados
+        actualizarSubcategoriaEnDatos(originalName, newName, newColor);
 
         finalizarEdicionSubcategoria(editContainer, subcategoryRow);
         Popup.mostrar("success", "Subcategoría actualizada exitosamente");
@@ -421,6 +672,36 @@
         subcategoryRow.querySelector("span").style.display = "";
         subcategoryRow.querySelector(".flex.space-x-3").style.display = "";
         editContainer.remove();
+      }
+
+      // Actualiza la subcategoría en el array
+      function actualizarSubcategoriaEnDatos(originalName, newName, newColor) {
+        datosSimulados.categorias.forEach((cat) => {
+          const subcat = cat.subcategorias.find(
+            (s) => s.nombre === originalName
+          );
+          if (subcat) {
+            subcat.nombre = newName.trim();
+            subcat.color = newColor;
+          }
+        });
+      }
+
+      // ===============
+      // Función Auxiliar
+      // ===============
+      function rgbToHex(rgb) {
+        const values = rgb.match(/\d+/g);
+        if (!values) return "#000000";
+        return (
+          "#" +
+          values.map((x) => parseInt(x).toString(16).padStart(2, "0")).join("")
+        );
+      }
+
+      function generarIdUnico() {
+        // Simulamos un ID incremental o único
+        return Date.now() + Math.floor(Math.random() * 1000);
       }
     </script>
   </body>
