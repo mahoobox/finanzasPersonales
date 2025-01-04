@@ -5,67 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Análisis Tributario - Finanzas Personales</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Librería Chart.js para gráficos (si en algún momento se requiere) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   </head>
-  <body class="bg-gray-100">
+  <body class="bg-gray-100" onload="iniciarInformeTributario()">
     <nav class="bg-blue-600 text-white p-4">
       <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-2xl font-bold">Análisis Tributario</h1>
-        <div class="flex items-center space-x-4">
-          <button
-            class="bg-white text-blue-600 px-4 py-2 rounded-md hover:bg-blue-50"
-          >
-            Exportar a Excel
-          </button>
-          <button
-            class="bg-white text-blue-600 px-4 py-2 rounded-md hover:bg-blue-50"
-          >
-            Exportar a PDF
-          </button>
-          <a href="index.html" class="text-white hover:text-gray-200"
-            >Volver al Inicio</a
-          >
-        </div>
+        <!-- Botón de volver al inicio (quitamos los de exportar) -->
+        <a href="index.html" class="text-white hover:text-gray-200">
+          Volver al Inicio
+        </a>
       </div>
     </nav>
 
     <main class="container mx-auto p-4">
       <!-- Filtros -->
       <div class="bg-white p-4 rounded-lg shadow-md mb-4">
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <!-- Año Fiscal -->
           <div>
             <label class="block text-gray-700 text-sm font-bold mb-2">
               Año Fiscal
             </label>
-            <select class="w-full border rounded-md p-2">
-              <option>2024</option>
-              <option>2023</option>
+            <select id="filtroAnio" class="w-full border rounded-md p-2">
+              <!-- Se llenará con JS -->
             </select>
           </div>
+
+          <!-- Período -->
           <div>
             <label class="block text-gray-700 text-sm font-bold mb-2">
-              Periodo
+              Período
             </label>
-            <select class="w-full border rounded-md p-2">
-              <option>Acumulado Anual</option>
-              <option>Enero - Marzo</option>
-              <option>Abril - Junio</option>
-              <option>Julio - Septiembre</option>
-              <option>Octubre - Diciembre</option>
+            <select id="filtroPeriodo" class="w-full border rounded-md p-2">
+              <!-- Se llenará con JS (Acumulado, Q1, etc.) -->
             </select>
           </div>
-          <div>
-            <label class="block text-gray-700 text-sm font-bold mb-2">
-              Mostrar Valores En
-            </label>
-            <select class="w-full border rounded-md p-2">
-              <option>UVT y Pesos</option>
-              <option>Solo UVT</option>
-              <option>Solo Pesos</option>
-            </select>
-          </div>
+
+          <!-- Botón Actualizar -->
           <div class="flex items-end">
             <button
               class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+              onclick="actualizarInformeTributario()"
             >
               Actualizar
             </button>
@@ -75,39 +57,14 @@
 
       <!-- Estado General -->
       <div class="bg-white p-6 rounded-lg shadow-md mb-6">
-        <h2 class="text-xl font-bold mb-4">Estado General</h2>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <!-- UVT del Año -->
-          <div class="p-4 bg-blue-50 rounded-lg">
-            <h3 class="font-bold mb-2">Valor UVT 2024</h3>
-            <div class="text-3xl font-bold text-blue-600">$47,065</div>
-            <div class="text-sm text-gray-500 mt-1">
-              Valor para cálculos del año en curso
-            </div>
-          </div>
-
-          <!-- Porcentaje Acumulado -->
-          <div class="p-4 bg-green-50 rounded-lg">
-            <h3 class="font-bold mb-2">Porcentaje del Año</h3>
-            <div class="text-3xl font-bold text-green-600">75%</div>
-            <div class="text-sm text-gray-500 mt-1">
-              9 de 12 meses transcurridos
-            </div>
-          </div>
-
-          <!-- Estado -->
-          <div class="p-4 bg-yellow-50 rounded-lg">
-            <h3 class="font-bold mb-2">Estado Actual</h3>
-            <div class="space-y-2">
-              <div class="flex justify-between items-center">
-                <span>Mayor Categoría:</span>
-                <span class="font-bold text-yellow-600">65.7%</span>
-              </div>
-              <div class="text-sm text-gray-500">
-                Compras y Consumos (920/1400 UVT)
-              </div>
-            </div>
-          </div>
+        <h2 id="tituloEstadoGeneral" class="text-xl font-bold mb-4">
+          Estado General
+        </h2>
+        <div
+          class="grid grid-cols-1 md:grid-cols-3 gap-6"
+          id="estadoGeneralContainer"
+        >
+          <!-- Se llena con JS -->
         </div>
       </div>
 
@@ -115,118 +72,21 @@
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
         <!-- Gráfico de Acumulados -->
         <div class="bg-white p-6 rounded-lg shadow-md">
-          <h2 class="text-xl font-bold mb-4">Acumulados vs Topes</h2>
-          <div class="space-y-6">
-            <!-- Consignaciones -->
-            <div>
-              <div class="flex justify-between text-sm mb-1">
-                <span>Consignaciones</span>
-                <span>750/1400 UVT (53.5%)</span>
-              </div>
-              <div class="w-full bg-gray-200 h-4 rounded-full">
-                <div
-                  class="bg-blue-600 h-4 rounded-l-full"
-                  style="width: 53.5%"
-                ></div>
-              </div>
-              <div class="flex justify-between text-xs text-gray-500 mt-1">
-                <span>$35,298,750</span>
-                <span>$65,891,000</span>
-              </div>
-            </div>
-
-            <!-- Tarjetas de Crédito -->
-            <div>
-              <div class="flex justify-between text-sm mb-1">
-                <span>Tarjetas de Crédito</span>
-                <span>600/1400 UVT (42.8%)</span>
-              </div>
-              <div class="w-full bg-gray-200 h-4 rounded-full">
-                <div
-                  class="bg-blue-600 h-4 rounded-l-full"
-                  style="width: 42.8%"
-                ></div>
-              </div>
-              <div class="flex justify-between text-xs text-gray-500 mt-1">
-                <span>$28,239,000</span>
-                <span>$65,891,000</span>
-              </div>
-            </div>
-
-            <!-- Compras y Consumos -->
-            <div>
-              <div class="flex justify-between text-sm mb-1">
-                <span>Compras y Consumos</span>
-                <span>920/1400 UVT (65.7%)</span>
-              </div>
-              <div class="w-full bg-gray-200 h-4 rounded-full">
-                <div
-                  class="bg-blue-600 h-4 rounded-l-full"
-                  style="width: 65.7%"
-                ></div>
-              </div>
-              <div class="flex justify-between text-xs text-gray-500 mt-1">
-                <span>$43,299,800</span>
-                <span>$65,891,000</span>
-              </div>
-            </div>
+          <h2 id="tituloAcumulados" class="text-xl font-bold mb-4">
+            Acumulados vs Topes
+          </h2>
+          <div id="acumuladosContainer" class="space-y-6">
+            <!-- Se llena con JS -->
           </div>
         </div>
 
         <!-- Proyección -->
         <div class="bg-white p-6 rounded-lg shadow-md">
-          <h2 class="text-xl font-bold mb-4">Proyección a Fin de Año</h2>
-          <div class="space-y-6">
-            <!-- Consignaciones -->
-            <div>
-              <div class="flex justify-between text-sm mb-1">
-                <span>Consignaciones</span>
-                <span>1000/1400 UVT (71.4%)</span>
-              </div>
-              <div class="w-full bg-gray-200 h-4 rounded-full">
-                <div
-                  class="bg-green-600 h-4 rounded-l-full"
-                  style="width: 71.4%"
-                ></div>
-              </div>
-              <div class="text-xs text-gray-500 mt-1">
-                Proyectado: $47,065,000
-              </div>
-            </div>
-
-            <!-- Tarjetas de Crédito -->
-            <div>
-              <div class="flex justify-between text-sm mb-1">
-                <span>Tarjetas de Crédito</span>
-                <span>800/1400 UVT (57.1%)</span>
-              </div>
-              <div class="w-full bg-gray-200 h-4 rounded-full">
-                <div
-                  class="bg-green-600 h-4 rounded-l-full"
-                  style="width: 57.1%"
-                ></div>
-              </div>
-              <div class="text-xs text-gray-500 mt-1">
-                Proyectado: $37,652,000
-              </div>
-            </div>
-
-            <!-- Compras y Consumos -->
-            <div>
-              <div class="flex justify-between text-sm mb-1">
-                <span>Compras y Consumos</span>
-                <span>1200/1400 UVT (85.7%)</span>
-              </div>
-              <div class="w-full bg-gray-200 h-4 rounded-full">
-                <div
-                  class="bg-yellow-600 h-4 rounded-l-full"
-                  style="width: 85.7%"
-                ></div>
-              </div>
-              <div class="text-xs text-gray-500 mt-1">
-                Proyectado: $56,478,000
-              </div>
-            </div>
+          <h2 id="tituloProyeccion" class="text-xl font-bold mb-4">
+            Proyección a Fin de Año
+          </h2>
+          <div id="proyeccionContainer" class="space-y-6">
+            <!-- Se llena con JS -->
           </div>
         </div>
       </div>
@@ -234,12 +94,15 @@
       <!-- Análisis Mensual -->
       <div class="bg-white p-6 rounded-lg shadow-md mb-6">
         <div class="flex justify-between items-center mb-4">
-          <h2 class="text-xl font-bold">Análisis Mensual</h2>
-          <select class="border rounded-md p-2">
-            <option>Todos los Conceptos</option>
-            <option>Consignaciones</option>
-            <option>Tarjetas de Crédito</option>
-            <option>Compras y Consumos</option>
+          <h2 id="tituloAnalisisMensual" class="text-xl font-bold">
+            Análisis Mensual
+          </h2>
+          <select
+            id="filtroConcepto"
+            class="border rounded-md p-2"
+            onchange="actualizarTablaAnalisisMensual()"
+          >
+            <!-- Se llena con JS (Todos los Conceptos, etc.) -->
           </select>
         </div>
         <div class="overflow-x-auto">
@@ -253,34 +116,8 @@
                 <th class="px-4 py-2 text-center">Tendencia</th>
               </tr>
             </thead>
-            <tbody class="divide-y">
-              <tr class="hover:bg-gray-50">
-                <td class="px-4 py-2">Septiembre</td>
-                <td class="px-4 py-2 text-right">120</td>
-                <td class="px-4 py-2 text-right">$5,647,800</td>
-                <td class="px-4 py-2 text-right">8.57%</td>
-                <td class="px-4 py-2 text-center">
-                  <span class="text-green-600">↗</span>
-                </td>
-              </tr>
-              <tr class="hover:bg-gray-50">
-                <td class="px-4 py-2">Agosto</td>
-                <td class="px-4 py-2 text-right">110</td>
-                <td class="px-4 py-2 text-right">$5,177,150</td>
-                <td class="px-4 py-2 text-right">7.86%</td>
-                <td class="px-4 py-2 text-center">
-                  <span class="text-red-600">↘</span>
-                </td>
-              </tr>
-              <tr class="hover:bg-gray-50">
-                <td class="px-4 py-2">Julio</td>
-                <td class="px-4 py-2 text-right">115</td>
-                <td class="px-4 py-2 text-right">$5,412,475</td>
-                <td class="px-4 py-2 text-right">8.21%</td>
-                <td class="px-4 py-2 text-center">
-                  <span class="text-gray-600">→</span>
-                </td>
-              </tr>
+            <tbody id="analisisMensualTbody" class="divide-y">
+              <!-- Se llena con JS -->
             </tbody>
           </table>
         </div>
@@ -293,100 +130,691 @@
           <h2 class="text-xl font-bold mb-4 text-red-800">
             Alertas y Puntos de Atención
           </h2>
-          <div class="space-y-4">
-            <div class="flex items-start space-x-2">
-              <div class="flex-shrink-0">
-                <svg
-                  class="h-6 w-6 text-red-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
-                  />
-                </svg>
-              </div>
-              <ul class="space-y-2 text-sm">
-                <li class="text-red-800">
-                  <span class="font-semibold">Compras y Consumos:</span>
-                  Alcanzado el 65.7% (920 UVT) con 3 meses restantes
-                </li>
-                <li class="text-red-800">
-                  <span class="font-semibold">Proyección Crítica:</span>
-                  Se estima alcanzar 85.7% al cierre del año
-                </li>
-                <li class="text-red-800">
-                  <span class="font-semibold">Incremento Notable:</span>
-                  +12% en movimientos respecto al mes anterior
-                </li>
-              </ul>
-            </div>
+          <div id="alertasContainer" class="space-y-4">
+            <!-- Se llena con JS -->
           </div>
         </div>
 
         <!-- Recomendaciones -->
         <div class="bg-green-50 p-6 rounded-lg shadow-md">
           <h2 class="text-xl font-bold mb-4 text-green-800">Recomendaciones</h2>
-          <div class="space-y-4">
-            <div class="flex items-start space-x-2">
-              <div class="flex-shrink-0">
-                <svg
-                  class="h-6 w-6 text-green-500"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    stroke-width="2"
-                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                  />
-                </svg>
-              </div>
-              <ul class="space-y-2 text-sm">
-                <li class="text-green-800">
-                  Considerar limitar compras y consumos a máximo 160 UVT
-                  mensuales
-                </li>
-                <li class="text-green-800">
-                  Priorizar el uso de medios de pago con soporte formal
-                </li>
-                <li class="text-green-800">
-                  Mantener registro detallado de transacciones en últimos meses
-                </li>
-              </ul>
-            </div>
+          <div id="recomendacionesContainer" class="space-y-4">
+            <!-- Se llena con JS -->
           </div>
         </div>
       </div>
 
-      <!-- Botones de Acción -->
+      <!-- Botones de Acción al final -->
       <div class="flex justify-end space-x-4">
         <button
           class="bg-gray-500 text-white px-6 py-2 rounded-md hover:bg-gray-600"
+          onclick="volverAtras()"
         >
           Volver
         </button>
         <button
-          class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
-        >
-          Guardar Informe
-        </button>
-        <button
           class="bg-green-600 text-white px-6 py-2 rounded-md hover:bg-green-700"
+          onclick="exportarExcel()"
         >
-          Enviar al Contador
+          Exportar a Excel
         </button>
       </div>
     </main>
 
     <footer class="bg-gray-200 text-center p-4 mt-8">
-      <p>Sistema de Finanzas Personales - 2024</p>
+      <p id="ultimaActualizacion">Sistema de Finanzas Personales - 2025</p>
     </footer>
+
+    <script>
+      // --------------------------------------------------------------------
+      // 1. DATOS DE EJEMPLO (LUEGO REEMPLAZADOS POR BACKEND)
+      // --------------------------------------------------------------------
+      // Años disponibles (orden de mayor a menor)
+      const aniosDisponibles = [2025, 2024];
+
+      // Períodos disponibles
+      const periodosDisponibles = [
+        { value: "acumulado", label: "Acumulado Anual" },
+        { value: "Q1", label: "Enero - Marzo" },
+        { value: "Q2", label: "Abril - Junio" },
+        { value: "Q3", label: "Julio - Septiembre" },
+        { value: "Q4", label: "Octubre - Diciembre" },
+      ];
+
+      // Conceptos para análisis mensual
+      const conceptos = [
+        { value: "todos", label: "Todos los Conceptos" },
+        { value: "consignaciones", label: "Consignaciones" },
+        { value: "tarjetas", label: "Tarjetas de Crédito" },
+        { value: "compras", label: "Compras y Consumos" },
+      ];
+
+      // Ejemplo de data para distintos años/periodos (2025, 2024)
+      const informeTributarioData = {
+        2025: {
+          acumulado: {
+            valorUVT: 49979, // UVT 2025
+            porcentajeAnio: 75,
+            mayorCategoria: {
+              nombre: "Tarjetas de Crédito",
+              porcentaje: 66.7,
+              actualUVT: 934,
+              maxUVT: 1400,
+            },
+            acumulados: [
+              {
+                titulo: "Consignaciones",
+                actualUVT: 700,
+                maxUVT: 1400,
+                porcentaje: 50,
+                actualPesos: 34985300,
+                maxPesos: 69970600,
+              },
+              {
+                titulo: "Tarjetas de Crédito",
+                actualUVT: 934,
+                maxUVT: 1400,
+                porcentaje: 66.7,
+                actualPesos: 46718386,
+                maxPesos: 69970600,
+              },
+              {
+                titulo: "Compras y Consumos",
+                actualUVT: 1000,
+                maxUVT: 1400,
+                porcentaje: 71.4,
+                actualPesos: 49979000,
+                maxPesos: 69970600,
+              },
+            ],
+            proyeccion: [
+              {
+                titulo: "Consignaciones",
+                proyectadoUVT: 1200,
+                porcentaje: 85.7,
+                proyectadoPesos: 59973600,
+              },
+              {
+                titulo: "Tarjetas de Crédito",
+                proyectadoUVT: 1100,
+                porcentaje: 78.6,
+                proyectadoPesos: 54976900,
+              },
+              {
+                titulo: "Compras y Consumos",
+                proyectadoUVT: 1400,
+                porcentaje: 100,
+                proyectadoPesos: 69970600,
+              },
+            ],
+            analisisMensual: [
+              {
+                mes: "Enero 2025",
+                uvt: 130,
+                pesos: 6497270,
+                porcentaje: 9.29,
+                tendencia: "↗",
+                concepto: "tarjetas",
+              },
+              {
+                mes: "Febrero 2025",
+                uvt: 120,
+                pesos: 5997360,
+                porcentaje: 8.57,
+                tendencia: "↗",
+                concepto: "compras",
+              },
+              {
+                mes: "Marzo 2025",
+                uvt: 90,
+                pesos: 4498020,
+                porcentaje: 6.43,
+                tendencia: "↘",
+                concepto: "consignaciones",
+              },
+              {
+                mes: "Abril 2025",
+                uvt: 110,
+                pesos: 5497690,
+                porcentaje: 7.86,
+                tendencia: "→",
+                concepto: "tarjetas",
+              },
+            ],
+            alertas: [
+              "Tarjetas de Crédito al 66.7%",
+              "Posible riesgo de exceder 78% a mitad de año",
+            ],
+            recomendaciones: [
+              "Revisar compras con tarjeta sin factura",
+              "Limitar consumos a máximo 200 UVT por mes",
+            ],
+          },
+          Q1: {
+            valorUVT: 49979,
+            porcentajeAnio: 25,
+            mayorCategoria: {
+              nombre: "Consignaciones",
+              porcentaje: 43,
+              actualUVT: 602,
+              maxUVT: 1400,
+            },
+            acumulados: [
+              {
+                titulo: "Consignaciones",
+                actualUVT: 602,
+                maxUVT: 1400,
+                porcentaje: 43,
+                actualPesos: 30189000,
+                maxPesos: 69970600,
+              },
+              {
+                titulo: "Tarjetas de Crédito",
+                actualUVT: 400,
+                maxUVT: 1400,
+                porcentaje: 28.6,
+                actualPesos: 19991600,
+                maxPesos: 69970600,
+              },
+              {
+                titulo: "Compras y Consumos",
+                actualUVT: 500,
+                maxUVT: 1400,
+                porcentaje: 35.7,
+                actualPesos: 24989500,
+                maxPesos: 69970600,
+              },
+            ],
+            proyeccion: [
+              {
+                titulo: "Consignaciones",
+                proyectadoUVT: 1200,
+                porcentaje: 85.7,
+                proyectadoPesos: 59973600,
+              },
+              {
+                titulo: "Tarjetas de Crédito",
+                proyectadoUVT: 900,
+                porcentaje: 64.3,
+                proyectadoPesos: 44979000,
+              },
+              {
+                titulo: "Compras y Consumos",
+                proyectadoUVT: 1400,
+                porcentaje: 100,
+                proyectadoPesos: 69970600,
+              },
+            ],
+            analisisMensual: [
+              {
+                mes: "Enero 2025",
+                uvt: 120,
+                pesos: 5997480,
+                porcentaje: 8.57,
+                tendencia: "↗",
+                concepto: "consignaciones",
+              },
+              {
+                mes: "Febrero 2025",
+                uvt: 100,
+                pesos: 4997900,
+                porcentaje: 7.14,
+                tendencia: "↗",
+                concepto: "tarjetas",
+              },
+              {
+                mes: "Marzo 2025",
+                uvt: 90,
+                pesos: 4498110,
+                porcentaje: 6.43,
+                tendencia: "↘",
+                concepto: "compras",
+              },
+            ],
+            alertas: [
+              "Consignaciones elevadas en febrero",
+              "Tarjetas de Crédito con tendencia al alza",
+            ],
+            recomendaciones: [
+              "Verificar soportes de pagos",
+              "Realizar un control estricto de consignaciones",
+            ],
+          },
+        },
+        2024: {
+          acumulado: {
+            valorUVT: 47065,
+            porcentajeAnio: 75,
+            mayorCategoria: {
+              nombre: "Compras y Consumos",
+              porcentaje: 65.7,
+              actualUVT: 920,
+              maxUVT: 1400,
+            },
+            acumulados: [
+              {
+                titulo: "Consignaciones",
+                actualUVT: 750,
+                maxUVT: 1400,
+                porcentaje: 53.5,
+                actualPesos: 35298750,
+                maxPesos: 65891000,
+              },
+              {
+                titulo: "Tarjetas de Crédito",
+                actualUVT: 600,
+                maxUVT: 1400,
+                porcentaje: 42.8,
+                actualPesos: 28239000,
+                maxPesos: 65891000,
+              },
+              {
+                titulo: "Compras y Consumos",
+                actualUVT: 920,
+                maxUVT: 1400,
+                porcentaje: 65.7,
+                actualPesos: 43299800,
+                maxPesos: 65891000,
+              },
+            ],
+            proyeccion: [
+              {
+                titulo: "Consignaciones",
+                proyectadoUVT: 1000,
+                porcentaje: 71.4,
+                proyectadoPesos: 47065000,
+              },
+              {
+                titulo: "Tarjetas de Crédito",
+                proyectadoUVT: 800,
+                porcentaje: 57.1,
+                proyectadoPesos: 37652000,
+              },
+              {
+                titulo: "Compras y Consumos",
+                proyectadoUVT: 1200,
+                porcentaje: 85.7,
+                proyectadoPesos: 56478000,
+              },
+            ],
+            analisisMensual: [
+              {
+                mes: "Enero",
+                uvt: 100,
+                pesos: 4706500,
+                porcentaje: 7.14,
+                tendencia: "↗",
+                concepto: "consignaciones",
+              },
+              {
+                mes: "Febrero",
+                uvt: 120,
+                pesos: 5647800,
+                porcentaje: 8.57,
+                tendencia: "↗",
+                concepto: "tarjetas",
+              },
+              {
+                mes: "Marzo",
+                uvt: 90,
+                pesos: 4235850,
+                porcentaje: 6.43,
+                tendencia: "↘",
+                concepto: "compras",
+              },
+            ],
+            alertas: [
+              "Compras y Consumos: 65.7% (920 UVT) con 3 meses restantes",
+              "Proyección de 85.7% al cierre del año",
+            ],
+            recomendaciones: [
+              "Limitar consumos a un máximo de 160 UVT mensuales",
+              "Priorizar pagos con soporte formal",
+            ],
+          },
+        },
+      };
+
+      // --------------------------------------------------------------------
+      // 2. INICIO
+      // --------------------------------------------------------------------
+      function iniciarInformeTributario() {
+        // Llenar selects de año y período
+        inicializarFiltros();
+        // Cargar al inicio el año actual y el periodo "acumulado"
+        actualizarInformeTributario();
+      }
+
+      function inicializarFiltros() {
+        // Año: orden mayor a menor, default = 2025
+        const selectAnio = document.getElementById("filtroAnio");
+        aniosDisponibles.forEach((a) => {
+          const opt = document.createElement("option");
+          opt.value = a;
+          opt.textContent = a;
+          selectAnio.appendChild(opt);
+        });
+        selectAnio.value = "2025"; // predeterminado
+
+        // Período
+        const selectPeriodo = document.getElementById("filtroPeriodo");
+        periodosDisponibles.forEach((p) => {
+          const opt = document.createElement("option");
+          opt.value = p.value;
+          opt.textContent = p.label;
+          selectPeriodo.appendChild(opt);
+        });
+        selectPeriodo.value = "acumulado"; // default
+
+        // Conceptos para análisis mensual
+        const selConcepto = document.getElementById("filtroConcepto");
+        conceptos.forEach((c) => {
+          const opt = document.createElement("option");
+          opt.value = c.value;
+          opt.textContent = c.label;
+          selConcepto.appendChild(opt);
+        });
+        selConcepto.value = "todos";
+      }
+
+      // --------------------------------------------------------------------
+      // 3. ACTUALIZAR INFORME
+      // --------------------------------------------------------------------
+      function actualizarInformeTributario() {
+        const anio = document.getElementById("filtroAnio").value;
+        const periodo = document.getElementById("filtroPeriodo").value;
+        const dataPeriodo = obtenerDataPeriodo(anio, periodo);
+
+        if (!dataPeriodo) {
+          alert("No hay data para ese año/periodo.");
+          return;
+        }
+
+        // Actualizar los títulos con el año
+        document.getElementById(
+          "tituloEstadoGeneral"
+        ).textContent = `Estado General ${anio}`;
+        document.getElementById(
+          "tituloAcumulados"
+        ).textContent = `Acumulados vs Topes ${anio}`;
+        document.getElementById(
+          "tituloProyeccion"
+        ).textContent = `Proyección a Fin de Año ${anio}`;
+        document.getElementById(
+          "tituloAnalisisMensual"
+        ).textContent = `Análisis Mensual ${anio}`;
+
+        renderEstadoGeneral(dataPeriodo);
+        renderAcumulados(dataPeriodo);
+        renderProyeccion(dataPeriodo);
+        renderTablaAnalisisMensual(dataPeriodo);
+        renderAlertas(dataPeriodo);
+        renderRecomendaciones(dataPeriodo);
+
+        document.getElementById(
+          "ultimaActualizacion"
+        ).textContent = `Informe Tributario Actualizado - Año ${anio}, Período: ${periodo} - ${new Date().toLocaleString()}`;
+      }
+
+      function obtenerDataPeriodo(anio, periodo) {
+        // Ej: informeTributarioData[2024]['acumulado']
+        if (informeTributarioData[anio]) {
+          return informeTributarioData[anio][periodo] || null;
+        }
+        return null;
+      }
+
+      // --------------------------------------------------------------------
+      // 4. RENDERIZAR SECCIONES
+      // --------------------------------------------------------------------
+      function renderEstadoGeneral(data) {
+        const container = document.getElementById("estadoGeneralContainer");
+        container.innerHTML = "";
+
+        // Tres col: UVT del año, Porcentaje del año, Estado Actual
+        const col1 = document.createElement("div");
+        col1.className = "p-4 bg-blue-50 rounded-lg";
+        col1.innerHTML = `
+          <h3 class="font-bold mb-2">Valor UVT</h3>
+          <div class="text-3xl font-bold text-blue-600">
+            $${(data.valorUVT || 0).toLocaleString()}
+          </div>
+          <div class="text-sm text-gray-500 mt-1">
+            Valor para cálculos del año en curso
+          </div>
+        `;
+
+        const col2 = document.createElement("div");
+        col2.className = "p-4 bg-green-50 rounded-lg";
+        col2.innerHTML = `
+          <h3 class="font-bold mb-2">Porcentaje del Año</h3>
+          <div class="text-3xl font-bold text-green-600">
+            ${data.porcentajeAnio || 0}%
+          </div>
+          <div class="text-sm text-gray-500 mt-1">
+            Progreso del año (aprox.)
+          </div>
+        `;
+
+        const col3 = document.createElement("div");
+        col3.className = "p-4 bg-yellow-50 rounded-lg";
+        let mayorCat = data.mayorCategoria || {};
+        col3.innerHTML = `
+          <h3 class="font-bold mb-2">Estado Actual</h3>
+          <div class="space-y-2">
+            <div class="flex justify-between items-center">
+              <span>Mayor Categoría:</span>
+              <span class="font-bold text-yellow-600">
+                ${(mayorCat.porcentaje || 0).toFixed(1)}%
+              </span>
+            </div>
+            <div class="text-sm text-gray-500">
+              ${mayorCat.nombre || ""} (${mayorCat.actualUVT || 0}/${
+          mayorCat.maxUVT || 0
+        } UVT)
+            </div>
+          </div>
+        `;
+
+        container.appendChild(col1);
+        container.appendChild(col2);
+        container.appendChild(col3);
+      }
+
+      function renderAcumulados(data) {
+        const container = document.getElementById("acumuladosContainer");
+        container.innerHTML = "";
+
+        if (!data.acumulados || data.acumulados.length === 0) return;
+
+        data.acumulados.forEach((item) => {
+          const div = document.createElement("div");
+          const porcentaje = item.porcentaje || 0;
+          div.innerHTML = `
+            <div class="flex justify-between text-sm mb-1">
+              <span>${item.titulo}</span>
+              <span>${item.actualUVT}/${item.maxUVT} UVT (${porcentaje}%)</span>
+            </div>
+            <div class="w-full bg-gray-200 h-4 rounded-full">
+              <div
+                class="bg-blue-600 h-4 rounded-l-full"
+                style="width: ${porcentaje}%"
+              ></div>
+            </div>
+            <div class="flex justify-between text-xs text-gray-500 mt-1">
+              <span>$${(item.actualPesos || 0).toLocaleString()}</span>
+              <span>$${(item.maxPesos || 0).toLocaleString()}</span>
+            </div>
+          `;
+          container.appendChild(div);
+        });
+      }
+
+      function renderProyeccion(data) {
+        const container = document.getElementById("proyeccionContainer");
+        container.innerHTML = "";
+
+        if (!data.proyeccion || data.proyeccion.length === 0) return;
+
+        data.proyeccion.forEach((item) => {
+          const porc = item.porcentaje || 0;
+          const div = document.createElement("div");
+          div.innerHTML = `
+            <div class="flex justify-between text-sm mb-1">
+              <span>${item.titulo}</span>
+              <span>${item.proyectadoUVT}/${1400} UVT (${porc}%)</span>
+            </div>
+            <div class="w-full bg-gray-200 h-4 rounded-full">
+              <div
+                class="bg-green-600 h-4 rounded-l-full"
+                style="width: ${porc}%"
+              ></div>
+            </div>
+            <div class="text-xs text-gray-500 mt-1">
+              Proyectado: $${(item.proyectadoPesos || 0).toLocaleString()}
+            </div>
+          `;
+          container.appendChild(div);
+        });
+      }
+
+      function renderTablaAnalisisMensual(data) {
+        const tbody = document.getElementById("analisisMensualTbody");
+        tbody.innerHTML = "";
+
+        if (!data.analisisMensual) return;
+
+        // Filtrar por concepto
+        const conceptoElegido = document.getElementById("filtroConcepto").value;
+        const arrFiltrado = data.analisisMensual.filter((m) => {
+          if (conceptoElegido === "todos") return true;
+          return m.concepto === conceptoElegido;
+        });
+
+        arrFiltrado.forEach((item) => {
+          const tr = document.createElement("tr");
+          tr.className = "hover:bg-gray-50";
+
+          const tdMes = document.createElement("td");
+          tdMes.className = "px-4 py-2";
+          tdMes.textContent = item.mes;
+
+          const tdUVT = document.createElement("td");
+          tdUVT.className = "px-4 py-2 text-right";
+          tdUVT.textContent = item.uvt;
+
+          const tdPesos = document.createElement("td");
+          tdPesos.className = "px-4 py-2 text-right";
+          tdPesos.textContent = `$${(item.pesos || 0).toLocaleString()}`;
+
+          const tdPct = document.createElement("td");
+          tdPct.className = "px-4 py-2 text-right";
+          tdPct.textContent = `${(item.porcentaje || 0).toFixed(2)}%`;
+
+          const tdTend = document.createElement("td");
+          tdTend.className = "px-4 py-2 text-center";
+          let color = "text-gray-600";
+          if (item.tendencia === "↗") color = "text-green-600";
+          if (item.tendencia === "↘") color = "text-red-600";
+          tdTend.innerHTML = `<span class="${color}">${item.tendencia}</span>`;
+
+          tr.appendChild(tdMes);
+          tr.appendChild(tdUVT);
+          tr.appendChild(tdPesos);
+          tr.appendChild(tdPct);
+          tr.appendChild(tdTend);
+
+          tbody.appendChild(tr);
+        });
+      }
+
+      function actualizarTablaAnalisisMensual() {
+        const anio = document.getElementById("filtroAnio").value;
+        const periodo = document.getElementById("filtroPeriodo").value;
+        const dataPeriodo = obtenerDataPeriodo(anio, periodo);
+        if (!dataPeriodo || !dataPeriodo.analisisMensual) return;
+
+        renderTablaAnalisisMensual(dataPeriodo);
+      }
+
+      function renderAlertas(data) {
+        const container = document.getElementById("alertasContainer");
+        container.innerHTML = "";
+
+        if (!data.alertas) return;
+
+        data.alertas.forEach((alerta) => {
+          const div = document.createElement("div");
+          div.className = "flex items-start space-x-2";
+          div.innerHTML = `
+            <div class="flex-shrink-0">
+              <svg
+                class="h-6 w-6 text-red-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M12 9v2m0 4h.01m-6.938
+                  4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464
+                  0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                />
+              </svg>
+            </div>
+            <p class="text-red-800 text-sm">${alerta}</p>
+          `;
+          container.appendChild(div);
+        });
+      }
+
+      function renderRecomendaciones(data) {
+        const container = document.getElementById("recomendacionesContainer");
+        container.innerHTML = "";
+
+        // Soportar la key 'recommendations' o 'recomendaciones'
+        const arr = data.recommendations || data.recomendaciones;
+        if (!arr || arr.length === 0) return;
+
+        arr.forEach((r) => {
+          const div = document.createElement("div");
+          div.className = "flex items-start space-x-2";
+          div.innerHTML = `
+            <div class="flex-shrink-0">
+              <svg
+                class="h-6 w-6 text-green-500"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M9 12l2 2
+                  4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                />
+              </svg>
+            </div>
+            <p class="text-green-800 text-sm">${r}</p>
+          `;
+          container.appendChild(div);
+        });
+      }
+
+      // --------------------------------------------------------------------
+      // 5. BOTONES DE ACCIÓN
+      // --------------------------------------------------------------------
+      function volverAtras() {
+        // Placeholder
+        alert("Volver (demo)");
+      }
+      function exportarExcel() {
+        // Placeholder
+        alert("Exportar a Excel (demo)");
+      }
+    </script>
   </body>
 </html>
