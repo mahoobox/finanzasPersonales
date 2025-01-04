@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Consolidado de Movimientos - Finanzas Personales</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Librería Chart.js (si hiciera falta para gráficos) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
       .dropdown-content {
         display: none;
@@ -15,129 +17,79 @@
         z-index: 50;
         border-radius: 0.375rem;
       }
-
       .dropdown:hover .dropdown-content {
         display: block;
       }
     </style>
   </head>
-  <body class="bg-gray-100">
+  <body class="bg-gray-100" onload="iniciarConsolidado()">
     <nav class="bg-blue-600 text-white p-4">
       <div class="container mx-auto flex justify-between items-center">
         <h1 class="text-2xl font-bold">Consolidado de Movimientos</h1>
-        <a href="index.html" class="text-white hover:text-gray-200"
-          >Volver al Inicio</a
-        >
+        <a href="index.html" class="text-white hover:text-gray-200">
+          Volver al Inicio
+        </a>
       </div>
     </nav>
 
     <main class="container mx-auto p-4">
-      <!-- Filtros Superiores -->
+      <!-- Filtros (similar a dashboard) -->
       <div class="bg-white p-4 rounded-lg shadow-md mb-4">
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label class="block text-gray-700 text-sm font-bold mb-2">
-              Desde
-            </label>
-            <input type="date" class="w-full border rounded-md p-2" />
-          </div>
-          <div>
-            <label class="block text-gray-700 text-sm font-bold mb-2">
-              Hasta
-            </label>
-            <input type="date" class="w-full border rounded-md p-2" />
-          </div>
-          <div class="flex items-end">
-            <button
-              class="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
-            >
-              Actualizar
-            </button>
-          </div>
+        <div class="grid grid-cols-4 gap-4">
+          <!-- Select de Período -->
+          <select
+            id="selectPeriodo"
+            class="border rounded-md p-2"
+            onchange="cambiarRangoFechas()"
+          >
+            <option value="mesActual" selected>Mes Actual</option>
+            <option value="mesAnterior">Mes Anterior</option>
+            <option value="ultimos3">Últimos 3 Meses</option>
+            <option value="anioActual">Año Actual</option>
+            <option value="anioAnterior">Año Anterior</option>
+            <option value="personalizado">Personalizado</option>
+          </select>
+          <!-- Fecha Inicio -->
+          <input
+            type="date"
+            id="fechaInicio"
+            class="border rounded-md p-2"
+            onchange="verificarPersonalizado()"
+          />
+          <!-- Fecha Fin -->
+          <input
+            type="date"
+            id="fechaFin"
+            class="border rounded-md p-2"
+            onchange="verificarPersonalizado()"
+          />
+          <!-- Botón Actualizar -->
+          <button
+            class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700"
+            onclick="actualizarConsolidado()"
+          >
+            Actualizar
+          </button>
         </div>
       </div>
 
-      <!-- Resumen -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <!-- Ingresos -->
-        <div class="p-4 bg-white rounded-lg shadow-md">
-          <h3 class="font-bold text-lg mb-3">Ingresos</h3>
-          <div class="space-y-2">
-            <div class="flex justify-between">
-              <span>Formales:</span>
-              <span class="font-bold text-green-600">$45,000,000</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Informales:</span>
-              <span class="font-bold text-green-600">$15,000,000</span>
-            </div>
-            <div class="flex justify-between pt-2 border-t mt-2">
-              <span class="font-bold">Total:</span>
-              <span class="font-bold text-green-600">$60,000,000</span>
-            </div>
-            <div class="bg-gray-100 h-2 rounded-full mt-2">
-              <div
-                class="bg-green-600 h-2 rounded-full"
-                style="width: 75%"
-              ></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Gastos -->
-        <div class="p-4 bg-white rounded-lg shadow-md">
-          <h3 class="font-bold text-lg mb-3">Gastos</h3>
-          <div class="space-y-2">
-            <div class="flex justify-between">
-              <span>Con Factura:</span>
-              <span class="font-bold text-red-600">$32,000,000</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Sin Factura:</span>
-              <span class="font-bold text-red-600">$8,000,000</span>
-            </div>
-            <div class="flex justify-between pt-2 border-t mt-2">
-              <span class="font-bold">Total:</span>
-              <span class="font-bold text-red-600">$40,000,000</span>
-            </div>
-            <div class="bg-gray-100 h-2 rounded-full mt-2">
-              <div class="bg-red-600 h-2 rounded-full" style="width: 50%"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Movimientos -->
-        <div class="p-4 bg-white rounded-lg shadow-md">
-          <h3 class="font-bold text-lg mb-3">Movimientos</h3>
-          <div class="space-y-2">
-            <div class="flex justify-between">
-              <span>Transferencias:</span>
-              <span class="font-bold">52</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Con Soporte:</span>
-              <span class="font-bold text-green-600">145</span>
-            </div>
-            <div class="flex justify-between">
-              <span>Sin Soporte:</span>
-              <span class="font-bold text-red-600">23</span>
-            </div>
-            <div class="bg-gray-100 h-2 rounded-full mt-2">
-              <div
-                class="bg-blue-600 h-2 rounded-full"
-                style="width: 85%"
-              ></div>
-            </div>
-          </div>
-        </div>
+      <!-- Resumen (Ingresos / Gastos / Movimientos) -->
+      <div
+        class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6"
+        id="resumenContainer"
+      >
+        <!-- Llenado dinámico con JS -->
       </div>
 
-      <!-- Tabla con Filtros Modernos -->
+      <!-- Tabla de Movimientos -->
       <div class="bg-white rounded-lg shadow-md">
         <div class="p-4 border-b">
-          <h2 class="text-xl font-bold">Detalle de Movimientos</h2>
+          <h2 id="tituloMovimientos" class="text-xl font-bold">
+            Detalle de Movimientos
+          </h2>
         </div>
 
+        <!-- Encabezado de la tabla con filtros -->
         <div class="overflow-x-auto">
           <table class="w-full">
             <thead class="bg-gray-50">
@@ -160,375 +112,93 @@
                         />
                       </svg>
                     </button>
-                    <!-- Dropdown para Fecha -->
-                    <div
-                      id="dropdownFecha"
-                      class="hidden absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50"
-                    >
-                      <div class="p-2">
-                        <a
-                          href="#"
-                          class="block px-4 py-2 text-sm hover:bg-gray-100"
-                          >Más reciente primero</a
-                        >
-                        <a
-                          href="#"
-                          class="block px-4 py-2 text-sm hover:bg-gray-100"
-                          >Más antiguo primero</a
-                        >
-                        <div class="border-t mt-2 pt-2 flex justify-end">
-                          <button
-                            class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
-                          >
-                            Aplicar
-                          </button>
-                        </div>
-                      </div>
-                    </div>
                   </div>
                 </th>
-
-                <!-- Tipo -->
-                <th class="px-4 py-2 dropdown">
-                  <div class="relative">
-                    <button
-                      onclick="toggleDropdown('tipo')"
-                      class="flex items-center space-x-1 hover:text-blue-600"
-                    >
-                      <span>Tipo</span>
-                      <svg
-                        class="w-4 h-4"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fill-rule="evenodd"
-                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                          clip-rule="evenodd"
-                        />
-                      </svg>
-                    </button>
-                    <!-- Dropdown para Tipo -->
-                    <div
-                      id="dropdownTipo"
-                      class="dropdown-content absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50"
-                    >
-                      <div class="p-2">
-                        <label class="flex items-center p-2 hover:bg-gray-100">
-                          <input type="checkbox" class="mr-2" />
-                          <span class="text-sm">Todos</span>
-                        </label>
-                        <label class="flex items-center p-2 hover:bg-gray-100">
-                          <input type="checkbox" class="mr-2" />
-                          <span class="text-sm">Ingreso</span>
-                        </label>
-                        <label class="flex items-center p-2 hover:bg-gray-100">
-                          <input type="checkbox" class="mr-2" />
-                          <span class="text-sm">Gasto</span>
-                        </label>
-                        <label class="flex items-center p-2 hover:bg-gray-100">
-                          <input type="checkbox" class="mr-2" />
-                          <span class="text-sm">Transferencia</span>
-                        </label>
-                        <div class="border-t mt-2 pt-2 flex justify-end">
-                          <button
-                            class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
-                          >
-                            Aplicar
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <!-- Tipo (Filtro) -->
+                <th class="px-4 py-2">
+                  <select
+                    id="filtroTipo"
+                    class="border rounded-md p-1"
+                    onchange="aplicarFiltros()"
+                  >
+                    <option value="todos">Tipo</option>
+                    <option value="Ingreso">Ingreso</option>
+                    <option value="Gasto">Gasto</option>
+                    <option value="Transferencia">Transferencia</option>
+                  </select>
                 </th>
-
-                <!-- Cuenta -->
-                <th class="px-4 py-2 dropdown">
-                  <div class="relative">
-                    <button
-                      onclick="toggleDropdown('cuenta')"
-                      class="flex items-center space-x-1 hover:text-blue-600"
-                    >
-                      <span>Cuenta</span>
-                      <svg
-                        class="w-4 h-4"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fill-rule="evenodd"
-                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                          clip-rule="evenodd"
-                        />
-                      </svg>
-                    </button>
-                    <!-- Dropdown para Cuenta -->
-                    <div
-                      id="dropdownCuenta"
-                      class="dropdown-content absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50"
-                    >
-                      <div class="p-2">
-                        <label class="flex items-center p-2 hover:bg-gray-100">
-                          <input type="checkbox" class="mr-2" />
-                          <span class="text-sm">Todas</span>
-                        </label>
-                        <label class="flex items-center p-2 hover:bg-gray-100">
-                          <input type="checkbox" class="mr-2" />
-                          <span class="text-sm">Efectivo</span>
-                        </label>
-                        <label class="flex items-center p-2 hover:bg-gray-100">
-                          <input type="checkbox" class="mr-2" />
-                          <span class="text-sm">Cuenta Corriente</span>
-                        </label>
-                        <label class="flex items-center p-2 hover:bg-gray-100">
-                          <input type="checkbox" class="mr-2" />
-                          <span class="text-sm">Cuenta Ahorros</span>
-                        </label>
-                        <div class="border-t mt-2 pt-2 flex justify-end">
-                          <button
-                            class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
-                          >
-                            Aplicar
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <!-- Cuenta (Filtro) -->
+                <th class="px-4 py-2">
+                  <select
+                    id="filtroCuenta"
+                    class="border rounded-md p-1"
+                    onchange="aplicarFiltros()"
+                  >
+                    <option value="todas">Cuenta</option>
+                    <option value="Cuenta Corriente">Cuenta Corriente</option>
+                    <option value="Cuenta Ahorros">Cuenta Ahorros</option>
+                    <option value="T.C. Bancolombia">T.C. Bancolombia</option>
+                    <option value="T.C. Davivienda">T.C. Davivienda</option>
+                    <option value="Efectivo">Efectivo</option>
+                  </select>
                 </th>
-
-                <!-- Categoría -->
-                <th class="px-4 py-2 dropdown">
-                  <div class="relative">
-                    <button
-                      onclick="toggleDropdown('categoria')"
-                      class="flex items-center space-x-1 hover:text-blue-600"
-                    >
-                      <span>Categoría</span>
-                      <svg
-                        class="w-4 h-4"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fill-rule="evenodd"
-                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                          clip-rule="evenodd"
-                        />
-                      </svg>
-                    </button>
-                    <!-- Dropdown para Categoría -->
-                    <div
-                      id="dropdownCategoria"
-                      class="dropdown-content absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50"
-                    >
-                      <div class="p-2">
-                        <label class="flex items-center p-2 hover:bg-gray-100">
-                          <input type="checkbox" class="mr-2" />
-                          <span class="text-sm">Todas</span>
-                        </label>
-                        <label class="flex items-center p-2 hover:bg-gray-100">
-                          <input type="checkbox" class="mr-2" />
-                          <span class="text-sm">Alimentación</span>
-                        </label>
-                        <label class="flex items-center p-2 hover:bg-gray-100">
-                          <input type="checkbox" class="mr-2" />
-                          <span class="text-sm">Transporte</span>
-                        </label>
-                        <label class="flex items-center p-2 hover:bg-gray-100">
-                          <input type="checkbox" class="mr-2" />
-                          <span class="text-sm">Servicios</span>
-                        </label>
-                        <div class="border-t mt-2 pt-2 flex justify-end">
-                          <button
-                            class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
-                          >
-                            Aplicar
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <!-- Categoría (Filtro) -->
+                <th class="px-4 py-2">
+                  <select
+                    id="filtroCategoria"
+                    class="border rounded-md p-1"
+                    onchange="aplicarFiltros()"
+                  >
+                    <option value="todas">Categoría</option>
+                    <option value="Honorarios">Honorarios</option>
+                    <option value="Equipos">Equipos</option>
+                    <option value="Consignación">Consignación</option>
+                    <option value="Restaurantes">Restaurantes</option>
+                    <option value="Servicios">Servicios</option>
+                    <option value="Venta Vehículo">Venta Vehículo</option>
+                    <option value="Venta Artículos">Venta Artículos</option>
+                    <option value="Transporte">Transporte</option>
+                    <option value="Ropa">Ropa</option>
+                    <option value="Impuestos">Impuestos</option>
+                    <option value="Alimentación">Alimentación</option>
+                    <option value="Entretenimiento">Entretenimiento</option>
+                    <!-- Agrega más según necesites -->
+                  </select>
                 </th>
-
-                <!-- Descripción (sin dropdown) -->
+                <!-- Descripción -->
                 <th class="px-4 py-2">Descripción</th>
-
-                <!-- Monto -->
-                <th class="px-4 py-2 dropdown">
-                  <div class="relative">
-                    <button
-                      onclick="toggleDropdown('monto')"
-                      class="flex items-center space-x-1 hover:text-blue-600"
-                    >
-                      <span>Monto</span>
-                      <svg
-                        class="w-4 h-4"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fill-rule="evenodd"
-                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                          clip-rule="evenodd"
-                        />
-                      </svg>
-                    </button>
-                    <!-- Dropdown para Monto -->
-                    <div
-                      id="dropdownMonto"
-                      class="dropdown-content absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50"
-                    >
-                      <div class="p-2">
-                        <label class="flex items-center p-2 hover:bg-gray-100">
-                          <input type="checkbox" class="mr-2" />
-                          <span class="text-sm">Todos</span>
-                        </label>
-                        <label class="flex items-center p-2 hover:bg-gray-100">
-                          <input type="checkbox" class="mr-2" />
-                          <span class="text-sm">> $1,000,000</span>
-                        </label>
-                        <label class="flex items-center p-2 hover:bg-gray-100">
-                          <input type="checkbox" class="mr-2" />
-                          <span class="text-sm">> $5,000,000</span>
-                        </label>
-                        <label class="flex items-center p-2 hover:bg-gray-100">
-                          <input type="checkbox" class="mr-2" />
-                          <span class="text-sm">> $10,000,000</span>
-                        </label>
-                        <div class="border-t mt-2 pt-2 flex justify-end">
-                          <button
-                            class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
-                          >
-                            Aplicar
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <!-- Monto (Filtro) -->
+                <th class="px-4 py-2 text-right">
+                  <select
+                    id="filtroMonto"
+                    class="border rounded-md p-1"
+                    onchange="aplicarFiltros()"
+                  >
+                    <option value="todos">Monto</option>
+                    <option value="1m">> $1,000,000</option>
+                    <option value="5m">> $5,000,000</option>
+                    <option value="10m">> $10,000,000</option>
+                  </select>
                 </th>
-
-                <!-- Estado Fiscal -->
-                <th class="px-4 py-2 dropdown">
-                  <div class="relative">
-                    <button
-                      onclick="toggleDropdown('estadoFiscal')"
-                      class="flex items-center space-x-1 hover:text-blue-600"
-                    >
-                      <span>Estado Fiscal</span>
-                      <svg
-                        class="w-4 h-4"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                      >
-                        <path
-                          fill-rule="evenodd"
-                          d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
-                          clip-rule="evenodd"
-                        />
-                      </svg>
-                    </button>
-                    <!-- Dropdown para Estado Fiscal -->
-                    <div
-                      id="dropdownEstadoFiscal"
-                      class="dropdown-content absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50"
-                    >
-                      <div class="p-2">
-                        <label class="flex items-center p-2 hover:bg-gray-100">
-                          <input type="checkbox" class="mr-2" />
-                          <span class="text-sm">Todos</span>
-                        </label>
-                        <label class="flex items-center p-2 hover:bg-gray-100">
-                          <input type="checkbox" class="mr-2" />
-                          <span class="text-sm">Exógena</span>
-                        </label>
-                        <label class="flex items-center p-2 hover:bg-gray-100">
-                          <input type="checkbox" class="mr-2" />
-                          <span class="text-sm">Deducible</span>
-                        </label>
-                        <label class="flex items-center p-2 hover:bg-gray-100">
-                          <input type="checkbox" class="mr-2" />
-                          <span class="text-sm">N/A</span>
-                        </label>
-                        <div class="border-t mt-2 pt-2 flex justify-end">
-                          <button
-                            class="px-3 py-1 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
-                          >
-                            Aplicar
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <!-- Estado Fiscal (Filtro) -->
+                <th class="px-4 py-2 text-center">
+                  <select
+                    id="filtroEstado"
+                    class="border rounded-md p-1"
+                    onchange="aplicarFiltros()"
+                  >
+                    <option value="todos">Estado Fiscal</option>
+                    <option value="Exógena">Exógena</option>
+                    <option value="Deducible">Deducible</option>
+                    <option value="N/A">N/A</option>
+                  </select>
                 </th>
-
-                <!-- Soporte (sin dropdown) -->
+                <!-- Soporte -->
                 <th class="px-4 py-2 text-center">Soporte</th>
               </tr>
             </thead>
-            <tbody class="divide-y">
-              <tr class="hover:bg-gray-50">
-                <td class="px-4 py-2">20/12/2024</td>
-                <td class="px-4 py-2">Ingreso</td>
-                <td class="px-4 py-2">Cuenta Corriente</td>
-                <td class="px-4 py-2">Honorarios</td>
-                <td class="px-4 py-2">Proyecto ABC</td>
-                <td class="px-4 py-2 text-right text-green-600">$5,000,000</td>
-                <td class="px-4 py-2 text-center">
-                  <span
-                    class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm"
-                  >
-                    Exógena
-                  </span>
-                </td>
-                <td class="px-4 py-2 text-center">
-                  <a href="#" class="text-blue-600 hover:underline">Ver</a>
-                </td>
-              </tr>
-
-              <tr class="hover:bg-gray-50">
-                <td class="px-4 py-2">18/12/2024</td>
-                <td class="px-4 py-2">Gasto</td>
-                <td class="px-4 py-2">T.C. Bancolombia</td>
-                <td class="px-4 py-2">Equipos</td>
-                <td class="px-4 py-2">Laptop Dell XPS</td>
-                <td class="px-4 py-2 text-right text-red-600">$4,500,000</td>
-                <td class="px-4 py-2 text-center">
-                  <div class="flex flex-col">
-                    <span
-                      class="px-2 py-1 bg-green-100 text-green-800 rounded-full text-sm mb-1"
-                    >
-                      Exógena
-                    </span>
-                    <span
-                      class="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-sm"
-                    >
-                      Deducible
-                    </span>
-                  </div>
-                </td>
-                <td class="px-4 py-2 text-center">
-                  <a href="#" class="text-blue-600 hover:underline">Ver</a>
-                </td>
-              </tr>
-
-              <tr class="hover:bg-gray-50">
-                <td class="px-4 py-2">15/12/2024</td>
-                <td class="px-4 py-2">Transferencia</td>
-                <td class="px-4 py-2">Efectivo → Ahorros</td>
-                <td class="px-4 py-2">-</td>
-                <td class="px-4 py-2">Consignación</td>
-                <td class="px-4 py-2 text-right text-gray-600">$2,000,000</td>
-                <td class="px-4 py-2 text-center">
-                  <span
-                    class="px-2 py-1 bg-gray-100 text-gray-800 rounded-full text-sm"
-                  >
-                    N/A
-                  </span>
-                </td>
-                <td class="px-4 py-2 text-center">
-                  <a href="#" class="text-blue-600 hover:underline">Ver</a>
-                </td>
-              </tr>
+            <tbody id="movimientosTbody" class="divide-y">
+              <!-- Se llena con JS -->
             </tbody>
           </table>
         </div>
@@ -536,27 +206,11 @@
         <!-- Paginación -->
         <div class="p-4 border-t bg-gray-50">
           <div class="flex justify-between items-center">
-            <div class="text-sm text-gray-600">
-              Mostrando 3 de 220 movimientos
+            <div class="text-sm text-gray-600" id="paginacionInfo">
+              Mostrando X de Y movimientos
             </div>
-            <div class="space-x-2">
-              <button class="px-3 py-1 border rounded hover:bg-gray-100">
-                Anterior
-              </button>
-              <button
-                class="px-3 py-1 border rounded bg-blue-50 border-blue-300"
-              >
-                1
-              </button>
-              <button class="px-3 py-1 border rounded hover:bg-gray-100">
-                2
-              </button>
-              <button class="px-3 py-1 border rounded hover:bg-gray-100">
-                3
-              </button>
-              <button class="px-3 py-1 border rounded hover:bg-gray-100">
-                Siguiente
-              </button>
+            <div class="space-x-2" id="paginacionBotones">
+              <!-- Botones de paginación -->
             </div>
           </div>
         </div>
@@ -574,228 +228,798 @@
         >
           Exportar a Excel
         </button>
-        <button
-          class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700"
-        >
-          Exportar a PDF
-        </button>
       </div>
     </main>
 
-    <!-- Dropdowns de Filtros (inicialmente ocultos) -->
-    <div id="filterDropdowns" class="hidden">
-      <!-- Filtro de Fecha -->
-      <div
-        id="fechaFilter"
-        class="hidden absolute bg-white border rounded-lg shadow-lg p-4 z-50"
-      >
-        <div class="space-y-2">
-          <div class="font-bold mb-2">Ordenar por:</div>
-          <div
-            class="flex items-center space-x-2 hover:bg-gray-100 p-1 cursor-pointer"
-          >
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M5 15l7-7 7 7"
-              />
-            </svg>
-            <span>Más reciente primero</span>
-          </div>
-          <div
-            class="flex items-center space-x-2 hover:bg-gray-100 p-1 cursor-pointer"
-          >
-            <svg
-              class="w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                stroke-linecap="round"
-                stroke-linejoin="round"
-                stroke-width="2"
-                d="M19 9l-7 7-7-7"
-              />
-            </svg>
-            <span>Más antiguo primero</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Filtro de Tipo -->
-      <div
-        id="tipoFilter"
-        class="hidden absolute bg-white border rounded-lg shadow-lg p-4 z-50"
-      >
-        <div class="space-y-2">
-          <label class="flex items-center space-x-2">
-            <input type="checkbox" checked />
-            <span>Todos</span>
-          </label>
-          <label class="flex items-center space-x-2">
-            <input type="checkbox" />
-            <span>Ingresos</span>
-          </label>
-          <label class="flex items-center space-x-2">
-            <input type="checkbox" />
-            <span>Gastos</span>
-          </label>
-          <label class="flex items-center space-x-2">
-            <input type="checkbox" />
-            <span>Transferencias</span>
-          </label>
-        </div>
-      </div>
-
-      <!-- [Similares dropdowns para otros filtros...] -->
-    </div>
+    <footer class="bg-gray-200 text-center p-4 mt-8">
+      <p>Sistema de Finanzas Personales - 2025</p>
+    </footer>
 
     <script>
-      let activeDropdown = null;
-      let activeButton = null;
+      // -------------------------------------------------------------
+      // 1. DATA DE EJEMPLO (SE REEMPLAZARÁ CON DATOS DEL BACKEND)
+      // -------------------------------------------------------------
+      const resumenData = {
+        ingresosFormales: 45000000,
+        ingresosInformales: 15000000,
+        gastosConFactura: 32000000,
+        gastosSinFactura: 8000000,
+        movimientosTransferencias: 52,
+        movimientosConSoporte: 145,
+        movimientosSinSoporte: 23,
+      };
+
+      // Se agregarán algunos movimientos con fecha en enero de 2025
+      // Para tener un total mayor a 20, iremos a 25 registros
+      // Cada objeto: { fecha, tipo, cuenta, categoria, descripcion, monto, isIngreso, estadoFiscal, soporteLink }
+      const movimientosData = [
+        // Movs diciembre 2024
+        {
+          fecha: "2024-12-20", // 1
+          tipo: "Ingreso",
+          cuenta: "Cuenta Ahorros",
+          categoria: "Honorarios",
+          descripcion: "Proyecto ABC",
+          monto: 5000000,
+          isIngreso: true,
+          estadoFiscal: "Exógena",
+          soporteLink: "#",
+        },
+        {
+          fecha: "2024-12-18", // 2
+          tipo: "Gasto",
+          cuenta: "T.C. Bancolombia",
+          categoria: "Equipos",
+          descripcion: "Laptop Dell XPS",
+          monto: 4500000,
+          isIngreso: false,
+          estadoFiscal: "Exógena / Deducible",
+          soporteLink: "#",
+        },
+        {
+          fecha: "2024-12-15", // 3
+          tipo: "Transferencia",
+          cuenta: "Efectivo",
+          categoria: "Consignación",
+          descripcion: "Ahorros",
+          monto: 2000000,
+          isIngreso: false,
+          estadoFiscal: "N/A",
+          soporteLink: "#",
+        },
+        {
+          fecha: "2024-12-10", // 4
+          tipo: "Ingreso",
+          cuenta: "Cuenta Corriente",
+          categoria: "Venta Vehículo",
+          descripcion: "Pago Parcial",
+          monto: 3000000,
+          isIngreso: true,
+          estadoFiscal: "N/A",
+          soporteLink: "#",
+        },
+        {
+          fecha: "2024-12-09", // 5
+          tipo: "Gasto",
+          cuenta: "T.C. Davivienda",
+          categoria: "Restaurantes",
+          descripcion: "Cena Familiar",
+          monto: 250000,
+          isIngreso: false,
+          estadoFiscal: "Deducible",
+          soporteLink: "#",
+        },
+        {
+          fecha: "2024-11-29", // 6
+          tipo: "Gasto",
+          cuenta: "Cuenta Corriente",
+          categoria: "Servicios",
+          descripcion: "Electricidad - Noviembre",
+          monto: 180000,
+          isIngreso: false,
+          estadoFiscal: "Exógena",
+          soporteLink: "#",
+        },
+        {
+          fecha: "2024-11-25", // 7
+          tipo: "Ingreso",
+          cuenta: "Efectivo",
+          categoria: "Venta Artículos",
+          descripcion: "Venta de muebles usados",
+          monto: 700000,
+          isIngreso: true,
+          estadoFiscal: "N/A",
+          soporteLink: "#",
+        },
+        {
+          fecha: "2024-11-20", // 8
+          tipo: "Gasto",
+          cuenta: "Cuenta Ahorros",
+          categoria: "Transporte",
+          descripcion: "Mantenimiento Carro",
+          monto: 400000,
+          isIngreso: false,
+          estadoFiscal: "Deducible",
+          soporteLink: "#",
+        },
+        {
+          fecha: "2024-11-15", // 9
+          tipo: "Gasto",
+          cuenta: "T.C. Bancolombia",
+          categoria: "Equipos",
+          descripcion: "Accesorios Computador",
+          monto: 300000,
+          isIngreso: false,
+          estadoFiscal: "Exógena",
+          soporteLink: "#",
+        },
+        {
+          fecha: "2024-10-30", // 10
+          tipo: "Ingreso",
+          cuenta: "Cuenta Corriente",
+          categoria: "Honorarios",
+          descripcion: "Consultoría",
+          monto: 2800000,
+          isIngreso: true,
+          estadoFiscal: "Exógena",
+          soporteLink: "#",
+        },
+        {
+          fecha: "2024-10-25", // 11
+          tipo: "Gasto",
+          cuenta: "T.C. Davivienda",
+          categoria: "Ropa",
+          descripcion: "Compra en Falabella",
+          monto: 600000,
+          isIngreso: false,
+          estadoFiscal: "N/A",
+          soporteLink: "#",
+        },
+        {
+          fecha: "2024-09-10", // 12
+          tipo: "Transferencia",
+          cuenta: "Ahorros",
+          category: "Reajuste Cuentas", // corregimos la key a "categoria"
+          categoria: "Reajuste Cuentas",
+          descripcion: "Mover fondos",
+          monto: 1000000,
+          isIngreso: false,
+          estadoFiscal: "N/A",
+          soporteLink: "#",
+        },
+        {
+          fecha: "2024-09-05", // 13
+          tipo: "Gasto",
+          cuenta: "Cuenta Ahorros",
+          categoria: "Servicios",
+          descripcion: "Agua y Gas",
+          monto: 220000,
+          isIngreso: false,
+          estadoFiscal: "Exógena",
+          soporteLink: "#",
+        },
+        {
+          fecha: "2024-08-18", // 14
+          tipo: "Ingreso",
+          cuenta: "Efectivo",
+          categoria: "Regalo Familiar", // no en la lista, se consideraría "otros"
+          descripcion: "Cumpleaños",
+          monto: 150000,
+          isIngreso: true,
+          estadoFiscal: "N/A",
+          soporteLink: "#",
+        },
+        {
+          fecha: "2024-08-01", // 15
+          tipo: "Gasto",
+          cuenta: "Cuenta Corriente",
+          categoria: "Entretenimiento",
+          descripcion: "Suscripción Netflix",
+          monto: 34000,
+          isIngreso: false,
+          estadoFiscal: "N/A",
+          soporteLink: "#",
+        },
+        {
+          fecha: "2024-07-25", // 16
+          tipo: "Ingreso",
+          cuenta: "Cuenta Ahorros",
+          categoria: "Honorarios",
+          descripcion: "Proyecto XYZ",
+          monto: 1000000,
+          isIngreso: true,
+          estadoFiscal: "N/A",
+          soporteLink: "#",
+        },
+        {
+          fecha: "2024-07-10", // 17
+          tipo: "Gasto",
+          cuenta: "T.C. Bancolombia",
+          categoria: "Restaurantes",
+          descripcion: "Comida Rápida",
+          monto: 80000,
+          isIngreso: false,
+          estadoFiscal: "Deducible",
+          soporteLink: "#",
+        },
+        {
+          fecha: "2024-06-05", // 18
+          tipo: "Gasto",
+          cuenta: "Cuenta Corriente",
+          categoria: "Impuestos",
+          descripcion: "Declaración IVA",
+          monto: 2000000,
+          isIngreso: false,
+          estadoFiscal: "Exógena",
+          soporteLink: "#",
+        },
+        {
+          fecha: "2024-06-01", // 19
+          tipo: "Ingreso",
+          cuenta: "Efectivo",
+          categoria: "Renta",
+          descripcion: "Arriendo Apartamento",
+          monto: 1200000,
+          isIngreso: true,
+          estadoFiscal: "Exógena",
+          soporteLink: "#",
+        },
+        {
+          fecha: "2024-05-20", // 20
+          tipo: "Gasto",
+          cuenta: "T.C. Davivienda",
+          categoria: "Alimentación",
+          descripcion: "Supermercado",
+          monto: 650000,
+          isIngreso: false,
+          estadoFiscal: "Deducible",
+          soporteLink: "#",
+        },
+
+        // Movs enero 2025
+        {
+          fecha: "2025-01-05", // 21
+          tipo: "Ingreso",
+          cuenta: "Cuenta Corriente",
+          categoria: "Honorarios",
+          descripcion: "Asesoría Nuevo Año",
+          monto: 4000000,
+          isIngreso: true,
+          estadoFiscal: "Exógena",
+          soporteLink: "#",
+        },
+        {
+          fecha: "2025-01-07", // 22
+          tipo: "Gasto",
+          cuenta: "T.C. Davivienda",
+          categoria: "Restaurantes",
+          descripcion: "Almuerzo Familiar",
+          monto: 200000,
+          isIngreso: false,
+          estadoFiscal: "Deducible",
+          soporteLink: "#",
+        },
+        {
+          fecha: "2025-01-10", // 23
+          tipo: "Gasto",
+          cuenta: "T.C. Bancolombia",
+          categoria: "Equipos",
+          descripcion: "Tablet para trabajo",
+          monto: 900000,
+          isIngreso: false,
+          estadoFiscal: "Exógena / Deducible",
+          soporteLink: "#",
+        },
+        {
+          fecha: "2025-01-15", // 24
+          tipo: "Ingreso",
+          cuenta: "Cuenta Ahorros",
+          categoria: "Consignación",
+          descripcion: "Pago de un cliente",
+          monto: 2500000,
+          isIngreso: true,
+          estadoFiscal: "N/A",
+          soporteLink: "#",
+        },
+        {
+          fecha: "2025-01-20", // 25
+          tipo: "Gasto",
+          cuenta: "Efectivo",
+          categoria: "Transporte",
+          descripcion: "Bus + Taxi",
+          monto: 60000,
+          isIngreso: false,
+          estadoFiscal: "N/A",
+          soporteLink: "#",
+        },
+      ];
+
+      const pageSize = 5;
+      let currentPage = 1;
+      let totalPages = 1;
       let sortDirection = "desc"; // 'asc' o 'desc'
 
-      // Función para alternar la dirección de ordenamiento
+      // Filtros en memoria
+      let filtroTipoVal = "todos";
+      let filtroCuentaVal = "todas";
+      let filtroCategoriaVal = "todas";
+      let filtroMontoVal = "todos";
+      let filtroEstadoVal = "todos";
+
+      // -------------------------------------------------------------
+      // 2. INICIO
+      // -------------------------------------------------------------
+      function iniciarConsolidado() {
+        // Ajustar por defecto a "Mes Actual"
+        establecerFechasPorPeriodo("mesActual");
+        // Pintar data inicial
+        actualizarConsolidado();
+      }
+
+      // -------------------------------------------------------------
+      // 3. FILTROS DE FECHA (similar a dashboard)
+      // -------------------------------------------------------------
+      function cambiarRangoFechas() {
+        const valor = document.getElementById("selectPeriodo").value;
+        establecerFechasPorPeriodo(valor);
+      }
+
+      function establecerFechasPorPeriodo(periodo) {
+        const hoy = new Date();
+        const fechaInicio = document.getElementById("fechaInicio");
+        const fechaFin = document.getElementById("fechaFin");
+
+        let primerDia = new Date(hoy);
+        let ultimoDia = new Date(hoy);
+
+        switch (periodo) {
+          case "mesActual": {
+            primerDia = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+            ultimoDia = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
+            break;
+          }
+          case "mesAnterior": {
+            const mesAnterior = hoy.getMonth() - 1;
+            const anio =
+              mesAnterior < 0 ? hoy.getFullYear() - 1 : hoy.getFullYear();
+            const mesAjustado = (mesAnterior + 12) % 12;
+            primerDia = new Date(anio, mesAjustado, 1);
+            ultimoDia = new Date(anio, mesAjustado + 1, 0);
+            break;
+          }
+          case "ultimos3": {
+            const mesActual = hoy.getMonth();
+            const anioActual = hoy.getFullYear();
+            primerDia = new Date(anioActual, mesActual, 1);
+            primerDia.setMonth(primerDia.getMonth() - 2);
+            ultimoDia = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
+            break;
+          }
+          case "anioActual": {
+            primerDia = new Date(hoy.getFullYear(), 0, 1);
+            ultimoDia = new Date(hoy.getFullYear(), 11, 31);
+            break;
+          }
+          case "anioAnterior": {
+            primerDia = new Date(hoy.getFullYear() - 1, 0, 1);
+            ultimoDia = new Date(hoy.getFullYear() - 1, 11, 31);
+            break;
+          }
+          case "personalizado": {
+            return;
+          }
+        }
+        fechaInicio.value = formatearFechaISO(primerDia);
+        fechaFin.value = formatearFechaISO(ultimoDia);
+      }
+
+      function verificarPersonalizado() {
+        const selectPeriodo = document.getElementById("selectPeriodo");
+        selectPeriodo.value = "personalizado";
+      }
+
+      function formatearFechaISO(fecha) {
+        const y = fecha.getFullYear();
+        const m = String(fecha.getMonth() + 1).padStart(2, "0");
+        const d = String(fecha.getDate()).padStart(2, "0");
+        return `${y}-${m}-${d}`;
+      }
+
+      // -------------------------------------------------------------
+      // 4. ACTUALIZAR CONSOLIDADO
+      // -------------------------------------------------------------
+      function actualizarConsolidado() {
+        currentPage = 1;
+        // Renderizar Resumen
+        renderResumen();
+        // Renderizar Movimientos
+        renderMovimientos();
+
+        // Actualizar Título según rango
+        const fi = document.getElementById("fechaInicio").value;
+        const ff = document.getElementById("fechaFin").value;
+        const titulo = document.getElementById("tituloMovimientos");
+        const fiTexto = formatearFechaUI(fi);
+        const ffTexto = formatearFechaUI(ff);
+        titulo.textContent = `Detalle de Movimientos ${fiTexto} a ${ffTexto}`;
+      }
+
+      function formatearFechaUI(yyyy_mm_dd) {
+        if (!yyyy_mm_dd.includes("-")) return yyyy_mm_dd;
+        const [year, month, day] = yyyy_mm_dd.split("-");
+        return `${day}-${month}-${year}`;
+      }
+
+      // -------------------------------------------------------------
+      // 5. RENDERIZAR RESUMEN
+      // -------------------------------------------------------------
+      function renderResumen() {
+        const contenedor = document.getElementById("resumenContainer");
+        contenedor.innerHTML = "";
+
+        // Ingresos
+        const divIngresos = document.createElement("div");
+        divIngresos.className = "p-4 bg-white rounded-lg shadow-md";
+        divIngresos.innerHTML = `
+          <h3 class="font-bold text-lg mb-3">Ingresos</h3>
+          <div class="space-y-2">
+            <div class="flex justify-between">
+              <span>Formales:</span>
+              <span class="font-bold text-green-600">
+                $${resumenData.ingresosFormales.toLocaleString()}
+              </span>
+            </div>
+            <div class="flex justify-between">
+              <span>Informales:</span>
+              <span class="font-bold text-green-600">
+                $${resumenData.ingresosInformales.toLocaleString()}
+              </span>
+            </div>
+            <div class="flex justify-between pt-2 border-t mt-2">
+              <span class="font-bold">Total:</span>
+              <span class="font-bold text-green-600">
+                $${(
+                  resumenData.ingresosFormales + resumenData.ingresosInformales
+                ).toLocaleString()}
+              </span>
+            </div>
+            <div class="bg-gray-100 h-2 rounded-full mt-2">
+              <div class="bg-green-600 h-2 rounded-full" style="width:75%"></div>
+            </div>
+          </div>
+        `;
+        // Gastos
+        const divGastos = document.createElement("div");
+        divGastos.className = "p-4 bg-white rounded-lg shadow-md";
+        divGastos.innerHTML = `
+          <h3 class="font-bold text-lg mb-3">Gastos</h3>
+          <div class="space-y-2">
+            <div class="flex justify-between">
+              <span>Con Factura:</span>
+              <span class="font-bold text-red-600">
+                $${resumenData.gastosConFactura.toLocaleString()}
+              </span>
+            </div>
+            <div class="flex justify-between">
+              <span>Sin Factura:</span>
+              <span class="font-bold text-red-600">
+                $${resumenData.gastosSinFactura.toLocaleString()}
+              </span>
+            </div>
+            <div class="flex justify-between pt-2 border-t mt-2">
+              <span class="font-bold">Total:</span>
+              <span class="font-bold text-red-600">
+                $${(
+                  resumenData.gastosConFactura + resumenData.gastosSinFactura
+                ).toLocaleString()}
+              </span>
+            </div>
+            <div class="bg-gray-100 h-2 rounded-full mt-2">
+              <div class="bg-red-600 h-2 rounded-full" style="width:50%"></div>
+            </div>
+          </div>
+        `;
+        // Movimientos
+        const divMovs = document.createElement("div");
+        divMovs.className = "p-4 bg-white rounded-lg shadow-md";
+        divMovs.innerHTML = `
+          <h3 class="font-bold text-lg mb-3">Movimientos</h3>
+          <div class="space-y-2">
+            <div class="flex justify-between">
+              <span>Transferencias:</span>
+              <span class="font-bold">${resumenData.movimientosTransferencias}</span>
+            </div>
+            <div class="flex justify-between">
+              <span>Con Soporte:</span>
+              <span class="font-bold text-green-600">
+                ${resumenData.movimientosConSoporte}
+              </span>
+            </div>
+            <div class="flex justify-between">
+              <span>Sin Soporte:</span>
+              <span class="font-bold text-red-600">
+                ${resumenData.movimientosSinSoporte}
+              </span>
+            </div>
+            <div class="bg-gray-100 h-2 rounded-full mt-2">
+              <div class="bg-blue-600 h-2 rounded-full" style="width:85%"></div>
+            </div>
+          </div>
+        `;
+        contenedor.appendChild(divIngresos);
+        contenedor.appendChild(divGastos);
+        contenedor.appendChild(divMovs);
+      }
+
+      // -------------------------------------------------------------
+      // 6. MOVIMIENTOS + PAGINACIÓN + FILTROS
+      // -------------------------------------------------------------
+      function renderMovimientos() {
+        // 1) Tomar rango de fechas
+        const fi = document.getElementById("fechaInicio").value;
+        const ff = document.getElementById("fechaFin").value;
+        const msIni = fi ? new Date(fi).getTime() : null;
+        const msFin = ff ? new Date(ff).getTime() : null;
+
+        // 2) Filtrar por fecha
+        let arrFiltrado = movimientosData.filter((m) => {
+          const msM = new Date(m.fecha).getTime();
+          if (msIni && msM < msIni) return false;
+          if (msFin && msM > msFin) return false;
+          return true;
+        });
+
+        // 3) Ordenar por fecha (sortDirection)
+        arrFiltrado.sort((a, b) => {
+          const da = new Date(a.fecha).getTime();
+          const db = new Date(b.fecha).getTime();
+          return sortDirection === "asc" ? da - db : db - da;
+        });
+
+        // 4) Aplicar filtros de Tipo, Cuenta, Categoría, Monto, Estado
+        arrFiltrado = aplicarFiltrosConData(arrFiltrado);
+
+        // 5) Paginación
+        const totalRecords = arrFiltrado.length;
+        totalPages = Math.ceil(totalRecords / pageSize);
+        if (currentPage > totalPages) currentPage = totalPages || 1;
+
+        const startIndex = (currentPage - 1) * pageSize;
+        const endIndex = startIndex + pageSize;
+        const arrPagina = arrFiltrado.slice(startIndex, endIndex);
+
+        // 6) Render en tabla
+        const tbody = document.getElementById("movimientosTbody");
+        tbody.innerHTML = "";
+        arrPagina.forEach((m) => {
+          const tr = document.createElement("tr");
+          tr.className = "hover:bg-gray-50";
+
+          // Fecha
+          const tdFecha = document.createElement("td");
+          tdFecha.className = "px-4 py-2";
+          tdFecha.textContent = formatearFechaUI(m.fecha);
+
+          // Tipo
+          const tdTipo = document.createElement("td");
+          tdTipo.className = "px-4 py-2";
+          tdTipo.textContent = m.tipo;
+
+          // Cuenta
+          const tdCuenta = document.createElement("td");
+          tdCuenta.className = "px-4 py-2";
+          tdCuenta.textContent = m.cuenta;
+
+          // Categoría
+          const tdCategoria = document.createElement("td");
+          tdCategoria.className = "px-4 py-2";
+          tdCategoria.textContent = m.categoria;
+
+          // Descripción
+          const tdDesc = document.createElement("td");
+          tdDesc.className = "px-4 py-2";
+          tdDesc.textContent = m.descripcion;
+
+          // Monto
+          const tdMonto = document.createElement("td");
+          tdMonto.className = "px-4 py-2 text-right";
+          tdMonto.textContent = "$" + m.monto.toLocaleString();
+          if (!m.isIngreso) {
+            tdMonto.classList.add("text-red-600");
+          } else {
+            tdMonto.classList.add("text-green-600");
+          }
+
+          // Estado Fiscal
+          const tdEstado = document.createElement("td");
+          tdEstado.className = "px-4 py-2 text-center";
+          if (m.estadoFiscal === "N/A") {
+            // Mostrar como texto sin formato
+            tdEstado.textContent = "N/A";
+          } else if (m.estadoFiscal.includes("/")) {
+            // múltiples estados
+            const partes = m.estadoFiscal.split("/");
+            const div = document.createElement("div");
+            div.className = "flex flex-col";
+            partes.forEach((p) => {
+              const s = p.trim();
+              const span = document.createElement("span");
+              span.className = "px-2 py-1 rounded-full text-sm mb-1";
+              if (s.toLowerCase().includes("exógena")) {
+                span.classList.add("bg-green-100", "text-green-800");
+              } else if (s.toLowerCase().includes("deducible")) {
+                span.classList.add("bg-blue-100", "text-blue-800");
+              } else {
+                span.classList.add("bg-gray-100", "text-gray-800");
+              }
+              span.textContent = s;
+              div.appendChild(span);
+            });
+            tdEstado.appendChild(div);
+          } else {
+            // un solo estado
+            const span = document.createElement("span");
+            span.className = "px-2 py-1 rounded-full text-sm";
+            const txt = m.estadoFiscal.toLowerCase();
+            if (txt.includes("exógena")) {
+              span.classList.add("bg-green-100", "text-green-800");
+            } else if (txt.includes("deducible")) {
+              span.classList.add("bg-blue-100", "text-blue-800");
+            } else {
+              span.classList.add("bg-gray-100", "text-gray-800");
+            }
+            span.textContent = m.estadoFiscal;
+            tdEstado.appendChild(span);
+          }
+
+          // Soporte
+          const tdSoporte = document.createElement("td");
+          tdSoporte.className = "px-4 py-2 text-center";
+          const aSoporte = document.createElement("a");
+          aSoporte.href = m.soporteLink;
+          aSoporte.textContent = "Ver";
+          aSoporte.className = "text-blue-600 hover:underline";
+          tdSoporte.appendChild(aSoporte);
+
+          tr.appendChild(tdFecha);
+          tr.appendChild(tdTipo);
+          tr.appendChild(tdCuenta);
+          tr.appendChild(tdCategoria);
+          tr.appendChild(tdDesc);
+          tr.appendChild(tdMonto);
+          tr.appendChild(tdEstado);
+          tr.appendChild(tdSoporte);
+
+          tbody.appendChild(tr);
+        });
+
+        // 7) Info de paginación
+        const paginacionInfo = document.getElementById("paginacionInfo");
+        paginacionInfo.textContent = `Mostrando ${arrPagina.length} de ${totalRecords} movimientos`;
+
+        renderPaginacionBotones(totalRecords, arrPagina.length);
+      }
+
+      function renderPaginacionBotones(totalRecords, shownRecords) {
+        const container = document.getElementById("paginacionBotones");
+        container.innerHTML = "";
+
+        // Botón Anterior
+        const btnAnterior = document.createElement("button");
+        btnAnterior.className = "px-3 py-1 border rounded hover:bg-gray-100";
+        btnAnterior.textContent = "Anterior";
+        btnAnterior.disabled = currentPage === 1;
+        btnAnterior.addEventListener("click", () => {
+          if (currentPage > 1) {
+            currentPage--;
+            renderMovimientos();
+          }
+        });
+        container.appendChild(btnAnterior);
+
+        // Páginas
+        for (let i = 1; i <= totalPages; i++) {
+          const btn = document.createElement("button");
+          btn.className = "px-3 py-1 border rounded hover:bg-gray-100";
+          btn.textContent = i;
+          if (i === currentPage) {
+            btn.classList.add("bg-blue-50", "border-blue-300");
+          }
+          btn.addEventListener("click", () => {
+            currentPage = i;
+            renderMovimientos();
+          });
+          container.appendChild(btn);
+        }
+
+        // Botón Siguiente
+        const btnSiguiente = document.createElement("button");
+        btnSiguiente.className = "px-3 py-1 border rounded hover:bg-gray-100";
+        btnSiguiente.textContent = "Siguiente";
+        btnSiguiente.disabled = currentPage === totalPages;
+        btnSiguiente.addEventListener("click", () => {
+          if (currentPage < totalPages) {
+            currentPage++;
+            renderMovimientos();
+          }
+        });
+        container.appendChild(btnSiguiente);
+      }
+
+      // ----------------------------------------------------------------
+      // 7. ORDENAR POR FECHA (TOGGLE)
+      // ----------------------------------------------------------------
       function toggleSortDirection() {
         sortDirection = sortDirection === "asc" ? "desc" : "asc";
-        const rows = Array.from(document.querySelectorAll("tbody tr"));
-        const tbody = document.querySelector("tbody");
-
-        rows.sort((a, b) => {
-          const dateA = new Date(a.cells[0].textContent);
-          const dateB = new Date(b.cells[0].textContent);
-          return sortDirection === "asc" ? dateA - dateB : dateB - dateA;
-        });
-
-        tbody.innerHTML = "";
-        rows.forEach((row) => tbody.appendChild(row));
+        renderMovimientos();
       }
 
-      function toggleDropdown(type) {
-        event.preventDefault();
-        const dropdown = document.getElementById("dropdown" + type);
+      // ----------------------------------------------------------------
+      // 8. APLICAR FILTROS (TIPO, CUENTA, CATEGORIA, MONTO, ESTADO)
+      // ----------------------------------------------------------------
+      function aplicarFiltros() {
+        // Recoger valores de los selects
+        filtroTipoVal = document.getElementById("filtroTipo").value;
+        filtroCuentaVal = document.getElementById("filtroCuenta").value;
+        filtroCategoriaVal = document.getElementById("filtroCategoria").value;
+        filtroMontoVal = document.getElementById("filtroMonto").value;
+        filtroEstadoVal = document.getElementById("filtroEstado").value;
 
-        // Cerrar otros dropdowns abiertos
-        document.querySelectorAll('[id^="dropdown"]').forEach((d) => {
-          if (d !== dropdown) d.classList.add("hidden");
-        });
+        // Volver a la primera página
+        currentPage = 1;
+        // Render
+        renderMovimientos();
+      }
 
-        // Toggle del dropdown actual
-        if (dropdown) {
-          dropdown.classList.toggle("hidden");
-
-          // Posicionar el dropdown
-          const button = event.currentTarget;
-          const rect = button.getBoundingClientRect();
-          dropdown.style.top = `${rect.bottom + window.scrollY}px`;
-          dropdown.style.left = `${rect.left}px`;
+      function aplicarFiltrosConData(arr) {
+        // Filtro tipo
+        if (filtroTipoVal !== "todos") {
+          arr = arr.filter((m) => m.tipo === filtroTipoVal);
         }
-      }
 
-      // Función para aplicar filtros
-      function applyFilters(dropdownId) {
-        const dropdown = document.getElementById(dropdownId);
-        const type = dropdownId.replace("dropdown", "").toLowerCase();
-        const selectedValues = [];
+        // Filtro cuenta
+        if (filtroCuentaVal !== "todas") {
+          arr = arr.filter((m) => m.cuenta === filtroCuentaVal);
+        }
 
-        // Recolectar valores seleccionados
-        dropdown
-          .querySelectorAll('input[type="checkbox"]:checked')
-          .forEach((checkbox) => {
-            if (checkbox.nextElementSibling.textContent !== "Todos") {
-              selectedValues.push(
-                checkbox.nextElementSibling.textContent.trim()
-              );
-            }
-          });
+        // Filtro categoría
+        if (filtroCategoriaVal !== "todas") {
+          arr = arr.filter((m) => m.categoria === filtroCategoriaVal);
+        }
 
-        // Filtrar filas
-        document.querySelectorAll("tbody tr").forEach((row) => {
-          let show = true;
-          const cellIndex = getCellIndexForType(type);
-          if (cellIndex !== -1) {
-            const cellValue = row.cells[cellIndex].textContent.trim();
-            if (
-              selectedValues.length > 0 &&
-              !selectedValues.includes(cellValue)
-            ) {
-              show = false;
-            }
+        // Filtro monto
+        if (filtroMontoVal !== "todos") {
+          const numeric = (m) => {
+            if (!m.monto || isNaN(m.monto)) return 0;
+            return m.monto;
+          };
+          switch (filtroMontoVal) {
+            case "1m":
+              arr = arr.filter((m) => numeric(m) > 1000000);
+              break;
+            case "5m":
+              arr = arr.filter((m) => numeric(m) > 5000000);
+              break;
+            case "10m":
+              arr = arr.filter((m) => numeric(m) > 10000000);
+              break;
           }
-          row.style.display = show ? "" : "none";
-        });
+        }
 
-        // Cerrar dropdown
-        dropdown.classList.add("hidden");
+        // Filtro estado
+        if (filtroEstadoVal !== "todos") {
+          arr = arr.filter((m) => {
+            // m.estadoFiscal puede ser 'N/A' o 'Exógena / Deducible' etc.
+            if (filtroEstadoVal === "N/A") {
+              return m.estadoFiscal === "N/A";
+            } else {
+              return m.estadoFiscal.includes(filtroEstadoVal);
+            }
+          });
+        }
+
+        return arr;
       }
-
-      function getCellIndexForType(type) {
-        switch (type) {
-          case "tipo":
-            return 1;
-          case "cuenta":
-            return 2;
-          case "categoria":
-            return 3;
-          case "monto":
-            return 5;
-          case "estadofiscal":
-            return 6;
-          default:
-            return -1;
-        }
-      }
-
-      // Event Listeners
-      document.addEventListener("click", function (event) {
-        if (
-          !event.target.closest(".relative") &&
-          !event.target.closest('[id^="dropdown"]')
-        ) {
-          document.querySelectorAll('[id^="dropdown"]').forEach((dropdown) => {
-            dropdown.classList.add("hidden");
-          });
-        }
-      });
-
-      // Manejar checkboxes "Todos"
-      document.querySelectorAll('[id^="dropdown"]').forEach((dropdown) => {
-        const todosCheckbox = dropdown.querySelector('input[type="checkbox"]');
-        const otrosCheckboxes = Array.from(
-          dropdown.querySelectorAll('input[type="checkbox"]')
-        ).slice(1);
-
-        if (todosCheckbox) {
-          todosCheckbox.addEventListener("change", function () {
-            otrosCheckboxes.forEach((checkbox) => {
-              checkbox.checked = this.checked;
-              checkbox.disabled = this.checked;
-            });
-          });
-        }
-      });
-
-      // Agregar eventos a botones "Aplicar"
-      document.querySelectorAll('[id^="dropdown"] button').forEach((button) => {
-        if (button.textContent.trim() === "Aplicar") {
-          button.addEventListener("click", function () {
-            const dropdownId = this.closest('[id^="dropdown"]').id;
-            applyFilters(dropdownId);
-          });
-        }
-      });
     </script>
-
-    <footer class="bg-gray-200 text-center p-4 mt-8">
-      <p>Sistema de Finanzas Personales - 2024</p>
-    </footer>
   </body>
 </html>
